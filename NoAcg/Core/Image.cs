@@ -1,6 +1,5 @@
-﻿using Core.Function;
-using Microsoft.Extensions.DependencyInjection;
-using NoAcg.Function;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NoAcg.Model;
 using Sora.Entities.CQCodes;
 using System;
 using System.Collections.Generic;
@@ -48,29 +47,35 @@ namespace NoAcg.Core
             }
         }
 
-        public async void GetImgByTag(string tag, int count = 1, int maxPage = 20, bool 防止和谐 = true,
+        public async void GetImgByTag(string tag, int count = 1, bool 防止和谐 = true,
             bool 发送提示 = true)
         {
             if (发送提示) _eventArgs.Reply(CQCode.CQText("少女祈祷中..."));
-            var tasks = new List<Task>();
-            for (int i = 0; i < count; i++)
+            int page = _yande.GetTagsPage(tag);
+            if (page == 0) _eventArgs.Reply(CQCode.CQText("发生了未知错误"));
+            else
             {
-                tasks.Add(Task.Run(() =>
+                var tasks = new List<Task>();
+                for (int i = 0; i < count; i++)
                 {
-                    try
+                    tasks.Add(Task.Run(() =>
                     {
-                        var data = _yande.GetImageByTags(tag, out string imgRating, maxPage);
-                        if (防止和谐 && (imgRating == "Explicit" || imgRating == "Questionable")) data = ChangeMd5(data);
-                        _eventArgs.Reply(CQCode.CQImage("base64://" + Convert.ToBase64String(data)));
-                    }
-                    catch (Exception e)
-                    {
-                        _eventArgs.Reply(CQCode.CQText("请求发生了错误：\n" + e.Message));
-                    }
-                }));
-            }
+                        try
+                        {
+                            var data = _yande.GetImageByTags(tag, out string imgRating, page > 20 ? 20 : page);
+                            if (防止和谐 && (imgRating == "Explicit" || imgRating == "Questionable"))
+                                data = ChangeMd5(data);
+                            _eventArgs.Reply(CQCode.CQImage("base64://" + Convert.ToBase64String(data)));
+                        }
+                        catch (Exception e)
+                        {
+                            _eventArgs.Reply(CQCode.CQText("请求发生了错误：\n" + e.Message));
+                        }
+                    }));
+                }
 
-            await Task.WhenAll(tasks.ToArray());
+                await Task.WhenAll(tasks.ToArray());
+            }
         }
 
         public CQCode GetRandom()

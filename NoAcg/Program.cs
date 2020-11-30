@@ -1,26 +1,25 @@
 ﻿using Fleck;
-using NoAcg.Function;
+using Microsoft.Extensions.DependencyInjection;
+using NoAcg.Core;
+using NoAcg.Model;
+using NoAcg.Model.Monitor;
 using Sora.Entities.CQCodes;
 using Sora.Server;
 using Sora.Tool;
 using System;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using System.Text.RegularExpressions;
-using Tool.Common;
-using Sora.EventArgs.SoraEvent;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using System.Text.Json;
-using System.Linq;
-using NoAcg.Core;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using Tool.Common;
 
 namespace NoAcg
 {
-    class Program
+    internal class Program
     {
-        static async Task Main(string[] args)
+        private static async Task Main(string[] args)
         {
             JsonSerializerOptions options = new JsonSerializerOptions
             {
@@ -77,7 +76,7 @@ namespace NoAcg
                             Text = "随机奶子",
                             ClassName = "NoAcg.Core.Image",
                             Method = "GetImgByTag",
-                            Param = new object[] {"breasts", 1, 20, true, true}
+                            Param = new object[] {"breasts", 1, true, true}
                         },
                         new InvokeItem()
                         {
@@ -85,7 +84,7 @@ namespace NoAcg
                             MatchMode = "Regex",
                             ClassName = "NoAcg.Core.Image",
                             Method = "GetImgByTag",
-                            Param = new object[] {"breasts", @"int:$1", 20, true, true}
+                            Param = new object[] {"breasts", @"int:$1", true, true}
                         },
                         new InvokeItem()
                         {
@@ -127,6 +126,9 @@ namespace NoAcg
 
             ConsoleLog.SetLogLevel(LogLevel.Debug);
             Yande yande = new Yande(appConfig?.YandeConfig);
+            var webClient = new WebClient {Proxy = appConfig?.YandeConfig.Proxy};
+            Twitter twitter = new Twitter(ref webClient);
+
             //初始化服务器实例
             SoraWSServer server = new SoraWSServer(appConfig?.ServerConfig);
 
@@ -136,6 +138,7 @@ namespace NoAcg
                 .AddSingleton(server)
                 .AddSingleton(invokeConfig ?? new InvokeConfig())
                 .AddSingleton(options)
+                .AddSingleton(twitter)
                 .BuildServiceProvider();
 
             Console.CancelKeyPress += (sender, e) =>
@@ -144,10 +147,31 @@ namespace NoAcg
                 server.Dispose();
             };
 
+            TweeterMonitorConfig tweeterMonitorConfig = new TweeterMonitorConfig
+            {
+                Proxy = appConfig.YandeConfig.Proxy,
+                Items = new List<MonitorItem>
+                {
+                    new MonitorItem()
+                    {
+                        Mark = "wuyu_8512",
+                        Private = new List<long> {3117836505},
+                        Group = new List<long> {764444946},
+                    },
+                    new MonitorItem()
+                    {
+                        Mark = "shiromanta1020",
+                        Group = new List<long> {122675463, 551856311}
+                    }
+                }
+            };
+
             bool isConnected = false;
             server.Event.OnClientConnect += async (sender, eventArgs) =>
             {
                 isConnected = true;
+                MonitorManage monitorManage = new MonitorManage(tweeterMonitorConfig, eventArgs.SoraApi);
+                monitorManage.OpenTwitterMonitor();
                 var (apiStatus, nick) = await eventArgs.SoraApi.GetLoginUserName();
             };
             //群消息接收回调
@@ -163,7 +187,8 @@ namespace NoAcg
             await server.StartServer();
         }
 
-        static async Task HandleMessage(IServiceProvider serviceProvider, List<InvokeItem> config, dynamic eventArgs)
+        private static async Task HandleMessage(IServiceProvider serviceProvider, IEnumerable<InvokeItem> config,
+            dynamic eventArgs)
         {
             foreach (var item in config)
             {
@@ -180,14 +205,17 @@ namespace NoAcg
                             case Task<CQCode> task1:
                                 await eventArgs.Reply(task1.Result);
                                 break;
+
                             case Task<IEnumerable<CQCode>> task2:
                                 await eventArgs.Reply(task2.Result);
                                 break;
+
                             default:
                                 await eventArgs.Reply(result);
                                 break;
                         }
                     }
+
                     if (item.Intercept) break;
                 }
             }
@@ -209,6 +237,7 @@ namespace NoAcg
             {
                 case "FullText":
                     return config.Param;
+
                 case "Regex":
                 {
                     var result = new List<object>();
@@ -219,7 +248,7 @@ namespace NoAcg
                             var temp = Regex.Replace(rawText, config.Text, str);
                             if (temp.StartsWith("int:", StringComparison.OrdinalIgnoreCase))
                                 result.Add(int.Parse(temp[4..]));
-                            else 
+                            else
                                 result.Add(temp);
                         }
                         else result.Add(item);
