@@ -16,34 +16,38 @@ namespace NoAcg.Model.Monitor
         public string Authorization => _webClient.Headers["authorization"];
         public string Path { get; private set; }
         public string Token => _webClient.Headers["x-guest-token"];
+        public static TweetConfig TweetCache { get; set; } = new TweetConfig();
 
         public Twitter(ref WebClient webClient, bool userCache = true)
         {
             this._webClient = webClient;
-            if (userCache)
+            lock (TweetCache)
             {
-                if (string.IsNullOrWhiteSpace(TweetCache.Authorization) || string.IsNullOrWhiteSpace(TweetCache.Path))
+                if (userCache)
                 {
-                    GetAuthorization();
+                    if (string.IsNullOrWhiteSpace(TweetCache.Authorization) || string.IsNullOrWhiteSpace(TweetCache.Path))
+                    {
+                        GetAuthorization();
+                    }
+                    else
+                    {
+                        webClient.Headers["authorization"] = TweetCache.Authorization;
+                        Path = TweetCache.Path;
+                    }
+
+                    if (string.IsNullOrWhiteSpace(TweetCache.Token)) GetToken();
+                    else webClient.Headers["x-guest-token"] = TweetCache.Token;
                 }
                 else
                 {
-                    webClient.Headers["authorization"] = TweetCache.Authorization;
-                    Path = TweetCache.Path;
+                    GetAuthorization();
+                    GetToken();
                 }
 
-                if (string.IsNullOrWhiteSpace(TweetCache.Token)) GetToken();
-                else webClient.Headers["x-guest-token"] = TweetCache.Token;
+                TweetCache.Authorization = this.Authorization;
+                TweetCache.Path = this.Path;
+                TweetCache.Token = this.Token;
             }
-            else
-            {
-                GetAuthorization();
-                GetToken();
-            }
-
-            TweetCache.Authorization = this.Authorization;
-            TweetCache.Path = this.Path;
-            TweetCache.Token = this.Token;
         }
 
         protected void GetAuthorization()
@@ -51,7 +55,10 @@ namespace NoAcg.Model.Monitor
             string @string;
             try
             {
-                @string = Encoding.UTF8.GetString(_webClient.DownloadData("https://twitter.com/"));
+                lock (_webClient)
+                {
+                    @string = Encoding.UTF8.GetString(_webClient.DownloadData("https://twitter.com/"));
+                }
             }
             catch (WebException e)
             {
@@ -67,7 +74,11 @@ namespace NoAcg.Model.Monitor
 
             Regex regex = new Regex("https(.*?)/main\\.(.*?)\\.js");
             string text = regex.Match(@string).Value;
-            string string2 = Encoding.UTF8.GetString(_webClient.DownloadData(text));
+            string string2;
+            lock (_webClient)
+            {
+                string2 = Encoding.UTF8.GetString(_webClient.DownloadData(text));
+            }
             Regex regex2 = new Regex("\"(A{5,}.*?)\"");
             string value = "Bearer " + regex2.Match(string2).Groups[1].Value;
             _webClient.Headers["authorization"] = value;
@@ -81,9 +92,13 @@ namespace NoAcg.Model.Monitor
             //webClient.Headers["x-guest-token"] = value2;
             try
             {
-                value2 = JObject.Parse(Encoding.UTF8.GetString(
-                    _webClient.UploadData("https://api.twitter.com/1.1/guest/activate.json", new byte[0])))[
-                    "guest_token"].ToString();
+                lock (_webClient)
+                {
+                    value2 = JObject.Parse(Encoding.UTF8.GetString(
+                        _webClient.UploadData("https://api.twitter.com/1.1/guest/activate.json", new byte[0])))[
+                        "guest_token"].ToString();
+                }
+                _webClient.Headers["x-guest-token"] = value2;
             }
             catch (WebException)
             {
@@ -91,16 +106,17 @@ namespace NoAcg.Model.Monitor
                 _webClient = new WebClient() {Proxy = _webClient.Proxy};
                 GetAuthorization();
             }
-
-            _webClient.Headers["x-guest-token"] = value2;
         }
 
         public string GetUserID(string userName)
         {
             string text2 =
                 $"https://api.twitter.com/graphql/{Path}/UserByScreenName?variables=%7B%22screen_name%22%3A%22{userName}%22%2C%22withHighlightedLabel%22%3Afalse%7D";
-            return JObject.Parse(Encoding.UTF8.GetString(_webClient.DownloadData(text2)))["data"]["user"]["rest_id"]
-                .ToString();
+            lock (_webClient)
+            {
+                return JObject.Parse(Encoding.UTF8.GetString(_webClient.DownloadData(text2)))["data"]["user"]["rest_id"]
+                    .ToString();
+            }
         }
 
         public Tweet[] GetTweets(string userId)
@@ -110,7 +126,10 @@ namespace NoAcg.Model.Monitor
             string string3;
             try
             {
-                string3 = Encoding.UTF8.GetString(_webClient.DownloadData(address));
+                lock (_webClient)
+                {
+                    string3 = Encoding.UTF8.GetString(_webClient.DownloadData(address));
+                }
             }
             catch (WebException e)
             {
@@ -203,10 +222,10 @@ namespace NoAcg.Model.Monitor
         public bool IsOnlyRetweet { get; set; }
     }
 
-    public static class TweetCache
+    public class TweetConfig
     {
-        public static string Authorization;
-        public static string Path;
-        public static string Token;
+        public string Authorization;
+        public string Path;
+        public string Token;
     }
 }

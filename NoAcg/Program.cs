@@ -9,6 +9,7 @@ using Sora.Tool;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -34,7 +35,7 @@ namespace NoAcg
             {
                 invokeConfig = new InvokeConfig
                 {
-                    GroupConfig = new List<InvokeItem>
+                    GroupConfigs = new[]
                     {
                         new InvokeItem()
                         {
@@ -62,7 +63,7 @@ namespace NoAcg
                             Method = "GetRandom"
                         }
                     },
-                    PrivateConfig = new List<InvokeItem>
+                    PrivateConfigs = new[]
                     {
                         new InvokeItem()
                         {
@@ -101,6 +102,12 @@ namespace NoAcg
             {
                 invokeConfig =
                     JsonSerializer.Deserialize<InvokeConfig>(await File.ReadAllTextAsync("InvokeConfig.json"), options);
+                if (invokeConfig == null)
+                {
+                    ConsoleLog.Warning("NoACG", "读取配置文件InvokeConfig.json发生了错误，建议删除文件重新生成");
+                    return;
+                }
+
                 ConsoleLog.Info("NoACG", "已经读取配置文件InvokeConfig.json");
             }
 
@@ -121,22 +128,28 @@ namespace NoAcg
             {
                 appConfig = JsonSerializer.Deserialize<AppConfig>(await File.ReadAllTextAsync("AppConfig.json"),
                     options);
+                if (appConfig == null)
+                {
+                    ConsoleLog.Warning("NoACG", "读取配置文件AppConfig.json发生了错误，建议删除文件重新生成");
+                    return;
+                }
+
                 ConsoleLog.Info("NoACG", "已经读取配置文件AppConfig.json");
             }
 
             ConsoleLog.SetLogLevel(LogLevel.Debug);
-            Yande yande = new Yande(appConfig?.YandeConfig);
-            var webClient = new WebClient {Proxy = appConfig?.YandeConfig.Proxy};
+            Yande yande = new Yande(appConfig.YandeConfig);
+            var webClient = new WebClient {Proxy = appConfig.YandeConfig.Proxy};
             Twitter twitter = new Twitter(ref webClient);
 
             //初始化服务器实例
-            SoraWSServer server = new SoraWSServer(appConfig?.ServerConfig);
+            SoraWSServer server = new SoraWSServer(appConfig.ServerConfig);
 
             //setup our DI
             var serviceProvider = new ServiceCollection()
                 .AddSingleton(yande)
                 .AddSingleton(server)
-                .AddSingleton(invokeConfig ?? new InvokeConfig())
+                .AddSingleton(invokeConfig)
                 .AddSingleton(options)
                 .AddSingleton(twitter)
                 .BuildServiceProvider();
@@ -156,12 +169,42 @@ namespace NoAcg
                     {
                         Mark = "wuyu_8512",
                         Private = new List<long> {3117836505},
-                        Group = new List<long> {764444946},
+                        Group = new List<long> {764444946, 551856311},
                     },
                     new MonitorItem()
                     {
-                        Mark = "shiromanta1020",
+                        Mark = "Strangestone",
                         Group = new List<long> {122675463, 551856311}
+                    },
+                    new MonitorItem()
+                    {
+                        Mark = "lnnews",
+                        Group = new List<long> {551856311}
+                    },
+                    new MonitorItem()
+                    {
+                        Mark = "GA_bunko",
+                        Group = new List<long> {551856311}
+                    },
+                    new MonitorItem()
+                    {
+                        Mark = "MF_bunkoJ",
+                        Group = new List<long> {551856311}
+                    },
+                    new MonitorItem()
+                    {
+                        Mark = "HJbunko",
+                        Group = new List<long> {551856311}
+                    },
+                    new MonitorItem()
+                    {
+                        Mark = "fantasia_bunko",
+                        Group = new List<long> {551856311}
+                    },
+                    new MonitorItem()
+                    {
+                        Mark = "bunko_dengeki",
+                        Group = new List<long> {551856311}
                     }
                 }
             };
@@ -177,18 +220,27 @@ namespace NoAcg
             //群消息接收回调
             server.Event.OnGroupMessage += async (sender, eventArgs) =>
             {
-                if (isConnected) await HandleMessage(serviceProvider, invokeConfig.GroupConfig, eventArgs);
+                if (invokeConfig.BlackLists?.Contains(eventArgs.SourceGroup.Id) ?? false) return;
+                if (invokeConfig.BlackLists?.Contains(eventArgs.SenderInfo.UserId) ?? false) return;
+                if (isConnected)
+                    await HandleMessage(serviceProvider,
+                        invokeConfig.UniversalConfigs.Concat(invokeConfig.GroupConfigs), eventArgs,
+                        eventArgs.SourceGroup.Id);
             };
             server.Event.OnPrivateMessage += async (sender, eventArgs) =>
             {
-                if (isConnected) await HandleMessage(serviceProvider, invokeConfig.PrivateConfig, eventArgs);
+                if (invokeConfig.BlackLists?.Contains(eventArgs.SenderInfo.UserId) ?? false) return;
+                if (isConnected)
+                    await HandleMessage(serviceProvider,
+                        invokeConfig.UniversalConfigs.Concat(invokeConfig.PrivateConfigs), eventArgs,
+                        eventArgs.SenderInfo.UserId);
             };
             //启动服务器
             await server.StartServer();
         }
 
         private static async Task HandleMessage(IServiceProvider serviceProvider, IEnumerable<InvokeItem> config,
-            dynamic eventArgs)
+            dynamic eventArgs, long source)
         {
             foreach (var item in config)
             {

@@ -1,5 +1,6 @@
 using Sora.Tool;
 using System;
+using Tool.Expansion;
 
 namespace NoAcg.Model.Monitor
 {
@@ -25,10 +26,8 @@ namespace NoAcg.Model.Monitor
         protected override void Handle()
         {
             Tweet[] list;
-            lock (_twitter)
-            {
-                list = _twitter.GetTweets(_userId);
-            }
+            if (_userId.IsNull()) return;
+            list = _twitter.GetTweets(_userId);
 
             ConsoleLog.Debug("NoACG [TweeterMonitor]", $"本次{Mark}推文数量：{list.Length}");
             if (list.Length == 0)

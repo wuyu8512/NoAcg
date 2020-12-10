@@ -121,7 +121,7 @@ namespace NoAcg.Model.Monitor
             });
             var client = new WebClient();
             Twitter twitter = new Twitter(ref client);
-            foreach (var tw in _config.Items.Select(item => new TweeterMonitor(item.Mark.ToString(), twitter)))
+            foreach (var tw in _config.Items.Select(item => new TweeterMonitor(item.Mark.ToString(), twitter){TimeInterval = 60}))
             {
                 tw.NewTweetEvent += function;
                 tw.Start();
