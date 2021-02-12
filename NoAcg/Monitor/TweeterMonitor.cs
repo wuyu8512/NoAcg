@@ -1,10 +1,10 @@
-using Sora.Tool;
 using System;
-using Tool.Expansion;
+using Wuyu.Tool.Expansion;
+using YukariToolBox.Console;
 
-namespace NoAcg.Model.Monitor
+namespace NoAcg.Monitor
 {
-    public class TweeterMonitor : Tool.Common.Monitor
+    public class TweeterMonitor : Wuyu.Tool.Common.Monitor
     {
         private readonly Twitter _twitter;
         private readonly string _userId;

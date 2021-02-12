@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Net;
 
-namespace NoAcg.Model.Monitor
+namespace NoAcg.Models
 {
 	public class TweeterMonitorConfig
 	{

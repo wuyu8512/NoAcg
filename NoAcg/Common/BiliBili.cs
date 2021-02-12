@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Tool.Web.HttpHelper;
+using Wuyu.Tool.Web.HttpHelper;
 
-namespace NoAcg.Model
+namespace NoAcg.Common
 {
     public static class BiliBili
     {

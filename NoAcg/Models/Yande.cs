@@ -2,9 +2,9 @@
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using Tool.Web.HttpHelper;
+using Wuyu.Tool.Web.HttpHelper;
 
-namespace NoAcg.Model
+namespace NoAcg.Models
 {
     public class Yande
     {

@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using NoAcg.Model;
+using NoAcg.Common;
+using NoAcg.Models;
 using Sora.Entities.CQCodes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Tool.Web.HttpHelper;
+using Wuyu.Tool.Web.HttpHelper;
 
 namespace NoAcg.Core
 {
