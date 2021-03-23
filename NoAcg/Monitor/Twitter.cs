@@ -104,7 +104,6 @@ namespace NoAcg.Monitor
 			}
 			catch (WebException)
 			{
-				_webClient.Dispose();
 				_webClient = new WebClient() { Proxy = _webClient.Proxy };
 				GetAuthorization();
 			}

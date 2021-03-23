@@ -13,7 +13,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Wuyu.Tool.Common;
-using YukariToolBox.Console;
+using YukariToolBox.FormatLog;
 
 namespace NoAcg
 {
@@ -55,7 +55,7 @@ namespace NoAcg
 			if (!File.Exists("AppConfig.json"))
 			{
 				await File.WriteAllTextAsync("AppConfig.json", JsonSerializer.Serialize(appConfig, options));
-				ConsoleLog.Info("NoACG", "没有找到AppConfig.json，已经生成默认文件");
+				Log.Info(typeof(Program).FullName, "没有找到AppConfig.json，已经生成默认文件");
 			}
 			else
 			{
@@ -87,12 +87,6 @@ namespace NoAcg
 				.AddSingleton(twitter)
 				.BuildServiceProvider();
 
-			Console.CancelKeyPress += (sender, e) =>
-			{
-				e.Cancel = false; //true: 不导致退出。false: 会导致退出
-				server.Dispose();
-			};
-
 			TweeterMonitorConfig tweeterMonitorConfig = new TweeterMonitorConfig
 			{
 				Proxy = appConfig.YandeConfig.Proxy,
@@ -102,7 +96,7 @@ namespace NoAcg
 					{
 						Mark = "wuyu_8512",
 						Private = new List<long> {3117836505},
-						Group = new List<long> {764444946, 551856311},
+						Group = new List<long> {764444946, 551856311,648300801},
 					}
 				}
 			};
