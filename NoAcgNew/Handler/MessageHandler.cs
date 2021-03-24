@@ -23,8 +23,12 @@ namespace NoAcgNew.Handler
 			_logger.LogInformation("我被初始化了");
 			
 			//_eventManager.OnHeartBeatEvent += async (args, api) => { _logger.LogInformation(args.Time.ToString()); };
-			_eventManager.OnLifeCycleEvent += async (args, api) => { _logger.LogInformation(args.SubType); };
-			_eventManager.OnPrivateMessage += async (args, api) => { _logger.LogInformation(args.RawMessage); };
+			_eventManager.OnLifeCycleEvent += async (args, api) =>
+			{
+				_logger.LogInformation(args.SubType);
+				return 0;
+			};
+			_eventManager.OnPrivateMessage += async (args, api) => throw new Exception();
 		}
 	}
 }

@@ -80,17 +80,22 @@ namespace NoAcgNew.Service
             }
         }
 
-        void MessageHandel(byte[] data)
+        private async void MessageHandel(byte[] data)
         {
-            Task.Run(async () =>
+            var str = Encoding.UTF8.GetString(data);
+            try
             {
-                var str = Encoding.UTF8.GetString(data);
-                await _eventManager.Adapter(JObject.Parse(str), _api);
-            });
+                var json = JObject.Parse(str);
+                if (!string.IsNullOrWhiteSpace(str)) await _eventManager.Adapter(json, _api, str);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "信息解析出现错误：{Msg}", str);
+            }
         }
 
         ~WebSocketService() => Dispose(false);
-        
+
         public void Dispose()
         {
             Dispose(true);

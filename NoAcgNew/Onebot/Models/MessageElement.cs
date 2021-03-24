@@ -19,7 +19,7 @@ namespace NoAcgNew.Onebot.Models
         /// </summary>
         [JsonConverter(typeof(EnumDescriptionConverter))]
         [JsonProperty(PropertyName = "type")]
-        internal CQFunction MsgType { get; set; }
+        internal CQCodeType MsgType { get; set; }
 
         /// <summary>
         /// 消息段JSON

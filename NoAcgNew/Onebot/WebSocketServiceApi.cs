@@ -1,5 +1,6 @@
 ﻿using System.Net.WebSockets;
 using NoAcgNew.Interfaces;
+using NoAcgNew.Onebot.Models;
 
 namespace NoAcgNew.Onebot
 {
@@ -10,6 +11,11 @@ namespace NoAcgNew.Onebot
         public WebSocketServiceApi(WebSocket socket)
         {
             _socket = socket;
+        }
+
+        public OneBotApiType GetApiType()
+        {
+            return OneBotApiType.WebSocket;
         }
     }
 }

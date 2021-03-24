@@ -6,7 +6,7 @@ namespace Sora.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// <para>Xml与Json集合</para>
-    /// <para>可能为<see cref="CQFunction"/>.<see langword="Json"/>或<see cref="CQFunction"/>.<see langword="Xml"/></para>
+    /// <para>可能为<see cref="CQCodeType"/>.<see langword="Json"/>或<see cref="CQCodeType"/>.<see langword="Xml"/></para>
     /// </summary>
     public struct Code
     {

@@ -8,7 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading.Tasks.Sources;
 using Newtonsoft.Json;
+using NoAcgNew.Onebot.Models;
+using NoAcgNew.Onebot.Models.ApiParams;
+using WebApiClientCore;
 
 namespace NoAcgNew.Onebot.Event
 {
@@ -27,9 +31,14 @@ namespace NoAcgNew.Onebot.Event
         /// Onebot事件回调
         /// </summary>
         /// <typeparam name="TEventArgs">事件参数</typeparam>
+        /// <typeparam name="TResult">返回</typeparam>
         /// <param name="eventArgs">事件参数</param>
         /// <param name="oneBotApi">客户端链接接口</param>
-        public delegate ValueTask EventAsyncCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi)
+        public delegate ValueTask<TResult> EventCallBackHandler<in TEventArgs, TResult>(TEventArgs eventArgs,
+            IOneBotApi oneBotApi)
+            where TEventArgs : System.EventArgs where TResult : BaseEventReturn;
+
+        public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi)
             where TEventArgs : System.EventArgs;
 
         #endregion
@@ -39,17 +48,17 @@ namespace NoAcgNew.Onebot.Event
         /// <summary>
         /// 心跳事件
         /// </summary>
-        public event EventAsyncCallBackHandler<HeartBeatEventArgs> OnHeartBeatEvent;
+        public EventCallBackHandler<HeartBeatEventArgs> OnHeartBeatEvent;
 
         /// <summary>
         /// 生命周期事件
         /// </summary>
-        public event EventAsyncCallBackHandler<LifeCycleEventArgs> OnLifeCycleEvent;
+        public EventCallBackHandler<LifeCycleEventArgs> OnLifeCycleEvent;
 
         /// <summary>
         /// 私聊事件
         /// </summary>
-        public event EventAsyncCallBackHandler<PrivateMsgEventArgs> OnPrivateMessage;
+        public EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgEventReturn> OnPrivateMessage;
 
         #endregion
 
@@ -60,7 +69,8 @@ namespace NoAcgNew.Onebot.Event
         /// </summary>
         /// <param name="messageJson">消息json对象</param>
         /// <param name="oneBotApi">客户端链接接口</param>
-        internal async ValueTask Adapter(JObject messageJson, IOneBotApi oneBotApi)
+        /// <param name="rawMsg"></param>
+        internal async ValueTask Adapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetBaseEventType(messageJson);
             try
@@ -69,10 +79,10 @@ namespace NoAcgNew.Onebot.Event
                 {
                     //元事件类型
                     case "meta_event":
-                        await MetaAdapter(messageJson, oneBotApi);
+                        await MetaAdapter(messageJson, oneBotApi, rawMsg);
                         break;
                     case "message":
-                        await MessageAdapter(messageJson, oneBotApi);
+                        await MessageAdapter(messageJson, oneBotApi, rawMsg);
                         break;
                     default:
                         _logger.LogWarning("[Event]接收到未知事件[{EventType}]", type);
@@ -90,7 +100,8 @@ namespace NoAcgNew.Onebot.Event
         /// </summary>
         /// <param name="messageJson">消息</param>
         /// <param name="oneBotApi">客户端链接接口</param>
-        private async ValueTask MetaAdapter(JObject messageJson, IOneBotApi oneBotApi)
+        /// <param name="rawMsg"></param>
+        private async ValueTask MetaAdapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetMetaEventType(messageJson);
             switch (type)
@@ -100,14 +111,15 @@ namespace NoAcgNew.Onebot.Event
                 {
                     var heartBeat = messageJson.ToObject<HeartBeatEventArgs>();
                     if (heartBeat != null && OnHeartBeatEvent != null)
-                        await OnHeartBeatEvent(heartBeat, oneBotApi);
+                        await InvokeEvent(OnHeartBeatEvent, heartBeat, oneBotApi, rawMsg);
                     break;
                 }
                 //生命周期
                 case "lifecycle":
                 {
                     var lifeCycle = messageJson.ToObject<LifeCycleEventArgs>();
-                    if (lifeCycle != null && OnLifeCycleEvent != null) await OnLifeCycleEvent(lifeCycle, oneBotApi);
+                    if (lifeCycle != null && OnLifeCycleEvent != null)
+                        await InvokeEvent(OnLifeCycleEvent, lifeCycle, oneBotApi, rawMsg);
                     break;
                 }
                 default:
@@ -121,7 +133,8 @@ namespace NoAcgNew.Onebot.Event
         /// </summary>
         /// <param name="messageJson">消息</param>
         /// <param name="oneBotApi">客户端链接接口</param>
-        private async ValueTask MessageAdapter(JObject messageJson, IOneBotApi oneBotApi)
+        /// <param name="rawMsg"></param>
+        private async ValueTask MessageAdapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetMessageType(messageJson);
             switch (type)
@@ -130,7 +143,8 @@ namespace NoAcgNew.Onebot.Event
                 case "private":
                 {
                     var privateMsg = messageJson.ToObject<PrivateMsgEventArgs>();
-                    if (privateMsg != null && OnPrivateMessage != null) await OnPrivateMessage(privateMsg, oneBotApi);
+                    if (privateMsg != null && OnPrivateMessage != null)
+                        await InvokeEvent(OnPrivateMessage, privateMsg, oneBotApi, rawMsg);
                     break;
                 }
                 //群聊事件
@@ -141,6 +155,48 @@ namespace NoAcgNew.Onebot.Event
                 default:
                     _logger.LogWarning("[Message Event]接收到未知事件[{MetaEventType}]", type);
                     break;
+            }
+        }
+
+        private async ValueTask InvokeEvent<T>(EventCallBackHandler<T> handler, T args, IOneBotApi api, string rawMsg)
+            where T : System.EventArgs
+        {
+            foreach (var @delegate in handler.GetInvocationList())
+            {
+                var func = (EventCallBackHandler<T>) @delegate;
+                var code = 0;
+                try
+                {
+                    code = await func(args, api);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "消息处理出现未知错误：{Msg}", rawMsg);
+                }
+
+                if (code == 1) break;
+            }
+        }
+
+        private async ValueTask InvokeEvent<T, TResult>(EventCallBackHandler<T, TResult> handler, T args,
+            IOneBotApi api, string rawMsg)
+            where T : System.EventArgs where TResult : BaseEventReturn
+        {
+            foreach (var @delegate in handler.GetInvocationList())
+            {
+                var func = (EventCallBackHandler<T, TResult>) @delegate;
+                var code = 0;
+                try
+                {
+                    var result = await func(args, api);
+                    code = result.Code;
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, "消息处理出现未知错误：{Msg}", rawMsg);
+                }
+
+                if (code == 1) break;
             }
         }
 
