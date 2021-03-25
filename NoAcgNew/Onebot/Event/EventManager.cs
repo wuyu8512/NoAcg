@@ -75,7 +75,7 @@ namespace NoAcgNew.Onebot.Event
         /// <param name="messageJson">消息json对象</param>
         /// <param name="oneBotApi">客户端链接接口</param>
         /// <param name="rawMsg"></param>
-        internal async ValueTask Adapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
+        internal async ValueTask<object> Adapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetBaseEventType(messageJson);
             try
@@ -87,8 +87,7 @@ namespace NoAcgNew.Onebot.Event
                         await MetaAdapter(messageJson, oneBotApi, rawMsg);
                         break;
                     case "message":
-                        await MessageAdapter(messageJson, oneBotApi, rawMsg);
-                        break;
+                        return await MessageAdapter(messageJson, oneBotApi, rawMsg);
                     default:
                         _logger.LogWarning("[Event]接收到未知事件[{Msg}]", rawMsg);
                         break;
@@ -98,6 +97,8 @@ namespace NoAcgNew.Onebot.Event
             {
                 _logger.LogError(e, "[Adapter]事件解析出现未知错误：{Msg}", rawMsg);
             }
+
+            return null;
         }
 
         /// <summary>
@@ -139,7 +140,7 @@ namespace NoAcgNew.Onebot.Event
         /// <param name="messageJson">消息</param>
         /// <param name="oneBotApi">客户端链接接口</param>
         /// <param name="rawMsg"></param>
-        private async ValueTask MessageAdapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
+        private async ValueTask<object> MessageAdapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetMessageType(messageJson);
             switch (type)
@@ -149,7 +150,7 @@ namespace NoAcgNew.Onebot.Event
                 {
                     var privateMsg = messageJson.ToObject<PrivateMsgEventArgs>();
                     if (privateMsg != null && OnPrivateMessage != null)
-                        await InvokeEvent(OnPrivateMessage, privateMsg, oneBotApi, rawMsg);
+                        return await InvokeEvent(OnPrivateMessage, privateMsg, oneBotApi, rawMsg);
                     break;
                 }
                 //群聊事件
@@ -157,13 +158,15 @@ namespace NoAcgNew.Onebot.Event
                 {
                     var groupMsg = messageJson.ToObject<GroupMsgEventArgs>();
                     if (groupMsg != null && OnGroupMessage != null)
-                        await InvokeEvent(OnGroupMessage, groupMsg, oneBotApi, rawMsg);
+                        return await InvokeEvent(OnGroupMessage, groupMsg, oneBotApi, rawMsg);
                     break;
                 }
                 default:
                     _logger.LogWarning("[Message Event]接收到未知事件[{MessageEventType}]", type);
                     break;
             }
+
+            return null;
         }
 
         private async ValueTask InvokeEvent<T>(EventCallBackHandler<T> handler, T args, IOneBotApi api, string rawMsg)
@@ -186,10 +189,11 @@ namespace NoAcgNew.Onebot.Event
             }
         }
 
-        private async ValueTask InvokeEvent<T, TResult>(EventCallBackHandler<T, TResult> handler, T args,
+        private async ValueTask<TResult> InvokeEvent<T, TResult>(EventCallBackHandler<T, TResult> handler, T args,
             IOneBotApi api, string rawMsg)
             where T : System.EventArgs where TResult : BaseEventReturn
         {
+            TResult replay = null;
             foreach (var @delegate in handler.GetInvocationList())
             {
                 var func = (EventCallBackHandler<T, TResult>) @delegate;
@@ -198,6 +202,7 @@ namespace NoAcgNew.Onebot.Event
                 {
                     var result = await func(args, api);
                     if (result == null) continue;
+                    replay = result;
                     code = result.Code;
                 }
                 catch (Exception e)
@@ -207,6 +212,8 @@ namespace NoAcgNew.Onebot.Event
 
                 if (code == 1) break;
             }
+
+            return replay;
         }
 
         #endregion

@@ -121,7 +121,6 @@ namespace NoAcgNew.Service
         private static async Task Acceptor(HttpContext context, Func<Task> next)
         {
             if (!context.WebSockets.IsWebSocketRequest) return;
-            context.RequestServices.GetRequiredService<MessageHandler>();
             var h = ActivatorUtilities.CreateInstance<WebSocketService>(context.RequestServices, context);
             await h.EchoLoop();
             h.Dispose();

@@ -31,6 +31,11 @@ namespace NoAcgNew.Enumeration.ApiType
         /// <summary>
         /// API超时
         /// </summary>
-        TimeOut = -1
+        TimeOut = -1,
+        
+        /// <summary>
+        /// 取消发送
+        /// </summary>
+        Cancel = -2
     }
 }

@@ -54,8 +54,8 @@ namespace NoAcgNew.Onebot
             }
         }
 
-        private async ValueTask<(JObject,ApiStatusType)> SendRequest<T>(T request,CancellationToken cancellationToken) 
-        where T:ApiRequest
+        private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken)
+            where T : ApiRequest
         {
             var str = MessageHelper.ConvertToJson(request);
             var data = Encoding.UTF8.GetBytes(str);
@@ -68,23 +68,28 @@ namespace NoAcgNew.Onebot
             }
             catch (TimeoutException e)
             {
-                _logger.LogError(e, "[SendRequest]Api请求等待超时，可能没有执行成功，执行的请求[{Request}]",str);
-                return (replay,ApiStatusType.TimeOut);
+                _logger.LogError(e, "[SendRequest]Api请求等待超时，可能没有执行成功，执行的请求[{Request}]", str);
+                return (replay, ApiStatusType.TimeOut);
             }
             catch (SocketException e)
             {
-                _logger.LogError(e,"[SendRequest] {Request}",str);
-                return (replay,ApiStatusType.Error);
+                _logger.LogError(e, "[SendRequest] {Request}", str);
+                return (replay, ApiStatusType.Error);
             }
             catch (WebSocketException e)
             {
-                _logger.LogError(e,"[SendRequest] {Request}", str);
-                return (replay,ApiStatusType.Error);
+                _logger.LogError(e, "[SendRequest] {Request}", str);
+                return (replay, ApiStatusType.Error);
+            }
+            catch (TaskCanceledException)
+            {
+                return (null, ApiStatusType.Cancel);
             }
 
+            // TODO ApiStatusType解析
             return (replay, ApiStatusType.Ok);
         }
-        
+
         public OneBotApiType GetApiType()
         {
             return OneBotApiType.WebSocket;
@@ -101,7 +106,26 @@ namespace NoAcgNew.Onebot
             };
 
             var (replay, statusType) = await SendRequest(request, cancellationToken);
-            return replay == null ? (statusType, 0) : (statusType, replay["data"]?["message_id"]?.ToObject<int>() ?? -1);
+            return replay == null
+                ? (statusType, 0)
+                : (statusType, replay["data"]?["message_id"]?.ToObject<int>() ?? -1);
+        }
+
+        public async ValueTask<(ApiStatusType, int)> SendGroupMsg(long groupId, IEnumerable<CQCode> message,
+            bool autoEscape = false,
+            CancellationToken cancellationToken = default)
+        {
+            var request = new ApiRequest<SendMessageParams>
+            {
+                ApiRequestType = ApiRequestType.SendMsg,
+                ApiParams = new SendMessageParams
+                    {UserId = 0, GroupId = groupId, Message = message, AutoEscape = autoEscape}
+            };
+
+            var (replay, statusType) = await SendRequest(request, cancellationToken);
+            return replay == null
+                ? (statusType, 0)
+                : (statusType, replay["data"]?["message_id"]?.ToObject<int>() ?? -1);
         }
     }
 }

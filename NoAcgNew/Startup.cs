@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -14,6 +15,7 @@ using NoAcgNew.Onebot;
 using NoAcgNew.Onebot.Event;
 using NoAcgNew.Service;
 using NoAcgNew.Converter;
+using NoAcgNew.CQHTTP;
 
 namespace NoAcgNew
 {
@@ -34,6 +36,9 @@ namespace NoAcgNew
 
 			services.AddSingleton<EventManager>();
 			services.AddSingleton<MessageHandler>();
+			services.AddHttpApi<IOneBotHttpApi>(o => o.HttpHost = new Uri("http://127.0.0.1:5700"));
+			services.AddSingleton<HttpApi>();
+			services.AddControllers().AddNewtonsoftJson();
 			JsonConvert.DefaultSettings = () => new JsonSerializerSettings
 			{
 				Converters = new List<JsonConverter> { new CQCodeConverter() }
@@ -59,8 +64,9 @@ namespace NoAcgNew
 				endpoints.MapControllers();
 			});
 			
-			app.Map("/Universal", WebSocketService.Map);
+			// app.Map("/Universal", WebSocketService.Map);
 			ApplicationLogging.LoggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
+			app.ApplicationServices.GetRequiredService<MessageHandler>();
 		}
 	}
 }
