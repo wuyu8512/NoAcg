@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using NoAcgNew.Onebot.Models;
-using Sora.Converter;
-using Sora.Entities.CQCodes;
-using Sora.EventArgs.SoraEvent;
+using NoAcgNew.Converter;
+using NoAcgNew.Entities.CQCodes;
+using NoAcgNew.EventArgs.NoAcgNewEvent;
 
-namespace Sora.OnebotModel.OnebotEvent.MessageEvent
+namespace NoAcgNew.OnebotModel.OnebotEvent.MessageEvent
 {
     /// <summary>
     /// 消息事件基类
@@ -40,7 +40,7 @@ namespace Sora.OnebotModel.OnebotEvent.MessageEvent
         /// 消息内容
         /// </summary>
         [JsonProperty(PropertyName = "message")]
-        internal List<CQCode> MessageList { get; set; }
+        internal CQCode[] MessageList { get; set; }
 
         /// <summary>
         /// 原始消息内容

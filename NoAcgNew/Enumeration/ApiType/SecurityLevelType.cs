@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration.ApiType
+namespace NoAcgNew.Enumeration.ApiType
 {
     /// <summary>
     /// <para>链接安全性</para>

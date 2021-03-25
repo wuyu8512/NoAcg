@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration.EventParamsType
+namespace NoAcgNew.Enumeration.EventParamsType
 {
     /// <summary>
     /// 禁言操作类型

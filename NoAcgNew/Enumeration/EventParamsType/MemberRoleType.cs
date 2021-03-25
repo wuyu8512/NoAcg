@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration.EventParamsType
+namespace NoAcgNew.Enumeration.EventParamsType
 {
     /// <summary>
     /// 成员权限等级

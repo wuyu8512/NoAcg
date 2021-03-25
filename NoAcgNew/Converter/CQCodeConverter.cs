@@ -2,17 +2,17 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NoAcgNew.Onebot.Models;
-using Sora.Entities.CQCodes;
-using Sora.Entities.CQCodes.CQCodeModel;
-using Sora.Enumeration;
+using NoAcgNew.Entities.CQCodes;
+using NoAcgNew.Entities.CQCodes.CQCodeModel;
+using NoAcgNew.Enumeration;
 
-namespace Sora.Converter
+namespace NoAcgNew.Converter
 {
     public class CQCodeConverter: JsonConverter<CQCode>
     {
         public override void WriteJson(JsonWriter writer, CQCode value, JsonSerializer serializer)
         {
-            writer.WriteRawValue(JsonConvert.SerializeObject(value.Data));
+            // writer.WriteRawValue(JsonConvert.SerializeObject(value.Data));
         }
 
         public override CQCode ReadJson(JsonReader reader, Type objectType, CQCode existingValue, bool hasExistingValue,
@@ -35,5 +35,7 @@ namespace Sora.Converter
                 _ => new CQCode(CQCodeType.Unknown, messageElement.RawData)
             };
         }
+
+        public override bool CanWrite { get; } = false;
     }
 }

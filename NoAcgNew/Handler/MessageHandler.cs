@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoAcgNew.Onebot;
 using NoAcgNew.Onebot.Event;
+using NoAcgNew.Onebot.Models;
 
 namespace NoAcgNew.Handler
 {
@@ -25,10 +26,20 @@ namespace NoAcgNew.Handler
 			//_eventManager.OnHeartBeatEvent += async (args, api) => { _logger.LogInformation(args.Time.ToString()); };
 			_eventManager.OnLifeCycleEvent += async (args, api) =>
 			{
-				_logger.LogInformation(args.SubType);
+				_logger.LogInformation(0,args.SubType);
 				return 0;
 			};
-			_eventManager.OnPrivateMessage += async (args, api) => throw new Exception();
+			_eventManager.OnPrivateMessage += async (args, api) =>
+			{
+				var (status,id) = await api.SendPrivateMsg(args.UserId, 0, args.MessageList);
+				_logger.LogInformation(id.ToString());
+				return null;
+			};
+			_eventManager.OnGroupMessage += async (args, api) =>
+			{
+				_logger.LogInformation(args.MessageId,args.RawMessage);
+				return new GroupMsgReturn();
+			};
 		}
 	}
 }

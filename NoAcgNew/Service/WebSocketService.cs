@@ -38,7 +38,7 @@ namespace NoAcgNew.Service
             var task = context.WebSockets.AcceptWebSocketAsync();
             task.Wait();
             _socket = task.Result;
-            _api = new WebSocketServiceApi(_socket);
+            _api = ActivatorUtilities.CreateInstance<WebSocketServiceApi>(context.RequestServices, _socket);
         }
 
         private async ValueTask EchoLoop()
@@ -49,10 +49,10 @@ namespace NoAcgNew.Service
                 while (result?.CloseStatus == null)
                 {
                     var bufferList = new List<byte>();
-                    var buffer = new byte[BufferSize];
+                    var buffer = WebSocket.CreateServerBuffer(BufferSize);
                     try
                     {
-                        result = await _socket.ReceiveAsync(new ArraySegment<byte>(buffer), _cancellationToken.Token);
+                        result = await _socket.ReceiveAsync(buffer, _cancellationToken.Token);
                     }
                     catch (SocketException e)
                     {
@@ -64,7 +64,7 @@ namespace NoAcgNew.Service
                         _logger.LogWarning("[WebSocketService] {Msg}", e.InnerException?.Message);
                         return;
                     }
-
+                    
                     bufferList.AddRange(buffer[..result.Count]);
                     if (!result.EndOfMessage) continue;
                     if (!result.CloseStatus.HasValue)
@@ -85,8 +85,10 @@ namespace NoAcgNew.Service
             var str = Encoding.UTF8.GetString(data);
             try
             {
+                if (string.IsNullOrWhiteSpace(str)) return;
                 var json = JObject.Parse(str);
-                if (!string.IsNullOrWhiteSpace(str)) await _eventManager.Adapter(json, _api, str);
+                if (json.ContainsKey("post_type")) await _eventManager.Adapter(json, _api, str);
+                else if(json.ContainsKey("echo")) _api.OnApiReplay(json);
             }
             catch (Exception e)
             {

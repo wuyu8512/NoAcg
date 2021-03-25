@@ -1,6 +1,6 @@
 using System;
 
-namespace Sora.OnebotModel
+namespace NoAcgNew.OnebotModel
 {
     /// <summary>
     /// <para>服务器配置类</para>

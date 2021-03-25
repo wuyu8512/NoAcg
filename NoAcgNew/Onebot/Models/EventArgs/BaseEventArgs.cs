@@ -2,9 +2,9 @@ using NoAcgNew.Interfaces;
 using NoAcgNew.Expansion;
 using System;
 using Newtonsoft.Json;
-using Sora.Converter;
+using NoAcgNew.Converter;
 
-namespace Sora.EventArgs.SoraEvent
+namespace NoAcgNew.EventArgs.NoAcgNewEvent
 {
     /// <summary>
     /// 框架事件基类

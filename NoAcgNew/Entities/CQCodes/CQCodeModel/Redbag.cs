@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Sora.Entities.CQCodes.CQCodeModel
+namespace NoAcgNew.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 接收红包

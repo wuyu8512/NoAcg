@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration.EventParamsType
+namespace NoAcgNew.Enumeration.EventParamsType
 {
     /// <summary>
     /// 荣誉类型

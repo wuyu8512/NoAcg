@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Sora.Entities.CQCodes.CQCodeModel
+namespace NoAcgNew.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 装逼大图

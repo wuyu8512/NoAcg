@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Sora.OnebotModel;
+using NoAcgNew.OnebotModel;
 
-namespace Sora.Entities.CQCodes.CQCodeModel
+namespace NoAcgNew.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 转发消息的列表

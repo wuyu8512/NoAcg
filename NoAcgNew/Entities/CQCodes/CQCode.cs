@@ -4,14 +4,15 @@ using System.IO;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Sora.Enumeration.EventParamsType;
-using Sora.Entities.CQCodes.CQCodeModel;
-using Sora.Enumeration;
+using NoAcgNew.Enumeration.EventParamsType;
+using NoAcgNew.Entities.CQCodes.CQCodeModel;
+using NoAcgNew.Enumeration;
 using NoAcgNew.Onebot.Models;
 using Microsoft.Extensions.Logging;
+using NoAcgNew.Converter;
 using NoAcgNew.Internal;
 
-namespace Sora.Entities.CQCodes
+namespace NoAcgNew.Entities.CQCodes
 {
     /// <summary>
     /// CQ码类
@@ -26,6 +27,7 @@ namespace Sora.Entities.CQCodes
         /// CQ码类型
         /// </summary>
         [JsonProperty(PropertyName = "type")]
+        [JsonConverter(typeof(EnumDescriptionConverter))]
         public CQCodeType Type { get; }
 
         /// <summary>

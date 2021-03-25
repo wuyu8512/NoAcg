@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using NoAcgNew.Expansion;
 
-namespace Sora.Converter
+namespace NoAcgNew.Converter
 {
     internal class DataTimeConverter: JsonConverter<DateTime>
     {

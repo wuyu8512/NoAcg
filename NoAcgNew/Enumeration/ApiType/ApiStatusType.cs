@@ -1,17 +1,17 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration.ApiType
+namespace NoAcgNew.Enumeration.ApiType
 {
     /// <summary>
     /// API返回值
     /// </summary>
-    [DefaultValue(OK)]
-    public enum APIStatusType
+    [DefaultValue(Ok)]
+    public enum ApiStatusType
     {
         /// <summary>
         /// API执行成功
         /// </summary>
-        OK = 0,
+        Ok = 0,
 
         /// <summary>
         /// API执行失败
@@ -27,11 +27,6 @@ namespace Sora.Enumeration.ApiType
         /// API执行发生内部错误
         /// </summary>
         Error = 502,
-
-        /// <summary>
-        /// API执行失败
-        /// </summary>
-        Failed_ = 102,
 
         /// <summary>
         /// API超时

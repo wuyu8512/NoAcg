@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
-using Sora.Enumeration;
+using NoAcgNew.Enumeration;
 
-namespace Sora.Converter
+namespace NoAcgNew.Converter
 {
     /// <summary>
     /// 用于Enum和Description特性互相转换的Json转换器

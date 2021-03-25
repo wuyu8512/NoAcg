@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
-using Sora.Converter;
-using Sora.Enumeration.EventParamsType;
+using NoAcgNew.Converter;
+using NoAcgNew.Enumeration.EventParamsType;
 
-namespace Sora.Entities.CQCodes.CQCodeModel
+namespace NoAcgNew.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 音乐分享

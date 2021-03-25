@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration.EventParamsType
+namespace NoAcgNew.Enumeration.EventParamsType
 {
     /// <summary>
     /// 管理员变动类型

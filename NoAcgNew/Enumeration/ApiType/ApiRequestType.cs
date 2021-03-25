@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration.ApiType
+namespace NoAcgNew.Enumeration.ApiType
 {
     /// <summary>
     /// API集合

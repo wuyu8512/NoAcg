@@ -1,6 +1,6 @@
 using System;
 
-namespace Sora.OnebotModel
+namespace NoAcgNew.OnebotModel
 {
     /// <summary>
     /// <para>客户端配置类</para>
@@ -41,9 +41,9 @@ namespace Sora.OnebotModel
         public TimeSpan ApiTimeOut { get; init; } = TimeSpan.FromMilliseconds(1000);
 
         /// <summary>
-        /// 是否启用Sora自带的指令系统
+        /// 是否启用NoAcgNew自带的指令系统
         /// </summary>
-        public bool EnableSoraCommandManager { get; init; } = true;
+        public bool EnableNoAcgNewCommandManager { get; init; } = true;
 
         /// <summary>
         /// <para>丢失连接时的重连超时</para>

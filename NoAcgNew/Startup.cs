@@ -13,7 +13,7 @@ using NoAcgNew.Internal;
 using NoAcgNew.Onebot;
 using NoAcgNew.Onebot.Event;
 using NoAcgNew.Service;
-using Sora.Converter;
+using NoAcgNew.Converter;
 
 namespace NoAcgNew
 {

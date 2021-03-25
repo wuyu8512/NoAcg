@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
-using Sora.Converter;
+using NoAcgNew.Converter;
 
-namespace Sora.Entities.CQCodes.CQCodeModel
+namespace NoAcgNew.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 回复

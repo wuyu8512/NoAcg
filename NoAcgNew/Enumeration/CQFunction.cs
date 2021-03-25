@@ -1,6 +1,6 @@
 using System.ComponentModel;
 
-namespace Sora.Enumeration
+namespace NoAcgNew.Enumeration
 {
     /// <summary>
     /// 消息段类型

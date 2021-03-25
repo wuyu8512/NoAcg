@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Sora.Converter
+namespace NoAcgNew.Converter
 {
     internal class StringConverter : JsonConverter
     {

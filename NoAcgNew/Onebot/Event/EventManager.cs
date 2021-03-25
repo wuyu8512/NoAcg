@@ -2,8 +2,8 @@
 using Newtonsoft.Json.Linq;
 using NoAcgNew.EventArgs.OneBotEventArgs.MetaEventArgs;
 using NoAcgNew.Interfaces;
-using Sora.OnebotModel.OnebotEvent.MessageEvent;
-using Sora.OnebotModel.OnebotEvent.MetaEvent;
+using NoAcgNew.OnebotModel.OnebotEvent.MessageEvent;
+using NoAcgNew.OnebotModel.OnebotEvent.MetaEvent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,8 +58,13 @@ namespace NoAcgNew.Onebot.Event
         /// <summary>
         /// 私聊事件
         /// </summary>
-        public EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgEventReturn> OnPrivateMessage;
+        public EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgReturn> OnPrivateMessage;
 
+        /// <summary>
+        /// 群聊事件
+        /// </summary>
+        public EventCallBackHandler<GroupMsgEventArgs, GroupMsgReturn> OnGroupMessage;
+        
         #endregion
 
         #region 事件分发
@@ -85,13 +90,13 @@ namespace NoAcgNew.Onebot.Event
                         await MessageAdapter(messageJson, oneBotApi, rawMsg);
                         break;
                     default:
-                        _logger.LogWarning("[Event]接收到未知事件[{EventType}]", type);
+                        _logger.LogWarning("[Event]接收到未知事件[{Msg}]", rawMsg);
                         break;
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "[Adapter]事件解析出现未知错误：{Data}", messageJson.ToString(Formatting.None));
+                _logger.LogError(e, "[Adapter]事件解析出现未知错误：{Msg}", rawMsg);
             }
         }
 
@@ -150,10 +155,13 @@ namespace NoAcgNew.Onebot.Event
                 //群聊事件
                 case "group":
                 {
+                    var groupMsg = messageJson.ToObject<GroupMsgEventArgs>();
+                    if (groupMsg != null && OnGroupMessage != null)
+                        await InvokeEvent(OnGroupMessage, groupMsg, oneBotApi, rawMsg);
                     break;
                 }
                 default:
-                    _logger.LogWarning("[Message Event]接收到未知事件[{MetaEventType}]", type);
+                    _logger.LogWarning("[Message Event]接收到未知事件[{MessageEventType}]", type);
                     break;
             }
         }
@@ -189,6 +197,7 @@ namespace NoAcgNew.Onebot.Event
                 try
                 {
                     var result = await func(args, api);
+                    if (result == null) continue;
                     code = result.Code;
                 }
                 catch (Exception e)
