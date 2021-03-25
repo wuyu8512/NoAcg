@@ -6,7 +6,7 @@ namespace NoAcgNew.Entities.CQCodes.CQCodeModel
     /// 接收红包
     /// 仅支持Go
     /// </summary>
-    public struct Redbag
+    public struct RedBag
     {
         /// <summary>
         /// 祝福语/口令

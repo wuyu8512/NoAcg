@@ -39,10 +39,6 @@ namespace NoAcgNew
 			services.AddHttpApi<IOneBotHttpApi>(o => o.HttpHost = new Uri("http://127.0.0.1:5700"));
 			services.AddSingleton<HttpApi>();
 			services.AddControllers().AddNewtonsoftJson();
-			JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-			{
-				Converters = new List<JsonConverter> { new CQCodeConverter() }
-			};
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -32,6 +32,12 @@ namespace NoAcgNew.Converter
                 CQCodeType.Forward => new CQCode(CQCodeType.Forward, messageElement.RawData.ToObject<Forward>()),
                 CQCodeType.Xml => new CQCode(CQCodeType.Xml, messageElement.RawData.ToObject<Code>()),
                 CQCodeType.Json => new CQCode(CQCodeType.Json, messageElement.RawData.ToObject<Code>()),
+                CQCodeType.Video => new CQCode(CQCodeType.Video,messageElement.RawData.ToObject<Video>()),
+                CQCodeType.Gift => new CQCode(CQCodeType.Gift,messageElement.RawData.ToObject<Gift>()),
+                CQCodeType.Music => new CQCode(CQCodeType.Music,messageElement.RawData.ToObject<Music>()),
+                CQCodeType.Poke => new CQCode(CQCodeType.Poke,messageElement.RawData.ToObject<Poke>()),
+                CQCodeType.CardImage => new CQCode(CQCodeType.CardImage,messageElement.RawData.ToObject<CardImage>()),
+                CQCodeType.RedBag => new CQCode(CQCodeType.RedBag,messageElement.RawData.ToObject<RedBag>()),
                 _ => new CQCode(CQCodeType.Unknown, messageElement.RawData)
             };
         }

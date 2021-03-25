@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
@@ -27,17 +28,16 @@ namespace NoAcgNew.Controllers
         }
 
         [HttpPost]
-        public async ValueTask<ActionResult> Post(JObject json)
+        public async ValueTask<ActionResult> Post()
         {
-            string rawData;
+            string rawMsg;
             using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
-            {
-                rawData = await reader.ReadToEndAsync();
+            {  
+                rawMsg = await reader.ReadToEndAsync();
             }
-
-            // _logger.LogInformation(rawData);
+            var json = JObject.Parse(rawMsg);
             if (!json.ContainsKey("post_type")) return Ok();
-            var result = await _eventManager.Adapter(json, _api, rawData);
+            var result = await _eventManager.Adapter(json, _api, rawMsg);
             return result switch
             {
                 null => Ok(),

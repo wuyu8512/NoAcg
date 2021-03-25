@@ -17,6 +17,7 @@ namespace NoAcgNew.Entities.CQCodes
     /// <summary>
     /// CQ码类
     /// </summary>
+    [JsonConverter(typeof(CQCodeConverter))]
     public sealed class CQCode
     {
         private static ILogger _log = ApplicationLogging.CreateLogger<CQCode>();
@@ -344,7 +345,7 @@ namespace NoAcgNew.Entities.CQCodes
         {
             if (string.IsNullOrEmpty(title)) throw new NullReferenceException(nameof(title));
             return new CQCode(CQCodeType.RedBag,
-                new Redbag
+                new RedBag
                 {
                     Title = title
                 });
