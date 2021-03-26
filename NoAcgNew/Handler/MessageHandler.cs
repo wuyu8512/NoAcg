@@ -38,7 +38,7 @@ namespace NoAcgNew.Handler
 			_eventManager.OnGroupMessage += async (args, api) =>
 			{
 				_logger.LogInformation(args.MessageId,args.RawMessage);
-				return new GroupMsgReturn();
+				return new GroupMsgReturn() {Reply = args.MessageList};
 			};
 		}
 	}
