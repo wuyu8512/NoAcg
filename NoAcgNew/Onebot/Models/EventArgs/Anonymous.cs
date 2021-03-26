@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace NoAcgNew.Entities
+namespace NoAcgNew.Onebot.Models.EventArgs
 {
     /// <summary>
     /// 匿名用户类

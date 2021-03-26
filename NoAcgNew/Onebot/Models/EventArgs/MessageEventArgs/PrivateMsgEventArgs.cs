@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
-using NoAcgNew.Onebot.Models.Info;
+using NoAcgNew.Onebot.Models.EventArgs.Info;
 
-namespace NoAcgNew.OnebotModel.OnebotEvent.MessageEvent
+namespace NoAcgNew.Onebot.Models.EventArgs.MessageEventArgs
 {
     /// <summary>
     /// 私聊消息事件

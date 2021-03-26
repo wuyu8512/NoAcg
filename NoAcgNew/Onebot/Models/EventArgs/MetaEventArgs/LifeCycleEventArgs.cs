@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace NoAcgNew.EventArgs.OneBotEventArgs.MetaEventArgs
+namespace NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs
 {
     /// <summary>
     /// 生命周期事件

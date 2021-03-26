@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using NoAcgNew.Onebot.Models;
 using NoAcgNew.Enumeration.ApiType;
-using Enumeration;
 using NoAcgNew.Entities.CQCodes;
+using NoAcgNew.Enumeration;
 
 namespace NoAcgNew.Interfaces
 {

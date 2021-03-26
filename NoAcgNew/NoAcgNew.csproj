@@ -16,7 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Onebot\Event\MetaEvent\" />
       <Folder Include="Onebot\Models\ApiParams\" />
       <Folder Include="Onebot\Models\ApiResult" />
     </ItemGroup>

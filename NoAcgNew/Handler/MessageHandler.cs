@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoAcgNew.Onebot;
-using NoAcgNew.Onebot.Event;
 using NoAcgNew.Onebot.Models;
+using NoAcgNew.Onebot.Models.QuickAction.MsgAction;
 
 namespace NoAcgNew.Handler
 {
@@ -38,7 +38,7 @@ namespace NoAcgNew.Handler
 			_eventManager.OnGroupMessage += async (args, api) =>
 			{
 				_logger.LogInformation(args.MessageId,args.RawMessage);
-				return new GroupMsgReturn() {Reply = args.MessageList};
+				return new GroupMsgAction() {Reply = args.MessageList};
 			};
 		}
 	}

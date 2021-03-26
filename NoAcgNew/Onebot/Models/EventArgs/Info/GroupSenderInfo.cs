@@ -2,7 +2,7 @@
 using NoAcgNew.Converter;
 using NoAcgNew.Enumeration.EventParamsType;
 
-namespace NoAcgNew.Onebot.Models.Info
+namespace NoAcgNew.Onebot.Models.EventArgs.Info
 {
     /// <summary>
     /// 群组消息发送者

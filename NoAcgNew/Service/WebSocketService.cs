@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NoAcgNew.Onebot.Event;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
@@ -11,8 +10,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NoAcgNew.Handler;
 using NoAcgNew.Onebot;
 
 namespace NoAcgNew.Service
@@ -90,7 +89,7 @@ namespace NoAcgNew.Service
                 if (json.ContainsKey("post_type")) await _eventManager.Adapter(json, _api, str);
                 else if(json.ContainsKey("echo")) _api.OnApiReplay(json);
             }
-            catch (Exception e)
+            catch (JsonReaderException e)
             {
                 _logger.LogError(e, "信息解析出现错误：{Msg}", str);
             }

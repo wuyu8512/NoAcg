@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using NoAcgNew.Entities.CQCodes;
-using NoAcgNew.Onebot.Models.ApiParams;
 
-namespace NoAcgNew.Onebot.Models.EventResult.MsgReturn
+namespace NoAcgNew.Onebot.Models.QuickAction.MsgAction
 {
-    public class BaseMsgReturn : BaseEventReturn
+    public class BaseMsgAction : BaseAction
     {
         [JsonProperty(PropertyName = "reply", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<CQCode> Reply { get; set; }

@@ -8,7 +8,7 @@ using NoAcgNew.Onebot.Models.ApiParams;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
 
-namespace NoAcgNew.CQHTTP
+namespace NoAcgNew.Interfaces
 {
 	[JsonNetReturn]
 	public interface IOneBotHttpApi: IHttpApi

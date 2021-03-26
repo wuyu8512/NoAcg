@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using NoAcgNew.OnebotModel;
 
 namespace NoAcgNew.Entities.CQCodes.CQCodeModel
 {

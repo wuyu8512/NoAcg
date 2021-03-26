@@ -1,6 +1,6 @@
 using System;
 
-namespace NoAcgNew.OnebotModel
+namespace NoAcgNew.Onebot.Models.Config
 {
     /// <summary>
     /// <para>客户端配置类</para>

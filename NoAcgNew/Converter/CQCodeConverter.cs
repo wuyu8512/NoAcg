@@ -20,7 +20,7 @@ namespace NoAcgNew.Converter
         {
             var json = JObject.Load(reader);
             var messageElement = json.ToObject<MessageElement>();
-            return messageElement.MsgType switch
+            return messageElement?.MsgType switch
             {
                 CQCodeType.Text => new CQCode(CQCodeType.Text, messageElement.RawData.ToObject<Text>()),
                 CQCodeType.Face => new CQCode(CQCodeType.Face, messageElement.RawData.ToObject<Face>()),
@@ -38,7 +38,7 @@ namespace NoAcgNew.Converter
                 CQCodeType.Poke => new CQCode(CQCodeType.Poke,messageElement.RawData.ToObject<Poke>()),
                 CQCodeType.CardImage => new CQCode(CQCodeType.CardImage,messageElement.RawData.ToObject<CardImage>()),
                 CQCodeType.RedBag => new CQCode(CQCodeType.RedBag,messageElement.RawData.ToObject<RedBag>()),
-                _ => new CQCode(CQCodeType.Unknown, messageElement.RawData)
+                _ => new CQCode(CQCodeType.Unknown, messageElement?.RawData)
             };
         }
 

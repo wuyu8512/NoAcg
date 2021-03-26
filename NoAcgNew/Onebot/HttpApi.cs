@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Enumeration;
-using NoAcgNew.CQHTTP;
 using NoAcgNew.Entities.CQCodes;
+using NoAcgNew.Enumeration;
 using NoAcgNew.Enumeration.ApiType;
 using NoAcgNew.Enumeration.EventParamsType;
 using NoAcgNew.Interfaces;
 using NoAcgNew.Onebot.Models.ApiParams;
 
-namespace NoAcgNew.Service
+namespace NoAcgNew.Onebot
 {
     public class HttpApi: IOneBotApi
     {

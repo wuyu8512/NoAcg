@@ -1,10 +1,8 @@
-using NoAcgNew.Interfaces;
-using NoAcgNew.Expansion;
 using System;
 using Newtonsoft.Json;
 using NoAcgNew.Converter;
 
-namespace NoAcgNew.EventArgs.NoAcgNewEvent
+namespace NoAcgNew.Onebot.Models.EventArgs
 {
     /// <summary>
     /// 框架事件基类

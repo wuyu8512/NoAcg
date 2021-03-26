@@ -6,8 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NoAcgNew.Onebot.Event;
+using NoAcgNew.Onebot;
 using NoAcgNew.Onebot.Models.ApiParams;
+using NoAcgNew.Onebot.Models.QuickAction;
 using NoAcgNew.Service;
 
 namespace NoAcgNew.Controllers
@@ -17,8 +18,8 @@ namespace NoAcgNew.Controllers
     public class MessageController : ControllerBase
     {
         private readonly ILogger<MessageController> _logger;
-        private EventManager _eventManager;
-        private HttpApi _api;
+        private readonly EventManager _eventManager;
+        private readonly HttpApi _api;
 
         public MessageController(ILogger<MessageController> logger, EventManager eventManager, HttpApi httpApi)
         {
@@ -41,7 +42,7 @@ namespace NoAcgNew.Controllers
             return result switch
             {
                 null => Ok(),
-                BaseEventReturn replay => Ok(replay),
+                BaseAction replay => Ok(replay),
                 _ => Ok()
             };
         }

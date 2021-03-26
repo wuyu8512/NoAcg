@@ -1,12 +1,8 @@
-﻿using System.Collections.Generic;
-using Newtonsoft.Json;
-using NoAcgNew.Entities.CQCodes;
-using NoAcgNew.Onebot.Models.ApiParams;
-using NoAcgNew.Onebot.Models.EventResult.MsgReturn;
+﻿using Newtonsoft.Json;
 
-namespace NoAcgNew.Onebot.Models
+namespace NoAcgNew.Onebot.Models.QuickAction.MsgAction
 {
-    public class PrivateMsgReturn : BaseMsgReturn
+    public class PrivateMsgAction : BaseMsgAction
     {
         [JsonProperty(PropertyName = "at_sender")]
         public bool AtSender { get; set; } = true;

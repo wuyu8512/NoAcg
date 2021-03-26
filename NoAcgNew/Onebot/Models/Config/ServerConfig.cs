@@ -1,6 +1,6 @@
 using System;
 
-namespace NoAcgNew.OnebotModel
+namespace NoAcgNew.Onebot.Models.Config
 {
     /// <summary>
     /// <para>服务器配置类</para>

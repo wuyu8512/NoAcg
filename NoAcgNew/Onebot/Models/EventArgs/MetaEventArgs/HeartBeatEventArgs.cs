@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
-using NoAcgNew.EventArgs.OneBotEventArgs.MetaEventArgs;
 
-namespace NoAcgNew.OnebotModel.OnebotEvent.MetaEvent
+namespace NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs
 {
     /// <summary>
     /// 心跳包

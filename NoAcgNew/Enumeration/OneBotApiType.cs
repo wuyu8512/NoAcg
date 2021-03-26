@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Enumeration
+namespace NoAcgNew.Enumeration
 {
     public enum OneBotApiType
     {

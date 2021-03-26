@@ -30,14 +30,14 @@ namespace NoAcgNew.Converter
                 return;
             }
 
-            FieldInfo fieldInfo = value.GetType().GetField(value.ToString()!);
+            var fieldInfo = value.GetType().GetField(value.ToString()!);
             if (fieldInfo == null)
             {
                 writer.WriteValue("");
                 return;
             }
 
-            DescriptionAttribute[] attributes =
+            var attributes =
                 (DescriptionAttribute[]) fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
             writer.WriteValue(attributes.Length > 0 ? attributes[0].Description : "");
         }
@@ -47,13 +47,13 @@ namespace NoAcgNew.Converter
         /// 通过Description获取枚举值
         /// </summary>
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
-                                        JsonSerializer serializer)
+            JsonSerializer serializer)
         {
-            FieldInfo[] fields    = objectType.GetFields();
-            string      readValue = reader.Value?.ToString() ?? string.Empty;
-            foreach (FieldInfo field in fields)
+            var fields = objectType.GetFields();
+            var readValue = reader.Value?.ToString() ?? string.Empty;
+            foreach (var field in fields)
             {
-                object[] objects = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                var objects = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
                 if (objects.Any(item => (item as DescriptionAttribute)?.Description ==
                                         readValue))
                 {

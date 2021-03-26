@@ -1,10 +1,6 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace NoAcgNew.Onebot.Models.Info
+namespace NoAcgNew.Onebot.Models.EventArgs.Info
 {
     /// <summary>
     /// 私聊消息发送者

@@ -1,11 +1,7 @@
-using System.Collections.Generic;
 using Newtonsoft.Json;
-using NoAcgNew.Onebot.Models;
-using NoAcgNew.Converter;
 using NoAcgNew.Entities.CQCodes;
-using NoAcgNew.EventArgs.NoAcgNewEvent;
 
-namespace NoAcgNew.OnebotModel.OnebotEvent.MessageEvent
+namespace NoAcgNew.Onebot.Models.EventArgs.MessageEventArgs
 {
     /// <summary>
     /// 消息事件基类

@@ -1,20 +1,14 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
-using NoAcgNew.EventArgs.OneBotEventArgs.MetaEventArgs;
-using NoAcgNew.Interfaces;
-using NoAcgNew.OnebotModel.OnebotEvent.MessageEvent;
-using NoAcgNew.OnebotModel.OnebotEvent.MetaEvent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
-using System.Threading.Tasks.Sources;
-using Newtonsoft.Json;
-using NoAcgNew.Onebot.Models;
-using NoAcgNew.Onebot.Models.ApiParams;
-using WebApiClientCore;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using NoAcgNew.Interfaces;
+using NoAcgNew.Onebot.Models.EventArgs.MessageEventArgs;
+using NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs;
+using NoAcgNew.Onebot.Models.QuickAction;
+using NoAcgNew.Onebot.Models.QuickAction.MsgAction;
 
-namespace NoAcgNew.Onebot.Event
+namespace NoAcgNew.Onebot
 {
     public class EventManager
     {
@@ -36,7 +30,7 @@ namespace NoAcgNew.Onebot.Event
         /// <param name="oneBotApi">客户端链接接口</param>
         public delegate ValueTask<TResult> EventCallBackHandler<in TEventArgs, TResult>(TEventArgs eventArgs,
             IOneBotApi oneBotApi)
-            where TEventArgs : System.EventArgs where TResult : BaseEventReturn;
+            where TEventArgs : System.EventArgs where TResult : BaseAction;
 
         public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi)
             where TEventArgs : System.EventArgs;
@@ -58,12 +52,12 @@ namespace NoAcgNew.Onebot.Event
         /// <summary>
         /// 私聊事件
         /// </summary>
-        public EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgReturn> OnPrivateMessage;
+        public EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgAction> OnPrivateMessage;
 
         /// <summary>
         /// 群聊事件
         /// </summary>
-        public EventCallBackHandler<GroupMsgEventArgs, GroupMsgReturn> OnGroupMessage;
+        public EventCallBackHandler<GroupMsgEventArgs, GroupMsgAction> OnGroupMessage;
         
         #endregion
 
@@ -191,7 +185,7 @@ namespace NoAcgNew.Onebot.Event
 
         private async ValueTask<TResult> InvokeEvent<T, TResult>(EventCallBackHandler<T, TResult> handler, T args,
             IOneBotApi api, string rawMsg)
-            where T : System.EventArgs where TResult : BaseEventReturn
+            where T : System.EventArgs where TResult : BaseAction
         {
             TResult replay = null;
             foreach (var @delegate in handler.GetInvocationList())
@@ -225,42 +219,42 @@ namespace NoAcgNew.Onebot.Event
         /// </summary>
         /// <param name="messageJson">消息Json对象</param>
         private static string GetBaseEventType(JObject messageJson) =>
-            !messageJson.TryGetValue("post_type", out JToken typeJson) ? string.Empty : typeJson.ToString();
+            !messageJson.TryGetValue("post_type", out var typeJson) ? string.Empty : typeJson.ToString();
 
         /// <summary>
         /// 获取元事件类型
         /// </summary>
         /// <param name="messageJson">消息Json对象</param>
         private static string GetMetaEventType(JObject messageJson) =>
-            !messageJson.TryGetValue("meta_event_type", out JToken typeJson) ? string.Empty : typeJson.ToString();
+            !messageJson.TryGetValue("meta_event_type", out var typeJson) ? string.Empty : typeJson.ToString();
 
         /// <summary>
         /// 获取消息事件类型
         /// </summary>
         /// <param name="messageJson">消息Json对象</param>
         private static string GetMessageType(JObject messageJson) =>
-            !messageJson.TryGetValue("message_type", out JToken typeJson) ? string.Empty : typeJson.ToString();
+            !messageJson.TryGetValue("message_type", out var typeJson) ? string.Empty : typeJson.ToString();
 
         /// <summary>
         /// 获取请求事件类型
         /// </summary>
         /// <param name="messageJson">消息Json对象</param>
         private static string GetRequestType(JObject messageJson) =>
-            !messageJson.TryGetValue("request_type", out JToken typeJson) ? string.Empty : typeJson.ToString();
+            !messageJson.TryGetValue("request_type", out var typeJson) ? string.Empty : typeJson.ToString();
 
         /// <summary>
         /// 获取通知事件类型
         /// </summary>
         /// <param name="messageJson">消息Json对象</param>
         private static string GetNoticeType(JObject messageJson) =>
-            !messageJson.TryGetValue("notice_type", out JToken typeJson) ? string.Empty : typeJson.ToString();
+            !messageJson.TryGetValue("notice_type", out var typeJson) ? string.Empty : typeJson.ToString();
 
         /// <summary>
         /// 获取通知事件子类型
         /// </summary>
         /// <param name="messageJson"></param>
         private static string GetNotifyType(JObject messageJson) =>
-            !messageJson.TryGetValue("sub_type", out JToken typeJson) ? string.Empty : typeJson.ToString();
+            !messageJson.TryGetValue("sub_type", out var typeJson) ? string.Empty : typeJson.ToString();
 
         #endregion
     }

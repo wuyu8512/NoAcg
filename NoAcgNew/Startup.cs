@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,15 +6,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
 using NoAcgNew.Handler;
 using NoAcgNew.Interfaces;
 using NoAcgNew.Internal;
 using NoAcgNew.Onebot;
-using NoAcgNew.Onebot.Event;
 using NoAcgNew.Service;
-using NoAcgNew.Converter;
-using NoAcgNew.CQHTTP;
 
 namespace NoAcgNew
 {
@@ -26,7 +21,7 @@ namespace NoAcgNew
 			Configuration = configuration;
 		}
 
-		public IConfiguration Configuration { get; }
+		private IConfiguration Configuration { get; }
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
