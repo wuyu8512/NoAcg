@@ -16,8 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Onebot\Models\ApiParams\" />
-      <Folder Include="Onebot\Models\ApiResult" />
+      <ProjectReference Include="..\Wuyu.OneBot\Wuyu.OneBot.csproj" />
     </ItemGroup>
 
 </Project>

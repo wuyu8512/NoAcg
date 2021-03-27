@@ -6,10 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using NoAcgNew.Handler;
-using NoAcgNew.Interfaces;
-using NoAcgNew.Internal;
-using NoAcgNew.Onebot;
-using System;
+using Wuyu.OneBot;
 
 namespace NoAcgNew
 {
@@ -28,10 +25,7 @@ namespace NoAcgNew
 			services.AddControllers();
 			services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "NoAcgNew", Version = "v1" }); });
 
-			services.AddSingleton<EventManager>();
-			services.AddSingleton<MessageHandler>();
-			services.AddHttpApi<IOneBotHttpApi>(o => o.HttpHost = new Uri("http://127.0.0.1:5700"));
-			services.AddSingleton<HttpApi>();
+			services.ConfigureOneBot();
 			services.AddControllers().AddNewtonsoftJson();
 		}
 
@@ -53,9 +47,8 @@ namespace NoAcgNew
 			{
 				endpoints.MapControllers();
 			});
-			
-			// app.Map("/Universal", WebSocketService.Map);
-			ApplicationLogging.LoggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
+
+			app.UseOneBot();
 			app.ApplicationServices.GetRequiredService<MessageHandler>();
 		}
 	}

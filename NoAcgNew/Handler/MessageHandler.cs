@@ -4,9 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using NoAcgNew.Onebot;
-using NoAcgNew.Onebot.Models;
-using NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation;
+using Wuyu.OneBot.Onebot;
+using Wuyu.OneBot.Onebot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
 {

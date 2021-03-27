@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NoAcgNew.Onebot;
-using NoAcgNew.Onebot.Models.QuickOperation;
+using Wuyu.OneBot.Onebot;
+using Wuyu.OneBot.Onebot.Models.QuickOperation;
 
 namespace NoAcgNew.Controllers
 {
