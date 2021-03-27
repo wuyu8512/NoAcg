@@ -14,19 +14,19 @@ namespace NoAcgNew.Onebot.Models.EventArgs
         /// 匿名用户 flag
         /// </summary>
         [JsonProperty(PropertyName = "flag")]
-        public string Flag { get; private init; }
+        public string Flag { get; internal init; }
 
         /// <summary>
         /// 匿名用户 ID
         /// </summary>
         [JsonProperty(PropertyName = "id")]
-        public long Id { get; private init; }
+        public long Id { get; internal init; }
 
         /// <summary>
         /// 匿名用户名称
         /// </summary>
         [JsonProperty(PropertyName = "name")]
-        public string Name { get; private init; }
+        public string Name { get; internal init; }
 
         #endregion
 
@@ -35,7 +35,7 @@ namespace NoAcgNew.Onebot.Models.EventArgs
         /// <summary>
         /// 构造函数
         /// </summary>
-        internal Anonymous()
+        public Anonymous()
         {
         }
 

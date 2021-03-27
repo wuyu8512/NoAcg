@@ -14,24 +14,24 @@ namespace NoAcgNew.Onebot.Models.EventArgs.RequestEvent
         /// </summary>
         [JsonProperty(PropertyName = "request_type")]
         [JsonConverter(typeof(EnumDescriptionConverter))]
-        internal RequestType RequestType { get; set; }
+        public RequestType RequestType { get; internal init; }
 
         /// <summary>
         /// 发送请求的 QQ 号
         /// </summary>
         [JsonProperty(PropertyName = "user_id")]
-        internal long UserId { get; set; }
+        public long UserId { get; internal init; }
 
         /// <summary>
         /// 验证信息
         /// </summary>
         [JsonProperty(PropertyName = "comment")]
-        internal string Comment { get; set; }
+        public string Comment { get; internal init; }
 
         /// <summary>
         /// 请求 flag
         /// </summary>
         [JsonProperty(PropertyName = "flag")]
-        internal string Flag { get; set; }
+        public string Flag { get; internal init; }
     }
 }

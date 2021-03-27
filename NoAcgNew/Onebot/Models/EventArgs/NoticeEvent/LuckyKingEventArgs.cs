@@ -11,6 +11,6 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 运气王UID
         /// </summary>
         [JsonProperty(PropertyName = "target_id")]
-        public long TargetId { get; set; }
+        public long TargetId { get; internal init; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace NoAcgNew.Expansion
 {
-	public static class DateTimeExpansion
+	internal static class DateTimeExpansion
 	{
 		public static DateTime ToDateTime(this long timeStamp)
 		{

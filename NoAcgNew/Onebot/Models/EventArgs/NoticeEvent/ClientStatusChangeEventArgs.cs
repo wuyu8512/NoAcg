@@ -12,12 +12,12 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 客户端信息
         /// </summary>
         [JsonProperty(PropertyName = "client")]
-        internal ClientInfo ClientInfo { get; set; }
+        public ClientInfo ClientInfo { get; internal init; }
 
         /// <summary>
         /// 是否在线
         /// </summary>
         [JsonProperty(PropertyName = "online")]
-        internal bool Online { get; set; }
+        public bool Online { get; internal init; }
     }
 }

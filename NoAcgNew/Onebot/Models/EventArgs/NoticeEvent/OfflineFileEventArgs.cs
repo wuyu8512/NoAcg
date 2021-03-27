@@ -12,6 +12,6 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 离线文件信息
         /// </summary>
         [JsonProperty(PropertyName = "file")]
-        internal OfflineFileInfo Info { get; set; }
+        public OfflineFileInfo Info { get; internal init; }
     }
 }

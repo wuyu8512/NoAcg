@@ -14,12 +14,12 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// </summary>
         [JsonConverter(typeof(EnumDescriptionConverter))]
         [JsonProperty(PropertyName = "sub_type")]
-        internal AdminChangeType SubType { get; set; }
+        public AdminChangeType SubType { get; internal init; }
 
         /// <summary>
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "group_id")]
-        internal long GroupId { get; set; }
+        public long GroupId { get; internal init; }
     }
 }

@@ -11,12 +11,12 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 被戳者 QQ 号
         /// </summary>
         [JsonProperty(PropertyName = "target_id")]
-        internal long TargetId { get; set; }
+        public long TargetId { get; internal init; }
         
         /// <summary>
         /// 被戳者 QQ 号
         /// </summary>
         [JsonProperty(PropertyName = "sender_id")]
-        internal long SendId { get; set; }
+        public long SendId { get; internal init; }
     }
 }

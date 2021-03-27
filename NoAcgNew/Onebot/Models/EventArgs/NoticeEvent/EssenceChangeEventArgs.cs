@@ -13,31 +13,31 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "group_id")]
-        internal long GroupId { get; set; }
+        public long GroupId { get; internal init; }
 
         /// <summary>
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "message_id")]
-        internal long MessageId { get; set; }
+        public long MessageId { get; internal init; }
 
         /// <summary>
         /// 操作者ID
         /// </summary>
         [JsonProperty(PropertyName = "operator_id")]
-        internal long OperatorId { get; set; }
+        public long OperatorId { get; internal init; }
 
         /// <summary>
         /// 发送者ID
         /// </summary>
         [JsonProperty(PropertyName = "sender_id")]
-        internal long SenderId { get; set; }
+        public long SenderId { get; internal init; }
 
         /// <summary>
         /// 事件子类型
         /// </summary>
         [JsonConverter(typeof(EnumDescriptionConverter))]
         [JsonProperty(PropertyName = "sub_type")]
-        internal EssenceChangeType EssenceChangeType { get; set; }
+        public EssenceChangeType EssenceChangeType { get; internal init; }
     }
 }

@@ -11,6 +11,6 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "group_id")]
-        public long GroupId { get; internal set; }
+        public long GroupId { get; internal init; }
     }
 }

@@ -16,7 +16,7 @@ using NoAcgNew.Onebot;
 
 namespace NoAcgNew.Service
 {
-    public class WebSocketService : IDisposable
+    public sealed class WebSocketService : IDisposable
     {
         private const int BufferSize = 1024;
         private bool _disposed;
@@ -103,7 +103,7 @@ namespace NoAcgNew.Service
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (_disposed) return;
 

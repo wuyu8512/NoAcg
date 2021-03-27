@@ -12,12 +12,12 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "group_id")]
-        public long GroupId { get; set; }
+        public long GroupId { get; internal init; }
 
         /// <summary>
         /// 上传的文件信息
         /// </summary>
         [JsonProperty(PropertyName = "file")]
-        public UploadFileInfo Upload { get; set; }
+        public UploadFileInfo Upload { get; internal init; }
     }
 }

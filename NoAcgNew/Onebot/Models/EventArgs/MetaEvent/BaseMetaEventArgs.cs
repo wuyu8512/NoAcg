@@ -8,6 +8,6 @@ namespace NoAcgNew.Onebot.Models.EventArgs.MetaEvent
         /// 元事件类型
         /// </summary>
         [JsonProperty(PropertyName = "meta_event_type")]
-        internal string MetaEventType { get; set; }
+        public string MetaEventType { get; internal init; }
     }
 }

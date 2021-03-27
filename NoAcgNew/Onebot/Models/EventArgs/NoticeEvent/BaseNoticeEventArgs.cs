@@ -11,12 +11,12 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 消息类型
         /// </summary>
         [JsonProperty(PropertyName = "notice_type", NullValueHandling = NullValueHandling.Ignore)]
-        public string NoticeType { get; internal set; }
+        public string NoticeType { get; internal init; }
 
         /// <summary>
         /// 操作对象UID
         /// </summary>
         [JsonProperty(PropertyName = "user_id", NullValueHandling = NullValueHandling.Ignore)]
-        public long UserId { get; internal set; }
+        public long UserId { get; internal init; }
     }
 }

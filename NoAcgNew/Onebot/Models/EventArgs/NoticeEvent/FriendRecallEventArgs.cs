@@ -11,6 +11,6 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 被撤回的消息 ID
         /// </summary>
         [JsonProperty(PropertyName = "message_id")]
-        internal int MessageId { get; set; }
+        public int MessageId { get; internal init; }
     }
 }

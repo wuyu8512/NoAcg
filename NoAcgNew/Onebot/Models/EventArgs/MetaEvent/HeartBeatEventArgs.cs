@@ -12,12 +12,12 @@ namespace NoAcgNew.Onebot.Models.EventArgs.MetaEvent
         /// 状态信息
         /// </summary>
         [JsonProperty(PropertyName = "status")]
-        internal JObject Status { get; set; }
+        public JObject Status { get; internal init; }
 
         /// <summary>
         /// 到下次心跳的间隔，单位毫秒
         /// </summary>
         [JsonProperty(PropertyName = "interval")]
-        internal long Interval { get; set; }
+        public long Interval { get; internal init; }
     }
 }

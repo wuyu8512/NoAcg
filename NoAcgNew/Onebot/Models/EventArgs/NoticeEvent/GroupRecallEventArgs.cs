@@ -11,18 +11,18 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "group_id")]
-        internal long GroupId { get; set; }
+        public long GroupId { get; internal init; }
 
         /// <summary>
         /// 操作者 QQ 号
         /// </summary>
         [JsonProperty(PropertyName = "operator_id")]
-        internal long OperatorId { get; set; }
+        public long OperatorId { get; internal init; }
 
         /// <summary>
         /// 被撤回的消息 ID
         /// </summary>
         [JsonProperty(PropertyName = "message_id")]
-        internal int MessageId { get; set; }
+        public int MessageId { get; internal init; }
     }
 }

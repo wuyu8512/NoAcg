@@ -12,6 +12,6 @@ namespace NoAcgNew.Onebot.Models.EventArgs.MessageEvent
         /// 发送人信息
         /// </summary>
         [JsonProperty(PropertyName = "sender")]
-        internal PrivateSenderInfo SenderInfo { get; set; }
+        public PrivateSenderInfo SenderInfo { get; internal init; }
     }
 }

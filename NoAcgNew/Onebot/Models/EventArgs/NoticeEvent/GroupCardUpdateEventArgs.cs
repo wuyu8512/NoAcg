@@ -12,18 +12,18 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "group_id")]
-        internal long GroupId { get; set; }
+        public long GroupId { get; internal init; }
 
         /// <summary>
         /// 新名片
         /// </summary>
         [JsonProperty(PropertyName = "card_new")]
-        internal string NewCard { get; set; }
+        public string NewCard { get; internal init; }
 
         /// <summary>
         /// 旧名片
         /// </summary>
         [JsonProperty(PropertyName = "card_old")]
-        internal string OldCard { get; set; }
+        public string OldCard { get; internal init; }
     }
 }

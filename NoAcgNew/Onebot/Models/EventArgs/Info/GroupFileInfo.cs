@@ -36,14 +36,14 @@ namespace NoAcgNew.Onebot.Models.EventArgs.Info
         /// 上传时间
         /// </summary>
         [JsonProperty(PropertyName = "upload_time")]
-        public DateTime UploadTime { get; private set; }
+        public DateTime UploadTime { get; internal init; }
 
         /// <summary>
         /// <para>过期时间</para>
         /// <para>永久文件为0</para>
         /// </summary>
         [JsonProperty(PropertyName = "dead_time")]
-        public DateTime DeadTime { get; private set; }
+        public DateTime DeadTime { get; internal init; }
 
         /// <summary>
         /// 修改时间

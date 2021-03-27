@@ -12,24 +12,24 @@ namespace NoAcgNew.Onebot.Models.EventArgs.MessageEvent
         /// 群号
         /// </summary>
         [JsonProperty(PropertyName = "group_id")]
-        internal long GroupId { get; set; }
+        public long GroupId { get; internal init; }
 
         /// <summary>
         /// 匿名信息
         /// </summary>
         [JsonProperty(PropertyName = "anonymous", NullValueHandling = NullValueHandling.Ignore)]
-        internal Anonymous Anonymous { get; set; }
+        public Anonymous Anonymous { get; internal init; }
 
         /// <summary>
         /// 发送人信息
         /// </summary>
         [JsonProperty(PropertyName = "sender")]
-        internal GroupSenderInfo SenderInfo { get; set; }
+        public GroupSenderInfo SenderInfo { get; internal init; }
 
         /// <summary>
         /// 消息序号
         /// </summary>
         [JsonProperty(PropertyName = "message_seq")]
-        internal int MessageSequence { get; set; }
+        public int MessageSequence { get; internal init; }
     }
 }

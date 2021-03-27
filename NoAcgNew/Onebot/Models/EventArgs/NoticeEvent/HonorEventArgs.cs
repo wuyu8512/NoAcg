@@ -14,6 +14,6 @@ namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
         /// </summary>
         [JsonConverter(typeof(EnumDescriptionConverter))]
         [JsonProperty(PropertyName = "honor_type")]
-        internal HonorType HonorType { get; set; }
+        public HonorType HonorType { get; internal init; }
     }
 }

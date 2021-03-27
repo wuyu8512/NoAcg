@@ -8,7 +8,7 @@ using NoAcgNew.Enumeration;
 
 namespace NoAcgNew.Converter
 {
-    public class CQCodeConverter: JsonConverter<CQCode>
+    internal class CQCodeConverter: JsonConverter<CQCode>
     {
         public override void WriteJson(JsonWriter writer, CQCode value, JsonSerializer serializer)
         {

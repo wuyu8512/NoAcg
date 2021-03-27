@@ -24,7 +24,7 @@ namespace NoAcgNew.Onebot.Models.EventArgs.Info
         /// 创建时间
         /// </summary>
         [JsonProperty(PropertyName = "create_time")]
-        public DateTime CreateTime { get; private set; }
+        public DateTime CreateTime { get; internal init; }
 
         /// <summary>
         /// 创建者UID
