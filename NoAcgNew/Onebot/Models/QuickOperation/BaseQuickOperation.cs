@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NoAcgNew.Onebot.Models.QuickAction
+namespace NoAcgNew.Onebot.Models.QuickOperation
 {
-    public class BaseAction
+    public class BaseQuickOperation
     {
         [JsonIgnore] public int Code { get; set; } = 0;
     }

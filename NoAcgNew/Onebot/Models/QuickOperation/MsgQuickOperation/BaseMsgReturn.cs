@@ -2,9 +2,9 @@
 using Newtonsoft.Json;
 using NoAcgNew.Entities.CQCodes;
 
-namespace NoAcgNew.Onebot.Models.QuickAction.MsgAction
+namespace NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation
 {
-    public class BaseMsgAction : BaseAction
+    public class BaseMsgQuickOperation : BaseQuickOperation
     {
         [JsonProperty(PropertyName = "reply", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<CQCode> Reply { get; set; }

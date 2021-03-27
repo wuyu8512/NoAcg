@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs
 {
@@ -11,7 +12,7 @@ namespace NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs
         /// 状态信息
         /// </summary>
         [JsonProperty(PropertyName = "status")]
-        internal object Status { get; set; }
+        internal JObject Status { get; set; }
 
         /// <summary>
         /// 到下次心跳的间隔，单位毫秒

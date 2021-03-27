@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace NoAcgNew.Expansion
 {
-    public static class TaskWaitingExtensions
+    public static class TaskExtensions
     {
         public static async Task<TResult> WaitAsync<TResult>(this Task<TResult> task, TimeSpan timeout)
         {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoAcgNew.Onebot;
 using NoAcgNew.Onebot.Models;
-using NoAcgNew.Onebot.Models.QuickAction.MsgAction;
+using NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
 {
@@ -38,7 +38,7 @@ namespace NoAcgNew.Handler
 			_eventManager.OnGroupMessage += async (args, api) =>
 			{
 				_logger.LogInformation(args.MessageId,args.RawMessage);
-				return new GroupMsgAction() {Reply = args.MessageList};
+				return new GroupMsgQuickOperation() {Reply = args.MessageList};
 			};
 		}
 	}

@@ -5,8 +5,9 @@ using Newtonsoft.Json.Linq;
 using NoAcgNew.Interfaces;
 using NoAcgNew.Onebot.Models.EventArgs.MessageEventArgs;
 using NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs;
-using NoAcgNew.Onebot.Models.QuickAction;
-using NoAcgNew.Onebot.Models.QuickAction.MsgAction;
+using NoAcgNew.Onebot.Models.EventArgs.NoticeEventArgs;
+using NoAcgNew.Onebot.Models.QuickOperation;
+using NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Onebot
 {
@@ -30,10 +31,9 @@ namespace NoAcgNew.Onebot
         /// <param name="oneBotApi">客户端链接接口</param>
         public delegate ValueTask<TResult> EventCallBackHandler<in TEventArgs, TResult>(TEventArgs eventArgs,
             IOneBotApi oneBotApi)
-            where TEventArgs : System.EventArgs where TResult : BaseAction;
+            where TEventArgs : EventArgs where TResult : BaseQuickOperation;
 
-        public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi)
-            where TEventArgs : System.EventArgs;
+        public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi);
 
         #endregion
 
@@ -42,23 +42,56 @@ namespace NoAcgNew.Onebot
         /// <summary>
         /// 心跳事件
         /// </summary>
-        public EventCallBackHandler<HeartBeatEventArgs> OnHeartBeatEvent;
+        public event EventCallBackHandler<HeartBeatEventArgs> OnHeartBeatEvent;
 
         /// <summary>
         /// 生命周期事件
         /// </summary>
-        public EventCallBackHandler<LifeCycleEventArgs> OnLifeCycleEvent;
+        public event EventCallBackHandler<LifeCycleEventArgs> OnLifeCycleEvent;
 
         /// <summary>
         /// 私聊事件
         /// </summary>
-        public EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgAction> OnPrivateMessage;
+        public event EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgQuickOperation> OnPrivateMessage;
 
         /// <summary>
         /// 群聊事件
         /// </summary>
-        public EventCallBackHandler<GroupMsgEventArgs, GroupMsgAction> OnGroupMessage;
-        
+        public event EventCallBackHandler<GroupMsgEventArgs, GroupMsgQuickOperation> OnGroupMessage;
+
+        /// <summary>
+        /// 群文件上传事件
+        /// </summary>
+        public event EventCallBackHandler<FileUploadEventArgs> OnFileUpload;
+
+        public event EventCallBackHandler<AdminChangeEventArgs> OnGroupAdminChange;
+
+        public event EventCallBackHandler<GroupMemberChangeEventArgs> OnGroupMemberChange;
+
+        public event EventCallBackHandler<GroupBanEventArgs> OnGroupBan;
+
+        public event EventCallBackHandler<FriendAddEventArgs> OnFriendAdd;
+
+        public event EventCallBackHandler<GroupRecallEventArgs> OnGroupRecall;
+
+        public event EventCallBackHandler<FriendRecallEventArgs> OnFriendRecall;
+
+        public event EventCallBackHandler<PokeEventArgs> OnFriendPokeEvent;
+
+        public event EventCallBackHandler<PokeEventArgs> OnGroupPokeEvent;
+
+        public event EventCallBackHandler<LuckyKingEventArgs> OnLuckyKingEvent;
+
+        public event EventCallBackHandler<HonorEventArgs> OnHonorEvent;
+
+        public event EventCallBackHandler<GroupCardUpdateEventArgs> OnGroupCardUpdate;
+
+        public event EventCallBackHandler<OfflineFileEventArgs> OnOfflineFileEvent;
+
+        public event EventCallBackHandler<ClientStatusChangeEventArgs> OnClientStatusChange;
+
+        public event EventCallBackHandler<EssenceChangeEventArgs> OnEssenceChange;
+
         #endregion
 
         #region 事件分发
@@ -82,6 +115,9 @@ namespace NoAcgNew.Onebot
                         break;
                     case "message":
                         return await MessageAdapter(messageJson, oneBotApi, rawMsg);
+                    case "notice":
+                        await NoticeAdapter(messageJson, oneBotApi, rawMsg);
+                        break;
                     default:
                         _logger.LogWarning("[Event]接收到未知事件[{Msg}]", rawMsg);
                         break;
@@ -163,8 +199,150 @@ namespace NoAcgNew.Onebot
             return null;
         }
 
+        /// <summary>
+        /// 通知事件处理和分发
+        /// </summary>
+        /// <param name="messageJson">消息</param>
+        /// <param name="oneBotApi">对应事件来源的Api接口</param>
+        /// <param name="rawMsg"></param>
+        private async ValueTask NoticeAdapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
+        {
+            var type = GetNoticeType(messageJson);
+            switch (type)
+            {
+                //群文件上传
+                case "group_upload":
+                {
+                    var fileUpload = messageJson.ToObject<FileUploadEventArgs>();
+                    if (OnFileUpload != null && fileUpload != null) await OnFileUpload(fileUpload, oneBotApi);
+                    break;
+                }
+                //群管理员变动
+                case "group_admin":
+                {
+                    var adminChange = messageJson.ToObject<AdminChangeEventArgs>();
+                    if (adminChange != null && OnGroupAdminChange != null)
+                        await OnGroupAdminChange(adminChange, oneBotApi);
+                    break;
+                }
+                //群成员变动
+                case "group_decrease":
+                case "group_increase":
+                {
+                    var groupMemberChange =
+                        messageJson.ToObject<GroupMemberChangeEventArgs>();
+                    if (groupMemberChange != null && OnGroupMemberChange != null)
+                        await OnGroupMemberChange(groupMemberChange, oneBotApi);
+                    break;
+                }
+                //群禁言
+                case "group_ban":
+                {
+                    var groupMute = messageJson.ToObject<GroupBanEventArgs>();
+                    if (groupMute != null && OnGroupBan != null) await OnGroupBan(groupMute, oneBotApi);
+                    break;
+                }
+                //好友添加
+                case "friend_add":
+                {
+                    var friendAdd = messageJson.ToObject<FriendAddEventArgs>();
+                    if (friendAdd != null && OnFriendAdd != null) await OnFriendAdd(friendAdd, oneBotApi);
+                    break;
+                }
+                //群消息撤回
+                case "group_recall":
+                {
+                    var groupRecall = messageJson.ToObject<GroupRecallEventArgs>();
+                    if (groupRecall != null && OnGroupRecall != null) await OnGroupRecall(groupRecall, oneBotApi);
+                    break;
+                }
+                //好友消息撤回
+                case "friend_recall":
+                {
+                    var friendRecall = messageJson.ToObject<FriendRecallEventArgs>();
+                    if (friendRecall != null && OnFriendRecall != null)
+                        await OnFriendRecall(friendRecall, oneBotApi);
+                    break;
+                }
+                //群名片变更
+                //此事件仅在Go上存在
+                case "group_card":
+                {
+                    var groupCardUpdate = messageJson.ToObject<GroupCardUpdateEventArgs>();
+                    if (groupCardUpdate != null && OnGroupCardUpdate != null)
+                        await OnGroupCardUpdate(groupCardUpdate, oneBotApi);
+                    break;
+                }
+                case "offline_file":
+                {
+                    var offlineFile = messageJson.ToObject<OfflineFileEventArgs>();
+                    if (offlineFile != null && OnOfflineFileEvent != null)
+                        await OnOfflineFileEvent(offlineFile, oneBotApi);
+                    break;
+                }
+                case "client_status":
+                {
+                    var clientStatus = messageJson.ToObject<ClientStatusChangeEventArgs>();
+                    if (clientStatus != null && OnClientStatusChange != null)
+                        await OnClientStatusChange(clientStatus,
+                            oneBotApi);
+                    break;
+                }
+                case "essence":
+                {
+                    var essenceChange = messageJson.ToObject<EssenceChangeEventArgs>();
+                    if (essenceChange != null && OnEssenceChange != null)
+                        await OnEssenceChange(essenceChange, oneBotApi);
+                    break;
+                }
+                //通知类事件
+                case "notify":
+                    var notifyType = GetNotifyType(messageJson);
+                    switch (notifyType)
+                    {
+                        case "poke": //戳一戳
+                        {
+                            var pokeEvent = messageJson.ToObject<PokeEventArgs>();
+                            if (pokeEvent == null) break;
+                            if (pokeEvent.GroupId == default)
+                            {
+                                if (OnGroupPokeEvent != null) await OnGroupPokeEvent(pokeEvent, oneBotApi);
+                            }
+                            else if (OnFriendPokeEvent != null) await OnFriendPokeEvent(pokeEvent, oneBotApi);
+
+                            break;
+                        }
+                        case "lucky_king": //运气王
+                        {
+                            var luckyEvent = messageJson.ToObject<LuckyKingEventArgs>();
+                            if (luckyEvent != null && OnLuckyKingEvent != null)
+                                await OnLuckyKingEvent(luckyEvent, oneBotApi);
+                            break;
+                        }
+                        case "honor":
+                        {
+                            var honorEvent = messageJson.ToObject<HonorEventArgs>();
+                            if (honorEvent != null && OnHonorEvent != null)
+                                await OnHonorEvent(honorEvent, oneBotApi);
+                            break;
+                        }
+                        default:
+                            _logger.LogWarning("[Notify]接收到未知事件[{NotifyType}]", notifyType);
+                            break;
+                    }
+                    break;
+                default:
+                    _logger.LogWarning("[Notice]接收到未知事件[{NoticeType}]", type);
+                    break;
+            }
+        }
+
+        #endregion
+
+        #region 事件处理
+
         private async ValueTask InvokeEvent<T>(EventCallBackHandler<T> handler, T args, IOneBotApi api, string rawMsg)
-            where T : System.EventArgs
+            where T : EventArgs
         {
             foreach (var @delegate in handler.GetInvocationList())
             {
@@ -185,7 +363,7 @@ namespace NoAcgNew.Onebot
 
         private async ValueTask<TResult> InvokeEvent<T, TResult>(EventCallBackHandler<T, TResult> handler, T args,
             IOneBotApi api, string rawMsg)
-            where T : System.EventArgs where TResult : BaseAction
+            where T : EventArgs where TResult : BaseQuickOperation
         {
             TResult replay = null;
             foreach (var @delegate in handler.GetInvocationList())

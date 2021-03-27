@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace NoAcgNew.Onebot.Models.QuickAction.MsgAction
+namespace NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation
 {
-    public class PrivateMsgAction : BaseMsgAction
+    public class PrivateMsgQuickOperation : BaseMsgQuickOperation
     {
         [JsonProperty(PropertyName = "at_sender")]
         public bool AtSender { get; set; } = true;

@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace NoAcgNew.Expansion
 {
-	public static class Long
+	public static class DateTimeExpansion
 	{
 		public static DateTime ToDateTime(this long timeStamp)
 		{
-			DateTime dtStart = (new DateTime(1970, 1, 1)).ToLocalTime();
-			long lTime = (timeStamp * 10000000);
-			TimeSpan toNow = new TimeSpan(lTime);
-			DateTime targetDt = dtStart.Add(toNow);
+			var dtStart = (new DateTime(1970, 1, 1)).ToLocalTime();
+			var lTime = (timeStamp * 10000000);
+			var toNow = new TimeSpan(lTime);
+			var targetDt = dtStart.Add(toNow);
 			return targetDt;
 		}
 	}

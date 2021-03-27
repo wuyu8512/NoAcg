@@ -2,14 +2,11 @@
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NoAcgNew.Onebot;
-using NoAcgNew.Onebot.Models.ApiParams;
-using NoAcgNew.Onebot.Models.QuickAction;
-using NoAcgNew.Service;
+using NoAcgNew.Onebot.Models.QuickOperation;
 
 namespace NoAcgNew.Controllers
 {
@@ -42,7 +39,7 @@ namespace NoAcgNew.Controllers
             return result switch
             {
                 null => Ok(),
-                BaseAction replay => Ok(replay),
+                BaseQuickOperation replay => Ok(replay),
                 _ => Ok()
             };
         }
