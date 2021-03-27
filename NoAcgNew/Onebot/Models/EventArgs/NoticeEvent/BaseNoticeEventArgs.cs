@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEventArgs
+namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 消息事件基类

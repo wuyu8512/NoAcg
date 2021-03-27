@@ -1,4 +1,4 @@
-namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEventArgs
+namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 好友添加事件

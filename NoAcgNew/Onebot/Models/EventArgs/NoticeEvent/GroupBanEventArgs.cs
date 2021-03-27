@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using NoAcgNew.Converter;
 using NoAcgNew.Enumeration.EventParamsType;
 
-namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEventArgs
+namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 群禁言事件

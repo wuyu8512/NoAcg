@@ -14,18 +14,18 @@ namespace NoAcgNew.Onebot.Models.EventArgs
         /// </summary>
         [JsonProperty(PropertyName = "time", NullValueHandling = NullValueHandling.Ignore)]
         [JsonConverter(typeof(DataTimeConverter))]
-        internal DateTime Time { get; set; }
+        public DateTime Time { get; set; }
 
         /// <summary>
         /// 收到事件的机器人 QQ 号
         /// </summary>
         [JsonProperty(PropertyName = "self_id", NullValueHandling = NullValueHandling.Ignore)]
-        internal long SelfID { get; set; }
+        public long SelfID { get; set; }
 
         /// <summary>
         /// 事件类型
         /// </summary>
         [JsonProperty(PropertyName = "post_type", NullValueHandling = NullValueHandling.Ignore)]
-        internal string PostType { get; set; }
+        public string PostType { get; set; }
     }
 }

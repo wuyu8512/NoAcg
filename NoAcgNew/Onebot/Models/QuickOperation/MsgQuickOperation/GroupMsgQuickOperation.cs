@@ -16,5 +16,7 @@ namespace NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation
 
         [JsonProperty(PropertyName = "ban_duration")]
         public long BanDuration { get; set; }
+
+        public static implicit operator GroupMsgQuickOperation(int code) => new() {Code = code};
     }
 }

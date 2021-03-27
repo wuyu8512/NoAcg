@@ -24,16 +24,10 @@ namespace NoAcgNew.Entities.CQCodes.CQCodeModel
         public long Time { get; internal set; }
 
         /// <summary>
-        /// 原始消息内容
-        /// </summary>
-        [JsonProperty(PropertyName = "content")]
-        internal List<MessageElement> MessageList { get; set; }
-
-        /// <summary>
         /// 消息内容
         /// </summary>
-        [JsonIgnore]
-        public List<CQCode> CQCodeMsgList { get; internal set; }
+        [JsonProperty(PropertyName = "content")]
+        public List<CQCode> MessageList { get; internal set; }
 
         #endregion
 

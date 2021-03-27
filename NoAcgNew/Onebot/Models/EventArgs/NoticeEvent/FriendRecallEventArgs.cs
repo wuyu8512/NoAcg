@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEventArgs
+namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 好友消息撤回

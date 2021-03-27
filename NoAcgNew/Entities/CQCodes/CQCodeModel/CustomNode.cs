@@ -33,19 +33,13 @@ namespace NoAcgNew.Entities.CQCodes.CQCodeModel
         /// 具体消息
         /// </summary>
         [JsonProperty(PropertyName = "content", NullValueHandling = NullValueHandling.Ignore)]
-        internal object Messages { get; set; }
+        internal IEnumerable<CQCode> Messages { get; set; }
 
         /// <summary>
         /// 转发时间
         /// </summary>
         [JsonProperty(PropertyName = "time", NullValueHandling = NullValueHandling.Ignore)]
         internal string Time { get; set; }
-
-        /// <summary>
-        /// 消息段
-        /// </summary>
-        [JsonIgnore]
-        public List<CQCode> MessageList { get; internal set; }
 
         /// <summary>
         /// 构造自定义节点
@@ -72,7 +66,7 @@ namespace NoAcgNew.Entities.CQCodes.CQCodeModel
             MessageId = null;
             Name      = name;
             UserId    = userId.ToString();
-            Messages  = customMessage.Select(msg => msg.ToOnebotMessage()).ToList();
+            Messages = customMessage;
             Time      = $"{time?.ToUnixTimeSeconds() ?? DateTimeOffset.Now.ToUnixTimeSeconds()}";
         }
 
@@ -83,13 +77,13 @@ namespace NoAcgNew.Entities.CQCodes.CQCodeModel
         /// <param name="userId">发送者ID</param>
         /// <param name="cqString">CQ码字符串格式</param>
         /// <param name="time">消息段转发时间</param>
-        public CustomNode(string name, long userId, string cqString, DateTimeOffset? time = null)
-        {
-            MessageId = null;
-            Name      = name;
-            UserId    = userId.ToString();
-            Messages  = cqString;
-            Time      = $"{time?.ToUnixTimeSeconds() ?? DateTimeOffset.Now.ToUnixTimeSeconds()}";
-        }
+        //public CustomNode(string name, long userId, string cqString, DateTimeOffset? time = null)
+        //{
+        //    MessageId = null;
+        //    Name      = name;
+        //    UserId    = userId.ToString();
+        //    Messages  = cqString;
+        //    Time      = $"{time?.ToUnixTimeSeconds() ?? DateTimeOffset.Now.ToUnixTimeSeconds()}";
+        //}
     }
 }

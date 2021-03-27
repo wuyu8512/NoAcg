@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using NoAcgNew.Onebot.Models.EventArgs.Info;
 
-namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEventArgs
+namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 群文件上传事件

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs
+namespace NoAcgNew.Onebot.Models.EventArgs.MetaEvent
 {
 	public abstract class BaseMetaEventArgs: BaseEventArgs
 	{

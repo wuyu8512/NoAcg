@@ -3,11 +3,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using NoAcgNew.Interfaces;
-using NoAcgNew.Onebot.Models.EventArgs.MessageEventArgs;
-using NoAcgNew.Onebot.Models.EventArgs.MetaEventArgs;
-using NoAcgNew.Onebot.Models.EventArgs.NoticeEventArgs;
+using NoAcgNew.Onebot.Models.EventArgs.MessageEvent;
+using NoAcgNew.Onebot.Models.EventArgs.MetaEvent;
+using NoAcgNew.Onebot.Models.EventArgs.NoticeEvent;
+using NoAcgNew.Onebot.Models.EventArgs.RequestEvent;
 using NoAcgNew.Onebot.Models.QuickOperation;
 using NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation;
+using NoAcgNew.Onebot.Models.QuickOperation.RequestQuickOperation;
 
 namespace NoAcgNew.Onebot
 {
@@ -41,7 +43,6 @@ namespace NoAcgNew.Onebot
         /// <param name="oneBotApi">对应的OneBot Api接口</param>
         /// <returns></returns>
         public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi);
-
         #endregion
 
         #region 事件回调
@@ -141,6 +142,15 @@ namespace NoAcgNew.Onebot
         /// </summary>
         public event EventCallBackHandler<EssenceChangeEventArgs> OnEssenceChange;
 
+        /// <summary>
+        /// 加好友请求事件
+        /// </summary>
+        public event EventCallBackHandler<FriendRequestEventArgs, FriendRequestQuickOperation> OnFriendRequest;
+
+        /// <summary>
+        /// 加群请求／邀请事件
+        /// </summary>
+        public event EventCallBackHandler<GroupRequestEventArgs, GroupRequestQuickOperation> OnGroupRequest;
         #endregion
 
         #region 事件分发
