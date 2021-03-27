@@ -1,4 +1,3 @@
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +9,7 @@ using NoAcgNew.Handler;
 using NoAcgNew.Interfaces;
 using NoAcgNew.Internal;
 using NoAcgNew.Onebot;
-using NoAcgNew.Service;
+using System;
 
 namespace NoAcgNew
 {

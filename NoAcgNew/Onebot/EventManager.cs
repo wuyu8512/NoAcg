@@ -28,11 +28,18 @@ namespace NoAcgNew.Onebot
         /// <typeparam name="TEventArgs">事件参数</typeparam>
         /// <typeparam name="TResult">返回</typeparam>
         /// <param name="eventArgs">事件参数</param>
-        /// <param name="oneBotApi">客户端链接接口</param>
+        /// <param name="oneBotApi">对应的OneBot Api接口</param>
         public delegate ValueTask<TResult> EventCallBackHandler<in TEventArgs, TResult>(TEventArgs eventArgs,
             IOneBotApi oneBotApi)
             where TEventArgs : EventArgs where TResult : BaseQuickOperation;
 
+        /// <summary>
+        /// Onebot事件回调
+        /// </summary>
+        /// <typeparam name="TEventArgs">事件参数</typeparam>
+        /// <param name="eventArgs">事件参数</param>
+        /// <param name="oneBotApi">对应的OneBot Api接口</param>
+        /// <returns></returns>
         public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi);
 
         #endregion
@@ -64,32 +71,74 @@ namespace NoAcgNew.Onebot
         /// </summary>
         public event EventCallBackHandler<FileUploadEventArgs> OnFileUpload;
 
+        /// <summary>
+        /// 群管理员变动事件
+        /// </summary>
         public event EventCallBackHandler<AdminChangeEventArgs> OnGroupAdminChange;
 
+        /// <summary>
+        /// 群成员数量变动事件
+        /// </summary>
         public event EventCallBackHandler<GroupMemberChangeEventArgs> OnGroupMemberChange;
 
+        /// <summary>
+        /// 群禁言事件
+        /// </summary>
         public event EventCallBackHandler<GroupBanEventArgs> OnGroupBan;
 
+        /// <summary>
+        /// 好友添加事件
+        /// </summary>
         public event EventCallBackHandler<FriendAddEventArgs> OnFriendAdd;
 
+        /// <summary>
+        /// 群消息撤回事件
+        /// </summary>
         public event EventCallBackHandler<GroupRecallEventArgs> OnGroupRecall;
 
+        /// <summary>
+        /// 好友消息撤回事件
+        /// </summary>
         public event EventCallBackHandler<FriendRecallEventArgs> OnFriendRecall;
 
+        /// <summary>
+        /// 好友戳一戳事件
+        /// </summary>
         public event EventCallBackHandler<PokeEventArgs> OnFriendPokeEvent;
 
+        /// <summary>
+        /// 群内戳一戳事件
+        /// </summary>
         public event EventCallBackHandler<PokeEventArgs> OnGroupPokeEvent;
 
+        /// <summary>
+        /// 群红包运气王提示事件
+        /// </summary>
         public event EventCallBackHandler<LuckyKingEventArgs> OnLuckyKingEvent;
 
+        /// <summary>
+        /// 群成员荣誉变更事件
+        /// </summary>
         public event EventCallBackHandler<HonorEventArgs> OnHonorEvent;
 
+        /// <summary>
+        /// 群成员名片更新事件
+        /// </summary>
         public event EventCallBackHandler<GroupCardUpdateEventArgs> OnGroupCardUpdate;
 
+        /// <summary>
+        /// 接收到离线文件事件
+        /// </summary>
         public event EventCallBackHandler<OfflineFileEventArgs> OnOfflineFileEvent;
 
+        /// <summary>
+        /// 其他客户端在线状态变更事件
+        /// </summary>
         public event EventCallBackHandler<ClientStatusChangeEventArgs> OnClientStatusChange;
 
+        /// <summary>
+        /// 精华消息事件
+        /// </summary>
         public event EventCallBackHandler<EssenceChangeEventArgs> OnEssenceChange;
 
         #endregion
