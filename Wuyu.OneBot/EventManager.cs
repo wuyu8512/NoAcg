@@ -43,6 +43,7 @@ namespace Wuyu.OneBot
         /// <param name="oneBotApi">对应的OneBot Api接口</param>
         /// <returns></returns>
         public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi);
+
         #endregion
 
         #region 事件回调
@@ -151,6 +152,7 @@ namespace Wuyu.OneBot
         /// 加群请求／邀请事件
         /// </summary>
         public event EventCallBackHandler<GroupRequestEventArgs, GroupRequestQuickOperation> OnGroupRequest;
+
         #endregion
 
         #region 事件分发
@@ -176,6 +178,9 @@ namespace Wuyu.OneBot
                         return await MessageAdapter(messageJson, oneBotApi, rawMsg);
                     case "notice":
                         await NoticeAdapter(messageJson, oneBotApi, rawMsg);
+                        break;
+                    case "request":
+                        RequestAdapter(messageJson, oneBotApi, rawMsg);
                         break;
                     default:
                         _logger.LogWarning("[Event]接收到未知事件[{Msg}]", rawMsg);
@@ -389,9 +394,47 @@ namespace Wuyu.OneBot
                             _logger.LogWarning("[Notify]接收到未知事件[{NotifyType}]", notifyType);
                             break;
                     }
+
                     break;
                 default:
                     _logger.LogWarning("[Notice]接收到未知事件[{NoticeType}]", type);
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// 请求事件处理和分发
+        /// </summary>
+        /// <param name="messageJson">消息</param>
+        /// <param name="oneBotApi">对应事件来源的Api接口</param>
+        private async void RequestAdapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
+        {
+            var type = GetRequestType(messageJson);
+            switch (type)
+            {
+                //好友请求事件
+                case "friend":
+                {
+                    var friendRequest = messageJson.ToObject<FriendRequestEventArgs>();
+                    if (friendRequest != null && OnFriendRequest != null)
+                        await OnFriendRequest(friendRequest, oneBotApi);
+                    break;
+                }
+                //群组请求事件
+                case "group":
+                {
+                    if (messageJson.TryGetValue("sub_type", out var sub) && sub.ToString().Equals("notice"))
+                    {
+                        _logger.LogWarning("[Request]收到notice消息类型，不解析此类型消息");
+                        break;
+                    }
+
+                    var groupRequest = messageJson.ToObject<GroupRequestEventArgs>();
+                    if (groupRequest != null && OnGroupRequest != null) await OnGroupRequest(groupRequest, oneBotApi);
+                    break;
+                }
+                default:
+                    _logger.LogWarning("[Request]接收到未知事件[{Type}]", type);
                     break;
             }
         }
