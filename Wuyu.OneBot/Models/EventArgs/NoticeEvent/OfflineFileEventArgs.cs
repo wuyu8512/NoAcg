@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
-using Wuyu.OneBot.Onebot.Models.EventArgs.Info;
+using Wuyu.OneBot.Models.EventArgs.Info;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.NoticeEvent
+namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 离线文件事件

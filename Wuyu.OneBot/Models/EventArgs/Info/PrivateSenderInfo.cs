@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.Info
+namespace Wuyu.OneBot.Models.EventArgs.Info
 {
     /// <summary>
     /// 私聊消息发送者

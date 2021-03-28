@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Wuyu.OneBot.Entities.CQCodes;
 
-namespace Wuyu.OneBot.Onebot.Models.QuickOperation.MsgQuickOperation
+namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
 {
     public class BaseMsgQuickOperation : BaseQuickOperation
     {

@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.Info
+namespace Wuyu.OneBot.Models.EventArgs.Info
 {
     /// <summary>
     /// 群成员信息

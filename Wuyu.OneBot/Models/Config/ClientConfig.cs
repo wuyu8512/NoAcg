@@ -1,6 +1,6 @@
 using System;
 
-namespace NoAcgNew.Onebot.Models.Config
+namespace Wuyu.OneBot.Models.Config
 {
     /// <summary>
     /// <para>客户端配置类</para>
@@ -39,11 +39,6 @@ namespace NoAcgNew.Onebot.Models.Config
         /// <para>默认为1000ms无需修改</para>
         /// </summary>
         public TimeSpan ApiTimeOut { get; init; } = TimeSpan.FromMilliseconds(1000);
-
-        /// <summary>
-        /// 是否启用NoAcgNew自带的指令系统
-        /// </summary>
-        public bool EnableNoAcgNewCommandManager { get; init; } = true;
 
         /// <summary>
         /// <para>丢失连接时的重连超时</para>

@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.Info
+namespace Wuyu.OneBot.Models.EventArgs.Info
 {
     /// <summary>
     /// 群文件夹信息

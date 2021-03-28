@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.NoticeEvent
+namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 群内通知类事件

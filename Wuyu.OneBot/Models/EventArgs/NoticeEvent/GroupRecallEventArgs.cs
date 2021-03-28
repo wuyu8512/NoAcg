@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.NoticeEvent
+namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 群消息撤回事件

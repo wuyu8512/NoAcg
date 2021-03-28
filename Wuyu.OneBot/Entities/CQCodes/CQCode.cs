@@ -7,10 +7,10 @@ using Newtonsoft.Json.Linq;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 using Wuyu.OneBot.Entities.CQCodes.CQCodeModel;
 using Wuyu.OneBot.Enumeration;
-using Wuyu.OneBot.Onebot.Models;
 using Microsoft.Extensions.Logging;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Internal;
+using Wuyu.OneBot.Models;
 
 namespace Wuyu.OneBot.Entities.CQCodes
 {

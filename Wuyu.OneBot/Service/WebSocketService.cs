@@ -12,9 +12,8 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using NoAcgNew.Onebot;
 
-namespace NoAcgNew.Service
+namespace Wuyu.OneBot.Service
 {
     public sealed class WebSocketService : IDisposable
     {

@@ -3,10 +3,9 @@ using System.Threading;
 using Newtonsoft.Json.Linq;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Interfaces;
-using Wuyu.OneBot.Onebot.Models;
-using Wuyu.OneBot.Onebot.Models.ApiParams;
 using WebApiClientCore;
 using WebApiClientCore.Attributes;
+using Wuyu.OneBot.Models.ApiParams;
 
 namespace Wuyu.OneBot.Interfaces
 {

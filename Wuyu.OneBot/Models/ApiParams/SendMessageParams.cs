@@ -4,7 +4,7 @@ using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 
-namespace Wuyu.OneBot.Onebot.Models.ApiParams
+namespace Wuyu.OneBot.Models.ApiParams
 {
     public sealed class SendMessageParams
     {

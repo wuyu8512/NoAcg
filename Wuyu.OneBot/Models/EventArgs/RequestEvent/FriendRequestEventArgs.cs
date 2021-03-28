@@ -1,4 +1,4 @@
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.RequestEvent
+namespace Wuyu.OneBot.Models.EventArgs.RequestEvent
 {
     /// <summary>
     /// 好友邀请事件

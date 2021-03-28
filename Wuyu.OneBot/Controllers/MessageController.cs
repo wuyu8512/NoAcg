@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Wuyu.OneBot.Onebot;
-using Wuyu.OneBot.Onebot.Models.QuickOperation;
+using Wuyu.OneBot.Models.QuickOperation;
 
-namespace NoAcgNew.Controllers
+namespace Wuyu.OneBot.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
@@ -26,7 +25,7 @@ namespace NoAcgNew.Controllers
         }
 
         [HttpPost]
-        public async ValueTask<ActionResult> Post()
+        public async ValueTask<IActionResult> Post()
         {
             string rawMsg;
             using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
@@ -39,7 +38,7 @@ namespace NoAcgNew.Controllers
             return result switch
             {
                 null => Ok(),
-                BaseQuickOperation replay => Ok(replay),
+                BaseQuickOperation replay =>  Ok(JsonConvert.SerializeObject(replay,Formatting.None)),
                 _ => Ok()
             };
         }

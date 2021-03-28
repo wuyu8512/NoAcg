@@ -2,16 +2,16 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
-using NoAcgNew.Interfaces;
-using NoAcgNew.Onebot.Models.EventArgs.MessageEvent;
-using NoAcgNew.Onebot.Models.EventArgs.MetaEvent;
-using NoAcgNew.Onebot.Models.EventArgs.NoticeEvent;
-using NoAcgNew.Onebot.Models.EventArgs.RequestEvent;
-using NoAcgNew.Onebot.Models.QuickOperation;
-using NoAcgNew.Onebot.Models.QuickOperation.MsgQuickOperation;
-using NoAcgNew.Onebot.Models.QuickOperation.RequestQuickOperation;
+using Wuyu.OneBot.Interfaces;
+using Wuyu.OneBot.Models.EventArgs.MessageEvent;
+using Wuyu.OneBot.Models.EventArgs.MetaEvent;
+using Wuyu.OneBot.Models.EventArgs.NoticeEvent;
+using Wuyu.OneBot.Models.EventArgs.RequestEvent;
+using Wuyu.OneBot.Models.QuickOperation;
+using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
+using Wuyu.OneBot.Models.QuickOperation.RequestQuickOperation;
 
-namespace NoAcgNew.Onebot
+namespace Wuyu.OneBot
 {
     public class EventManager
     {
@@ -161,7 +161,7 @@ namespace NoAcgNew.Onebot
         /// <param name="messageJson">消息json对象</param>
         /// <param name="oneBotApi">客户端链接接口</param>
         /// <param name="rawMsg"></param>
-        internal async ValueTask<object> Adapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
+        public async ValueTask<object> Adapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetBaseEventType(messageJson);
             try

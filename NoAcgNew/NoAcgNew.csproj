@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.4" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
         <PackageReference Include="WebApiClientCore" Version="2.0.1" />
         <PackageReference Include="WebApiClientCore.Extensions.NewtonsoftJson" Version="2.0.1" />

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Wuyu.OneBot.Onebot;
-using Wuyu.OneBot.Onebot.Models.QuickOperation.MsgQuickOperation;
+using Wuyu.OneBot;
+using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
 {
@@ -23,22 +23,22 @@ namespace NoAcgNew.Handler
             _logger.LogInformation("我被初始化了");
 
             //_eventManager.OnHeartBeatEvent += async (args, api) => { _logger.LogInformation(args.Time.ToString()); };
-            _eventManager.OnLifeCycleEvent += async (args, api) =>
-            {
-                _logger.LogInformation(0, args.SubType);
-                return 0;
-            };
-            _eventManager.OnPrivateMessage += async (args, api) =>
-            {
-                var (status, id) = await api.SendPrivateMsg(args.UserId, 0, args.MessageList);
-                _logger.LogInformation(id.ToString());
-                return 0;
-            };
-            _eventManager.OnGroupMessage += async (args, api) =>
-            {
-                _logger.LogInformation(args.MessageId, args.RawMessage);
-                return new GroupMsgQuickOperation {Reply = args.MessageList};
-            };
+            // _eventManager.OnLifeCycleEvent += async (args, api) =>
+            // {
+            //     _logger.LogInformation(0, args.SubType);
+            //     return 0;
+            // };
+            // _eventManager.OnPrivateMessage += async (args, api) =>
+            // {
+            //     var (status, id) = await api.SendPrivateMsg(args.UserId, 0, args.MessageList);
+            //     _logger.LogInformation(id.ToString());
+            //     return 0;
+            // };
+            // _eventManager.OnGroupMessage += async (args, api) =>
+            // {
+            //     _logger.LogInformation(args.MessageId, args.RawMessage);
+            //     return new GroupMsgQuickOperation {Reply = args.MessageList};
+            // };
         }
     }
 }

@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Internal;
-using Wuyu.OneBot.Onebot;
 using System;
 
 namespace Wuyu.OneBot

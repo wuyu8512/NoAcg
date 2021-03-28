@@ -1,4 +1,4 @@
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.Info
+namespace Wuyu.OneBot.Models.EventArgs.Info
 {
     /// <summary>
     /// 群信息

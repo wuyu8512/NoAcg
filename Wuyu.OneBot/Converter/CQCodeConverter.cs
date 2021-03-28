@@ -1,10 +1,10 @@
 ﻿using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Wuyu.OneBot.Onebot.Models;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Entities.CQCodes.CQCodeModel;
 using Wuyu.OneBot.Enumeration;
+using Wuyu.OneBot.Models;
 
 namespace Wuyu.OneBot.Converter
 {

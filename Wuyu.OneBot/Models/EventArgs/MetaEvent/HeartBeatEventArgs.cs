@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.MetaEvent
+namespace Wuyu.OneBot.Models.EventArgs.MetaEvent
 {
     /// <summary>
     /// 心跳包

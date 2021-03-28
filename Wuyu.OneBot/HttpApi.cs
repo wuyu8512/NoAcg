@@ -6,9 +6,9 @@ using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Enumeration.ApiType;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 using Wuyu.OneBot.Interfaces;
-using Wuyu.OneBot.Onebot.Models.ApiParams;
+using Wuyu.OneBot.Models.ApiParams;
 
-namespace Wuyu.OneBot.Onebot
+namespace Wuyu.OneBot
 {
 	public class HttpApi : IOneBotApi
 	{

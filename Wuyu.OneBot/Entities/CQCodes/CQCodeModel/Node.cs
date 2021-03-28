@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
-using Wuyu.OneBot.Onebot.Models;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {

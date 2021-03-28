@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
-using Wuyu.OneBot.Onebot.Models.EventArgs.Info;
+using Wuyu.OneBot.Models.EventArgs.Info;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.MessageEvent
+namespace Wuyu.OneBot.Models.EventArgs.MessageEvent
 {
     /// <summary>
     /// 私聊消息事件

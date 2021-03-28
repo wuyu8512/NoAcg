@@ -2,12 +2,8 @@
 using Newtonsoft.Json.Linq;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace Wuyu.OneBot.Onebot.Models
+namespace Wuyu.OneBot.Models
 {
     /// <summary>
     /// Onebot消息段

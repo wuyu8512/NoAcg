@@ -1,7 +1,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs
+namespace Wuyu.OneBot.Models.EventArgs
 {
     /// <summary>
     /// 匿名用户类

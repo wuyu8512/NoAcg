@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Wuyu.OneBot.Onebot.Models;
 using Wuyu.OneBot.Enumeration.ApiType;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Enumeration;

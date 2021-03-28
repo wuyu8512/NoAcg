@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.MetaEvent
+namespace Wuyu.OneBot.Models.EventArgs.MetaEvent
 {
 	public abstract class BaseMetaEventArgs: BaseEventArgs
 	{

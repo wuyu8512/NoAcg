@@ -14,11 +14,9 @@ using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Enumeration.ApiType;
 using Wuyu.OneBot.Expansion;
 using Wuyu.OneBot.Interfaces;
-using Wuyu.OneBot.Internal;
-using Wuyu.OneBot.Onebot.Models;
-using Wuyu.OneBot.Onebot.Models.ApiParams;
+using Wuyu.OneBot.Models.ApiParams;
 
-namespace Wuyu.OneBot.Onebot
+namespace Wuyu.OneBot
 {
 	public class WebSocketServiceApi : IOneBotApi
 	{

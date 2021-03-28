@@ -1,6 +1,6 @@
 using System;
 
-namespace Wuyu.OneBot.Onebot.Models.Config
+namespace Wuyu.OneBot.Models.Config
 {
     /// <summary>
     /// <para>服务器配置类</para>

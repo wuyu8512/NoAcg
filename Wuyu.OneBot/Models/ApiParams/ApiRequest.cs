@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration.ApiType;
 
-namespace Wuyu.OneBot.Onebot.Models.ApiParams
+namespace Wuyu.OneBot.Models.ApiParams
 {
     public sealed class ApiRequest<T> : ApiRequest
     {

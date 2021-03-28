@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Wuyu.OneBot.Onebot.Models.QuickOperation.RequestQuickOperation
+namespace Wuyu.OneBot.Models.QuickOperation.RequestQuickOperation
 {
     public class FriendRequestQuickOperation : BaseRequestQuickOperation
     {

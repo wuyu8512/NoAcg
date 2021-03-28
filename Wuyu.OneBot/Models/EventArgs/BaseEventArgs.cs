@@ -2,7 +2,7 @@ using System;
 using Newtonsoft.Json;
 using Wuyu.OneBot.Converter;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs
+namespace Wuyu.OneBot.Models.EventArgs
 {
     /// <summary>
     /// 框架事件基类

@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json;
-
-namespace Wuyu.OneBot.Onebot.Models.QuickOperation.MsgQuickOperation
+﻿namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
 {
     public class PrivateMsgQuickOperation : BaseMsgQuickOperation
     {

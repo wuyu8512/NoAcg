@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.NoticeEvent
+namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 群成员荣誉变更事件

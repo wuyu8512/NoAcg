@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Wuyu.OneBot.Entities.CQCodes;
 
-namespace Wuyu.OneBot.Onebot.Models.EventArgs.MessageEvent
+namespace Wuyu.OneBot.Models.EventArgs.MessageEvent
 {
     /// <summary>
     /// 消息事件基类

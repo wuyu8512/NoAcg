@@ -1,8 +1,8 @@
 using Newtonsoft.Json;
-using NoAcgNew.Converter;
-using NoAcgNew.Enumeration.EventParamsType;
+using Wuyu.OneBot.Converter;
+using Wuyu.OneBot.Enumeration.EventParamsType;
 
-namespace NoAcgNew.Onebot.Models.EventArgs.NoticeEvent
+namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 群管理员变动事件
