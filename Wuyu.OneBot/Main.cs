@@ -25,7 +25,11 @@ namespace Wuyu.OneBot
 				{
 					throw new ArgumentException("开启了Http Post但没有传递Http Host");
 				}
-				services.ConfigureHttpApi<IOneBotHttpApi>(o => o.HttpHost = Options.HttpApiHost);
+				services.ConfigureHttpApi<IOneBotHttpApi>(o =>
+				{
+					o.HttpHost = Options.HttpApiHost;
+					o.UseLogging = false;
+				});
 			}
 			
 			return services;

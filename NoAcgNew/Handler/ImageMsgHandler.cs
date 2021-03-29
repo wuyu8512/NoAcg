@@ -55,10 +55,15 @@ namespace NoAcgNew.Handler
                 if (args.RawMessage == customTags.Command)
                 {
                     var page = await yandeService.GetTagsPageAsync(customTags.Tag);
-                    long groupId = 0;
+                    long? groupId = null;
+                    long? userId = null;
                     if (args is GroupMsgEventArgs groupArgs)
                     {
                         groupId = groupArgs.GroupId;
+					}
+					else
+					{
+                        userId = args.UserId;
                     }
 
                     for (var i = 0; i < customTags.Count; i++)
@@ -67,7 +72,7 @@ namespace NoAcgNew.Handler
                         {
                             var (data, rating) =
                                 await yandeService.GetImageByTagsAsync(customTags.Tag, page, customTags.Rating);
-                            await api.SendMsg(args.UserId, groupId,
+                            await api.SendMsg(userId, groupId,
                                 new[] {CQCode.CQImage("base64://" + Convert.ToBase64String(data))});
                         });
                     }

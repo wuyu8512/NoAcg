@@ -24,7 +24,7 @@ namespace Wuyu.OneBot
             return OneBotApiType.Http;
         }
 
-        public async ValueTask<(ApiStatusType, int)> SendPrivateMsg(long userId, long groupId,
+        public async ValueTask<(ApiStatusType, int)> SendPrivateMsg(long userId, long? groupId,
             IEnumerable<CQCode> message, bool autoEscape = false,
             CancellationToken cancellationToken = default)
         {
@@ -35,10 +35,10 @@ namespace Wuyu.OneBot
             bool autoEscape = false,
             CancellationToken cancellationToken = default)
         {
-            return await SendMsg(0, groupId, message, autoEscape, cancellationToken);
+            return await SendMsg(null, groupId, message, autoEscape, cancellationToken);
         }
 
-        public async ValueTask<(ApiStatusType, int)> SendMsg(long userId, long groupId, IEnumerable<CQCode> message,
+        public async ValueTask<(ApiStatusType, int)> SendMsg(long? userId, long? groupId, IEnumerable<CQCode> message,
             bool autoEscape = false,
             CancellationToken cancellationToken = default)
         {

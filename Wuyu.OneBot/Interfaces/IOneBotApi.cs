@@ -13,7 +13,7 @@ namespace Wuyu.OneBot.Interfaces
 	{
 		public OneBotApiType GetApiType();
 
-		public ValueTask<(ApiStatusType, int)> SendPrivateMsg(long userId, long groupId,
+		public ValueTask<(ApiStatusType, int)> SendPrivateMsg(long userId, long? groupId,
 			IEnumerable<CQCode> message,
 			bool autoEscape = false,
 			CancellationToken cancellationToken = default
@@ -25,7 +25,7 @@ namespace Wuyu.OneBot.Interfaces
 			CancellationToken cancellationToken = default
 		);
 
-		public ValueTask<(ApiStatusType, int)> SendMsg(long userId, long groupId,
+		public ValueTask<(ApiStatusType, int)> SendMsg(long? userId, long? groupId,
 			IEnumerable<CQCode> message,
 			bool autoEscape = false,
 			CancellationToken cancellationToken = default);
