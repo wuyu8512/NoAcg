@@ -29,8 +29,8 @@ namespace NoAcgNew
 
 			services.ConfigureOneBot(o =>
 			{
-				o.EnableWebSocketService = false;
-				o.EnableHttpPost = true;
+				o.EnableWebSocketService = Configuration.GetValue<bool>("EnableWebSocketService");
+				o.EnableHttpPost = Configuration.GetValue<bool>("EnableHttpPost");
 				o.HttpApiHost = new Uri(Configuration["OneBotHttpApi"]);
 			});
 			services.AddSingleton<GlobalService>();

@@ -37,9 +37,11 @@ namespace Wuyu.OneBot
 
 		public static void UseOneBot(this IApplicationBuilder app)
 		{
+			var logger = app.ApplicationServices.GetRequiredService<ILogger<OneBotOptions>>();
 			if (Options.EnableWebSocketService)
 			{
 				app.Map(Options.WebSocketUrl, WebSocketService.Map);
+				logger.LogInformation("开启了WebSocket服务器，路径为：{Path}", Options.WebSocketUrl);
 			}
 			ApplicationLogging.LoggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
 		}
