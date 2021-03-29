@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -26,9 +27,12 @@ namespace NoAcgNew
 			services.AddControllers();
 			services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "NoAcgNew", Version = "v1" }); });
 
-			services.ConfigureOneBot();
-			services.AddSingleton<MessageHandler>();
-			services.AddSingleton<ImageMsgHandler>();
+			services.ConfigureOneBot(o =>
+			{
+				o.EnableWebSocketService = false;
+				o.EnableHttpPost = true;
+				o.HttpApiHost = new Uri(Configuration["OneBotHttpApi"]);
+			});
 			services.AddSingleton<GlobalService>();
 		}
 
@@ -52,8 +56,8 @@ namespace NoAcgNew
 			});
 
 			app.UseOneBot();
-			app.ApplicationServices.GetRequiredService<MessageHandler>();
-			app.ApplicationServices.GetRequiredService<ImageMsgHandler>();
+			ActivatorUtilities.CreateInstance<MessageHandler>(app.ApplicationServices);
+			ActivatorUtilities.CreateInstance<ImageMsgHandler>(app.ApplicationServices);
 		}
 	}
 }

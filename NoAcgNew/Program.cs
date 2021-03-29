@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -18,6 +19,16 @@ namespace NoAcgNew
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>().ConfigureAppConfiguration(
+                        o =>
+                        {
+                            foreach (var jsonFilename in Directory.EnumerateFiles(
+                                Directory.GetCurrentDirectory() + "/Setting", "*.json",
+                                SearchOption.AllDirectories))
+                                o.AddJsonFile(jsonFilename);
+                        });
+                });
     }
 }

@@ -9,11 +9,11 @@ namespace Wuyu.OneBot.Models.ApiParams
     public sealed class SendMessageParams
     {
         /// <summary>
-        /// 消息类型 群/私聊
+        /// 消息类型 群/私聊，如不传入, 则根据传入的 *_id 参数判断
         /// </summary>
         [JsonConverter(typeof(EnumDescriptionConverter))]
-        [JsonProperty(PropertyName = "message_type")]
-        internal MessageType MessageType { get; set; }
+        [JsonProperty(PropertyName = "message_type", NullValueHandling = NullValueHandling.Ignore)]
+        internal MessageType? MessageType { get; set; }
 
         /// <summary>
         /// 用户id

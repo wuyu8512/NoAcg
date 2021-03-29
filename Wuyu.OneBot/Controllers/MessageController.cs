@@ -27,18 +27,20 @@ namespace Wuyu.OneBot.Controllers
         [HttpPost]
         public async ValueTask<IActionResult> Post()
         {
+            if (!Main.Options.EnableHttpPost) return Ok();
             string rawMsg;
             using (var reader = new StreamReader(Request.Body, Encoding.UTF8))
-            {  
+            {
                 rawMsg = await reader.ReadToEndAsync();
             }
+
             var json = JObject.Parse(rawMsg);
             if (!json.ContainsKey("post_type")) return Ok();
             var result = await _eventManager.Adapter(json, _api, rawMsg);
             return result switch
             {
                 null => Ok(),
-                BaseQuickOperation replay =>  Ok(JsonConvert.SerializeObject(replay,Formatting.None)),
+                BaseQuickOperation replay => Ok(JsonConvert.SerializeObject(replay, Formatting.None)),
                 _ => Ok()
             };
         }

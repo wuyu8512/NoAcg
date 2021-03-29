@@ -1,0 +1,16 @@
+﻿{
+  "Yande": {
+    "HotImg": {
+      "Command": "热门图片",
+      "Rating": 7
+    },
+    "CustomTags": [
+      {
+        "Command": "随机奶子",
+        "Tag": "breasts",
+        "Rating": 7,
+        "Count": 2
+      }
+    ]
+  }
+}

@@ -24,5 +24,10 @@ namespace Wuyu.OneBot.Interfaces
 			bool autoEscape = false,
 			CancellationToken cancellationToken = default
 		);
+
+		public ValueTask<(ApiStatusType, int)> SendMsg(long userId, long groupId,
+			IEnumerable<CQCode> message,
+			bool autoEscape = false,
+			CancellationToken cancellationToken = default);
 	}
 }
