@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using Microsoft.Extensions.Configuration;
 using NoAcgNew.Models;
 
@@ -11,7 +12,7 @@ namespace NoAcgNew.Services
         public GlobalService(IConfiguration configuration)
         {
             _configuration = configuration;
-            WebProxy = new WebProxy(configuration["Proxy"]);
+            WebProxy = configuration.GetSection("Proxy").Get<WebProxy>();
             YandeSetting.HotImg = configuration.GetSection("Yande").GetSection("HotImg")
                 .Get<YandeSetting.HotImgSetting>();
             YandeSetting.CustomTags = configuration.GetSection("Yande").GetSection("CustomTags")
