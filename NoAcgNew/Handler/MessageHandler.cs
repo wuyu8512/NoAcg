@@ -20,7 +20,7 @@ namespace NoAcgNew.Handler
             _eventManager = eventManager;
             _logger = logger;
 
-            _logger.LogInformation("我被初始化了");
+            // _logger.LogInformation("我被初始化了");
 
             //_eventManager.OnHeartBeatEvent += async (args, api) => { _logger.LogInformation(args.Time.ToString()); };
             // _eventManager.OnLifeCycleEvent += async (args, api) =>
@@ -28,17 +28,19 @@ namespace NoAcgNew.Handler
             //     _logger.LogInformation(0, args.SubType);
             //     return 0;
             // };
-            // _eventManager.OnPrivateMessage += async (args, api) =>
-            // {
-            //     var (status, id) = await api.SendPrivateMsg(args.UserId, 0, args.MessageList);
-            //     _logger.LogInformation(id.ToString());
-            //     return 0;
-            // };
-            // _eventManager.OnGroupMessage += async (args, api) =>
-            // {
-            //     _logger.LogInformation(args.MessageId, args.RawMessage);
-            //     return new GroupMsgQuickOperation {Reply = args.MessageList};
-            // };
+            _eventManager.OnPrivateMessage += async (args, api) =>
+            {
+                // var (status, id) = await api.SendPrivateMsg(args.UserId, 0, args.MessageList);
+                // _logger.LogInformation(id.ToString());
+                _logger.LogInformation(args.MessageId, args.RawMessage);
+                return 0;
+            };
+            _eventManager.OnGroupMessage += async (args, api) =>
+            {
+                _logger.LogInformation(args.MessageId, args.RawMessage);
+                // return new GroupMsgQuickOperation {Reply = args.MessageList};
+                return 0;
+            };
         }
     }
 }

@@ -407,6 +407,7 @@ namespace Wuyu.OneBot
         /// </summary>
         /// <param name="messageJson">消息</param>
         /// <param name="oneBotApi">对应事件来源的Api接口</param>
+        /// <param name="rawMsg"></param>
         private async void RequestAdapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetRequestType(messageJson);

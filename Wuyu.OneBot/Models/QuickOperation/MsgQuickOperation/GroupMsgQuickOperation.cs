@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Wuyu.OneBot.Entities.CQCodes;
 
 namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
 {
@@ -18,5 +19,18 @@ namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
         public long BanDuration { get; set; }
 
         public static implicit operator GroupMsgQuickOperation(int code) => new() {Code = code};
+
+        public static implicit operator GroupMsgQuickOperation(CQCode code) => new() {Reply = new[] {code}};
+
+        public GroupMsgQuickOperation(BaseMsgQuickOperation baseMsg)
+        {
+            Reply = baseMsg.Reply;
+            Code = baseMsg.Code;
+            AutoEscape = baseMsg.AutoEscape;
+        }
+
+        public GroupMsgQuickOperation()
+        {
+        }
     }
 }

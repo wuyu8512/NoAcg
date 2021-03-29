@@ -145,7 +145,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         public static CQCode CQImage(string data, bool useCache = true, int? threadCount = null)
         {
             if (string.IsNullOrEmpty(data)) throw new NullReferenceException(nameof(data));
-            (string dataStr, bool isDataStr) = ParseDataStr(data);
+            var (dataStr, isDataStr) = ParseDataStr(data);
             if (!isDataStr)
             {
                 _log.LogError("[CQImage]非法参数({Data})，已忽略CQ码", data);

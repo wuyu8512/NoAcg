@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using NoAcgNew.Handler;
+using NoAcgNew.Services;
 using Wuyu.OneBot;
 
 namespace NoAcgNew
@@ -27,6 +28,8 @@ namespace NoAcgNew
 
 			services.ConfigureOneBot();
 			services.AddSingleton<MessageHandler>();
+			services.AddSingleton<ImageMsgHandler>();
+			services.AddSingleton<GlobalService>();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +53,7 @@ namespace NoAcgNew
 
 			app.UseOneBot();
 			app.ApplicationServices.GetRequiredService<MessageHandler>();
+			app.ApplicationServices.GetRequiredService<ImageMsgHandler>();
 		}
 	}
 }
