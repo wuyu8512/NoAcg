@@ -22,6 +22,7 @@ namespace NoAcgNew.Handler
         public ImageMsgHandler(EventManager eventManager,
             ILogger<ImageMsgHandler> logger, GlobalService globalService, IServiceProvider provider)
         {
+            _eventManager = eventManager;
             _logger = logger;
             eventManager.OnGroupMessage += OnGroupMessage;
             eventManager.OnPrivateMessage += OnPrivateMessage;

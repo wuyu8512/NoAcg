@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wuyu.Tool", "..\..\C#\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj", "{4A83D193-1EDE-4C29-8EC4-0602BAD660D5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoAcgNew", "NoAcgNew\NoAcgNew.csproj", "{691C5D9A-8244-4E97-BF95-9D753C7B5ED5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wuyu.OneBot", "Wuyu.OneBot\Wuyu.OneBot.csproj", "{AFF80BD2-25DC-46E4-A181-521DF594F63F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wuyu.Tool", "..\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj", "{C13C4017-4AEB-4CF9-AE41-8B4F9B9F7208}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{4A83D193-1EDE-4C29-8EC4-0602BAD660D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4A83D193-1EDE-4C29-8EC4-0602BAD660D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4A83D193-1EDE-4C29-8EC4-0602BAD660D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4A83D193-1EDE-4C29-8EC4-0602BAD660D5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{691C5D9A-8244-4E97-BF95-9D753C7B5ED5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{691C5D9A-8244-4E97-BF95-9D753C7B5ED5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{691C5D9A-8244-4E97-BF95-9D753C7B5ED5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{AFF80BD2-25DC-46E4-A181-521DF594F63F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFF80BD2-25DC-46E4-A181-521DF594F63F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFF80BD2-25DC-46E4-A181-521DF594F63F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C13C4017-4AEB-4CF9-AE41-8B4F9B9F7208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C13C4017-4AEB-4CF9-AE41-8B4F9B9F7208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C13C4017-4AEB-4CF9-AE41-8B4F9B9F7208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C13C4017-4AEB-4CF9-AE41-8B4F9B9F7208}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
