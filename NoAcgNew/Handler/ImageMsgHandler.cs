@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using NoAcgNew.Services;
 using Wuyu.OneBot;
 using Wuyu.OneBot.Entities.CQCodes;
+using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Models.EventArgs.MessageEvent;
 using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
@@ -44,11 +45,19 @@ namespace NoAcgNew.Handler
 
         private async ValueTask<BaseMsgQuickOperation> Handler(BaseMessageEventArgs args, IOneBotApi api)
         {
+            long? groupId = null;
+            long? userId = null;
+            if (args is GroupMsgEventArgs groupArgs) groupId = groupArgs.GroupId;
+            else userId = args.UserId;
+
             var yandeService = ActivatorUtilities.CreateInstance<YandeService>(_provider, _globalService.WebProxy);
             if (args.RawMessage == _globalService.YandeSetting.HotImg.Command)
             {
                 var (data, rating) = await yandeService.GetHotImgAsync(_globalService.YandeSetting.HotImg.Rating);
-                return CQCode.CQImage("base64://" + Convert.ToBase64String(data));
+                if (api.GetApiType() == OneBotApiType.Http)
+                    return CQCode.CQImage("base64://" + Convert.ToBase64String(data));
+                await api.SendMsg(userId, groupId,
+                    new[] {CQCode.CQImage("base64://" + Convert.ToBase64String(data))});
             }
 
             foreach (var customTags in _globalService.YandeSetting.CustomTags)
@@ -56,17 +65,6 @@ namespace NoAcgNew.Handler
                 if (args.RawMessage == customTags.Command)
                 {
                     var page = await yandeService.GetTagsPageAsync(customTags.Tag);
-                    long? groupId = null;
-                    long? userId = null;
-                    if (args is GroupMsgEventArgs groupArgs)
-                    {
-                        groupId = groupArgs.GroupId;
-					}
-					else
-					{
-                        userId = args.UserId;
-                    }
-
                     for (var i = 0; i < customTags.Count; i++)
                     {
                         var _ = Task.Run(async () =>

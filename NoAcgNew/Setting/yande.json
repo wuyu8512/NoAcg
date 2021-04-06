@@ -7,14 +7,32 @@
     "CustomTags": [
       {
         "Command": "来点奶子",
-        "Tag": "breasts",
-        "Rating": 3,
+        "Tag": "breasts rating:-explicit",
+        "Rating": 7,
         "Count": 3
       },
       {
+        "Command": "[CQ:image,file=1bebdf21eea058c2db36720ce09bce03.image]",
+        "Tag": "cleavage rating:-explicit",
+        "Rating": 7,
+        "Count": 1
+      },
+      {
+        "Command": "奶子18连",
+        "Tag": "cleavage rating:-explicit",
+        "Rating": 7,
+        "Count": 18
+      },
+      {
         "Command": "来点萝莉",
-        "Tag": "loli",
-        "Rating": 3,
+        "Tag": "loli rating:-explicit",
+        "Rating": 7,
+        "Count": 1
+      },
+      {
+        "Command": "来点兽耳",
+        "Tag": "animal_ears rating:-explicit",
+        "Rating": 7,
         "Count": 1
       }
     ]

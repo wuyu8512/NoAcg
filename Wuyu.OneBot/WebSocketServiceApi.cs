@@ -66,7 +66,7 @@ namespace Wuyu.OneBot
             }
             catch (TimeoutException e)
             {
-                _logger.LogError(e, "[SendRequest]Api请求等待超时，可能没有执行成功，执行的请求[{Request}]", str);
+                _logger.LogError(e, "[SendRequest]Api请求等待超时，可能没有执行成功，执行的请求[{Request}]", request.ApiRequestType);
                 return (replay, ApiStatusType.TimeOut);
             }
             catch (SocketException e)

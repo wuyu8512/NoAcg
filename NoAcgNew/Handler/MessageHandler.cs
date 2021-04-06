@@ -30,14 +30,14 @@ namespace NoAcgNew.Handler
             // };
             _eventManager.OnPrivateMessage += async (args, api) =>
             {
-                var (status, id) = await api.SendPrivateMsg(args.UserId, null, args.MessageList);
-                _logger.LogInformation(id.ToString());
+                // var (status, id) = await api.SendPrivateMsg(args.UserId, null, args.MessageList);
+                // _logger.LogInformation(id.ToString());
                 _logger.LogInformation(args.MessageId, args.RawMessage);
                 return 0;
             };
             _eventManager.OnGroupMessage += async (args, api) =>
             {
-                // _logger.LogInformation(args.MessageId, args.RawMessage);
+                _logger.LogInformation(args.MessageId, args.RawMessage);
                 // return new GroupMsgQuickOperation {Reply = args.MessageList};
                 return 0;
             };
