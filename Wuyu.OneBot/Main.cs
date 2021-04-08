@@ -51,6 +51,8 @@ namespace Wuyu.OneBot
             if (Options.EnableHttpPost)
             {
                 logger.LogInformation("开启了Http Post服务器，路径为：{Path}", "/Message/Post");
+                var manager = app.ApplicationServices.GetRequiredService<EventManager>();
+                manager.Connection(app.ApplicationServices.GetRequiredService<HttpApi>());
             }
 
             ApplicationLogging.LoggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();

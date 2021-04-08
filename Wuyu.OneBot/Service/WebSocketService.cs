@@ -37,11 +37,13 @@ namespace Wuyu.OneBot.Service
             task.Wait();
             _socket = task.Result;
             _api = ActivatorUtilities.CreateInstance<WebSocketServiceApi>(context.RequestServices, _socket);
+            
             logger.LogInformation("有新客户端连接了");
         }
 
         private async ValueTask EchoLoop()
         {
+            _eventManager.Connection(_api);
             while (true)
             {
                 WebSocketReceiveResult result = null;

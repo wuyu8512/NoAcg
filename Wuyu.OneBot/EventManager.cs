@@ -43,11 +43,23 @@ namespace Wuyu.OneBot
         /// <param name="oneBotApi">对应的OneBot Api接口</param>
         /// <returns></returns>
         public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi);
+        
+        /// <summary>
+        /// Onebot事件回调
+        /// </summary>
+        /// <param name="oneBotApi">对应的OneBot Api接口</param>
+        /// <returns></returns>
+        public delegate ValueTask EventCallBackHandler(IOneBotApi oneBotApi);
 
         #endregion
 
         #region 事件回调
 
+        /// <summary>
+        /// 连接事件，对于反向WebSocket，将在每次客户端连接时触发，对于Http，将在程序启动时触发
+        /// </summary>
+        public event EventCallBackHandler OnConnection;
+        
         /// <summary>
         /// 心跳事件
         /// </summary>
@@ -157,6 +169,18 @@ namespace Wuyu.OneBot
 
         #region 事件分发
 
+        public async void Connection(IOneBotApi oneBotApi)
+        {
+            try
+            {
+                if (OnConnection != null) await OnConnection(oneBotApi);
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning(e, "出现了未知错误");
+            }
+        }
+        
         /// <summary>
         /// 事件分发
         /// </summary>

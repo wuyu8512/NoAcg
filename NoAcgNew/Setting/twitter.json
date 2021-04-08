@@ -1,0 +1,16 @@
+﻿{
+  "Twitter": {
+    "Monitor": [
+      {
+        "Name": "wuyu_8512",
+        "Group": [
+          814942865
+        ],
+        "Private": [
+          3117836505
+        ],
+        "Enable": true
+      }
+    ]
+  }
+}

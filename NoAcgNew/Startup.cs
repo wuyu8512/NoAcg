@@ -58,6 +58,7 @@ namespace NoAcgNew
 			app.UseOneBot();
 			ActivatorUtilities.CreateInstance<MessageHandler>(app.ApplicationServices);
 			ActivatorUtilities.CreateInstance<ImageMsgHandler>(app.ApplicationServices);
+			ActivatorUtilities.CreateInstance<TwitterHandler>(app.ApplicationServices);
 		}
 	}
 }

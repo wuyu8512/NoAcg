@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
@@ -55,8 +56,7 @@ namespace Wuyu.OneBot
         private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken)
             where T : ApiRequest
         {
-            var str = JsonConvert.SerializeObject(request, Formatting.None);
-            var data = Encoding.UTF8.GetBytes(str);
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request, Formatting.None));
             JObject replay = null;
             try
             {
@@ -71,12 +71,12 @@ namespace Wuyu.OneBot
             }
             catch (SocketException e)
             {
-                _logger.LogError(e, "[SendRequest] {Request}", str);
+                _logger.LogError(e, "[SendRequest] {Request}", request.ApiRequestType);
                 return (replay, ApiStatusType.Error);
             }
             catch (WebSocketException e)
             {
-                _logger.LogError(e, "[SendRequest] {Request}", str);
+                _logger.LogError(e, "[SendRequest] {Request}", request.ApiRequestType);
                 return (replay, ApiStatusType.Error);
             }
             catch (TaskCanceledException)
@@ -105,7 +105,7 @@ namespace Wuyu.OneBot
         {
             return await SendMsg(null, groupId, message, autoEscape, cancellationToken);
         }
-
+        
         public async ValueTask<(ApiStatusType, int)> SendMsg(long? userId, long? groupId, IEnumerable<CQCode> message,
             bool autoEscape = false,
             CancellationToken cancellationToken = default)

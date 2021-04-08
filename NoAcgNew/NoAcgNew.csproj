@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj" />
+      <ProjectReference Include="..\..\..\C#\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj" />
       <ProjectReference Include="..\Wuyu.OneBot\Wuyu.OneBot.csproj" />
     </ItemGroup>
 

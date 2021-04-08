@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using Microsoft.Extensions.Configuration;
 using NoAcgNew.Models;
@@ -17,9 +18,13 @@ namespace NoAcgNew.Services
                 .Get<YandeSetting.HotImgSetting>();
             YandeSetting.CustomTags = configuration.GetSection("Yande").GetSection("CustomTags")
                 .Get<YandeSetting.CustomTagsSetting[]>();
+
+            TwitterSetting.Monitor = configuration.GetSection("Twitter").GetSection("Monitor")
+                .Get<TwitterSetting.MonitorSetting[]>().ToDictionary(m => m.Name);
         }
 
         public WebProxy WebProxy { get; }
         public YandeSetting YandeSetting { get; } = new();
+        public TwitterSetting TwitterSetting { get; } = new();
     }
 }
