@@ -56,7 +56,7 @@ namespace Wuyu.OneBot
         #region 事件回调
 
         /// <summary>
-        /// 连接事件，对于反向WebSocket，将在每次客户端连接时触发，对于Http，将在程序启动时触发
+        /// 连接事件，对于反向WebSocket，将在每次客户端连接时触发，对于Http Post，将在程序启动时触发
         /// </summary>
         public event EventCallBackHandler OnConnection;
         
