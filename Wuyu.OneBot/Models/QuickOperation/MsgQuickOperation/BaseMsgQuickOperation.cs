@@ -9,9 +9,9 @@ namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
         [JsonProperty(PropertyName = "reply", NullValueHandling = NullValueHandling.Ignore)]
         public IEnumerable<CQCode> Reply { get; set; }
 
-        [JsonProperty(PropertyName = "auto_escape")]
-        public bool AutoEscape { get; set; }
-        
+        [JsonProperty(PropertyName = "auto_escape", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AutoEscape { get; set; }
+
         public static implicit operator BaseMsgQuickOperation(int code) => new() {Code = code};
 
         public static implicit operator BaseMsgQuickOperation(CQCode code) => new() {Reply = new[] {code}};

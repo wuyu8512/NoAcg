@@ -5,18 +5,20 @@ namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
 {
     public class GroupMsgQuickOperation : BaseMsgQuickOperation
     {
-        [JsonProperty(PropertyName = "at_sender")]
-        public bool AtSender { get; set; } = true;
+        [JsonProperty(PropertyName = "at_sender", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? AtSender { get; set; }
 
-        [JsonProperty(PropertyName = "delete")]
-        public bool Delete { get; set; }
+        [JsonProperty(PropertyName = "delete", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Delete { get; set; }
 
-        [JsonProperty(PropertyName = "kick")] public bool Kick { get; set; }
+        [JsonProperty(PropertyName = "kick", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Kick { get; set; }
 
-        [JsonProperty(PropertyName = "ban")] public bool Ban { get; set; }
+        [JsonProperty(PropertyName = "ban", NullValueHandling = NullValueHandling.Ignore)]
+        public bool? Ban { get; set; }
 
-        [JsonProperty(PropertyName = "ban_duration")]
-        public long BanDuration { get; set; }
+        [JsonProperty(PropertyName = "ban_duration", NullValueHandling = NullValueHandling.Ignore)]
+        public long? BanDuration { get; set; }
 
         public static implicit operator GroupMsgQuickOperation(int code) => new() {Code = code};
 

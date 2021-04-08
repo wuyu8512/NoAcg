@@ -54,10 +54,9 @@ namespace NoAcgNew.Handler
             if (args.RawMessage == _globalService.YandeSetting.HotImg.Command)
             {
                 var (data, rating) = await yandeService.GetHotImgAsync(_globalService.YandeSetting.HotImg.Rating);
-                if (api.GetApiType() == OneBotApiType.Http)
-                    return CQCode.CQImage("base64://" + Convert.ToBase64String(data));
-                await api.SendMsg(userId, groupId,
-                    new[] {CQCode.CQImage("base64://" + Convert.ToBase64String(data))});
+                var replay = CQCode.CQImage("base64://" + Convert.ToBase64String(data));
+                if (api.GetApiType() == OneBotApiType.Http) return replay;
+                await api.SendMsg(userId, groupId, new[] {replay});
             }
 
             foreach (var customTags in _globalService.YandeSetting.CustomTags)
