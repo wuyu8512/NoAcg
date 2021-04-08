@@ -56,6 +56,7 @@ namespace Wuyu.OneBot
         private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken)
             where T : ApiRequest
         {
+            if (_socket.State != WebSocketState.Open) return (null, ApiStatusType.Error);;
             var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request, Formatting.None));
             JObject replay = null;
             try
@@ -118,9 +119,13 @@ namespace Wuyu.OneBot
             };
 
             var (replay, statusType) = await SendRequest(request, cancellationToken);
-            return replay == null
-                ? (statusType, 0)
-                : (statusType, replay["data"]?["message_id"]?.ToObject<int>() ?? -1);
+            var id = -1;
+            if (replay?["data"] is JObject data && data.ContainsKey("message_id"))
+            {
+                id = data["message_id"]?.ToObject<int>() ?? -1;
+            }
+
+            return replay == null ? (statusType, 0) : (statusType, id);
         }
     }
 }

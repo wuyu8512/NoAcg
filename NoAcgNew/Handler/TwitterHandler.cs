@@ -6,7 +6,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NoAcg.Monitor;
 using NoAcgNew.Core;
 using NoAcgNew.Models;
 using NoAcgNew.Services;
@@ -58,20 +57,19 @@ namespace NoAcgNew.Handler
 
         private async void CallBack(TweeterMonitor monitor, Tweet tweet)
         {
+            if (_api == null) return;
+
             var content = GetTweetContent(tweet);
-            content.Insert(0, CQCode.CQText($"您监控的{monitor.Name}有新的推文了\n"));
-            var video = content.Where(c => c.Type == CQCodeType.Video);
+            content.Insert(0, CQCode.CQText($"您订阅的{monitor.Name}有新推文了\n"));
+            var video = content.Where(c => c.Type == CQCodeType.Video).ToArray();
             content = content.Where(c => c.Type != CQCodeType.Video).ToList();
             var sendConfig = _globalService.TwitterSetting.Monitor[monitor.Name];
             if (sendConfig.Group != null)
             {
                 foreach (var item in sendConfig.Group)
                 {
-                    if (_api != null)
-                    {
-                        await _api.SendGroupMsg(item, content);
-                        await _api.SendGroupMsg(item, video);
-                    }
+                    if (content.Any()) await _api.SendGroupMsg(item, content);
+                    if (video.Any()) await _api.SendGroupMsg(item, video);
                 }
             }
 
@@ -79,11 +77,8 @@ namespace NoAcgNew.Handler
             {
                 foreach (var item in sendConfig.Private)
                 {
-                    if (_api != null)
-                    {
-                        await _api.SendPrivateMsg(item, null, content);
-                        await _api.SendPrivateMsg(item, null, video);
-                    }
+                    if (content.Any()) await _api.SendPrivateMsg(item, null, content);
+                    if (video.Any()) await _api.SendPrivateMsg(item, null, video);
                 }
             }
         }

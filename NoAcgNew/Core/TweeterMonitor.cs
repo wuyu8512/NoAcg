@@ -1,9 +1,8 @@
 using System;
 using Microsoft.Extensions.Logging;
-using NoAcgNew.Core;
 using Wuyu.Tool.Expansion;
 
-namespace NoAcg.Monitor
+namespace NoAcgNew.Core
 {
     public class TweeterMonitor : Wuyu.Tool.Common.Monitor
     {
