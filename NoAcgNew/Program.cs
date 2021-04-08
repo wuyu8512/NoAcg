@@ -21,11 +21,12 @@ namespace NoAcgNew
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "/Cache");
                     webBuilder.UseStartup<Startup>().ConfigureAppConfiguration(
                         o =>
                         {
                             foreach (var jsonFilename in Directory.EnumerateFiles(
-                                Directory.GetCurrentDirectory() + "/Setting", "*.json",
+                                AppDomain.CurrentDomain.BaseDirectory + "/Setting", "*.json",
                                 SearchOption.AllDirectories))
                                 o.AddJsonFile(jsonFilename);
                         });

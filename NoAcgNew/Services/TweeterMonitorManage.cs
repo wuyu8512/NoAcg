@@ -27,6 +27,7 @@ namespace NoAcgNew.Services
             var client = new WebClient();
 
             var tweeterMonitor = ActivatorUtilities.CreateInstance<TweeterMonitor>(_serviceProvider, name, _twitterApi);
+            tweeterMonitor.ClearAllStartEvent();
             tweeterMonitor.NewTweetEvent += action;
             tweeterMonitor.Start();
             _tweeterMonitors[name] = tweeterMonitor;
