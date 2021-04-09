@@ -15,5 +15,8 @@ namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
         public static implicit operator BaseMsgQuickOperation(int code) => new() {Code = code};
 
         public static implicit operator BaseMsgQuickOperation(CQCode code) => new() {Reply = new[] {code}};
+
+        public static implicit operator BaseMsgQuickOperation((CQCode msg, int code) data) =>
+            new() {Reply = new[] {data.msg}, Code = data.code};
     }
 }

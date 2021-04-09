@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Enumeration.ApiType;
@@ -50,10 +51,14 @@ namespace Wuyu.OneBot
                 AutoEscape = autoEscape,
             }, cancellationToken);
 
+            var id = -1;
+            if (replay?["data"] is JObject data && data.ContainsKey("message_id"))
+            {
+                id = data["message_id"]?.ToObject<int>() ?? -1;
+            }
+
             // TODO ApiStatusType解析
-            return replay == null
-                ? (ApiStatusType.Error, 0)
-                : (ApiStatusType.Ok, replay["data"]?["message_id"]?.ToObject<int>() ?? -1);
+            return replay == null ? (ApiStatusType.Error, 0) : (ApiStatusType.Ok, id);
         }
     }
 }
