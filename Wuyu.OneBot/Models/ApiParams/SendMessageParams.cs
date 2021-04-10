@@ -36,7 +36,7 @@ namespace Wuyu.OneBot.Models.ApiParams
         /// <summary>
         /// 是否忽略CQ码
         /// </summary>
-        [JsonProperty(PropertyName = "auto_escape")]
-        internal bool AutoEscape { get; set; }
+        [JsonProperty(PropertyName = "auto_escape",NullValueHandling = NullValueHandling.Ignore)]
+        internal bool? AutoEscape { get; set; }
     }
 }

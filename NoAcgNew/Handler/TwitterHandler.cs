@@ -28,6 +28,7 @@ namespace NoAcgNew.Handler
         private readonly IServiceProvider _provider;
         private readonly TweeterMonitorManage _manage;
         private IOneBotApi _api;
+        private bool _isStart;
 
         public TwitterHandler(EventManager eventManager,
             ILogger<TwitterHandler> logger, GlobalService globalService, IServiceProvider provider)
@@ -35,19 +36,23 @@ namespace NoAcgNew.Handler
             _eventManager = eventManager;
             _logger = logger;
             eventManager.OnGroupMessage += OnGroupMessage;
-            eventManager.OnConnection += async (api) => { _api = api; };
+            eventManager.OnConnection += async (api) =>
+            {
+                _api = api;
+                if (!_isStart)
+                {
+                    foreach (var monitor in globalService.TwitterSetting.Monitor.Where(monitor => monitor.Value.Enable))
+                    {
+                        _manage.StartNewMonitor(monitor.Key, CallBack);
+                    }
+
+                    _isStart = true;
+                }
+            };
             _globalService = globalService;
             _provider = provider;
             var client = new WebClient {Proxy = _globalService.WebProxy};
             _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(provider, new TwitterApi(ref client));
-
-            foreach (var monitor in globalService.TwitterSetting.Monitor)
-            {
-                if (monitor.Value.Enable)
-                {
-                    _manage.StartNewMonitor(monitor.Key, CallBack);
-                }
-            }
         }
 
         private async ValueTask<GroupMsgQuickOperation> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
@@ -68,7 +73,9 @@ namespace NoAcgNew.Handler
             {
                 foreach (var item in sendConfig.Group)
                 {
+                    await Task.Delay(1000);
                     if (content.Any()) await _api.SendGroupMsg(item, content);
+                    await Task.Delay(1000);
                     if (video.Any()) await _api.SendGroupMsg(item, video);
                 }
             }
@@ -77,7 +84,9 @@ namespace NoAcgNew.Handler
             {
                 foreach (var item in sendConfig.Private)
                 {
+                    await Task.Delay(1000);
                     if (content.Any()) await _api.SendPrivateMsg(item, null, content);
+                    await Task.Delay(1000);
                     if (video.Any()) await _api.SendPrivateMsg(item, null, video);
                 }
             }

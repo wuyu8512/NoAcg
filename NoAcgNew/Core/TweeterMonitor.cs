@@ -22,7 +22,7 @@ namespace NoAcgNew.Core
             _twitter = twitter;
             NewTweetEvent += (sender, tweet) => logger.LogDebug("{Name}有新的推文了", name);
             _userId = _twitter.GetUserID(name);
-            logger.LogDebug("本次监控用户ID为：{UserId}", _userId);
+            logger.LogInformation("本次监控用户ID为：{UserId}", _userId);
         }
 
         protected override void Handle()

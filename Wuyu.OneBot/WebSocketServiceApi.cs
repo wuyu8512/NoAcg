@@ -95,22 +95,24 @@ namespace Wuyu.OneBot
         }
 
         public async ValueTask<(ApiStatusType, int)> SendPrivateMsg(long userId, long? groupId,
-            IEnumerable<CQCode> message, bool autoEscape = false, CancellationToken cancellationToken = default)
+            IEnumerable<CQCode> message, bool? autoEscape = default, CancellationToken cancellationToken = default)
         {
             return await SendMsg(userId, groupId, message, autoEscape, cancellationToken);
         }
 
         public async ValueTask<(ApiStatusType, int)> SendGroupMsg(long groupId, IEnumerable<CQCode> message,
-            bool autoEscape = false,
+            bool? autoEscape = default,
             CancellationToken cancellationToken = default)
         {
             return await SendMsg(null, groupId, message, autoEscape, cancellationToken);
         }
 
+        
         public async ValueTask<(ApiStatusType, int)> SendMsg(long? userId, long? groupId, IEnumerable<CQCode> message,
-            bool autoEscape = false,
+            bool? autoEscape = default,
             CancellationToken cancellationToken = default)
         {
+            _logger.LogDebug("[SendMsg] User：{UserId} Group：{GroupId}", userId, groupId);
             var request = new ApiRequest<SendMessageParams>
             {
                 ApiRequestType = ApiRequestType.SendMsg,

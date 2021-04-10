@@ -37,7 +37,7 @@ namespace Wuyu.OneBot.Service
             task.Wait();
             _socket = task.Result;
             _api = ActivatorUtilities.CreateInstance<WebSocketServiceApi>(context.RequestServices, _socket);
-            
+
             logger.LogInformation("有新客户端连接了");
         }
 
@@ -57,15 +57,15 @@ namespace Wuyu.OneBot.Service
                     }
                     catch (SocketException e)
                     {
-                        _logger.LogWarning("[WebSocketService] {Msg}", e.Message);
+                        _logger.LogWarning(e, "[WebSocketService] {Msg}", e.Message);
                         return;
                     }
                     catch (WebSocketException e)
                     {
-                        _logger.LogWarning("[WebSocketService] {Msg}", e.InnerException?.Message);
+                        _logger.LogWarning(e, "[WebSocketService] {Msg}", e.InnerException?.Message);
                         return;
                     }
-                    
+
                     bufferList.AddRange(buffer[..result.Count]);
                     if (!result.EndOfMessage) continue;
                     if (!result.CloseStatus.HasValue)
@@ -89,7 +89,7 @@ namespace Wuyu.OneBot.Service
                 if (string.IsNullOrWhiteSpace(str)) return;
                 var json = JObject.Parse(str);
                 if (json.ContainsKey("post_type")) await _eventManager.Adapter(json, _api, str);
-                else if(json.ContainsKey("echo")) _api.OnApiReplay(json);
+                else if (json.ContainsKey("echo")) _api.OnApiReplay(json);
             }
             catch (JsonReaderException e)
             {

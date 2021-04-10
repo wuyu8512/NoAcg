@@ -15,19 +15,19 @@ namespace Wuyu.OneBot.Interfaces
 
 		public ValueTask<(ApiStatusType, int)> SendPrivateMsg(long userId, long? groupId,
 			IEnumerable<CQCode> message,
-			bool autoEscape = false,
+			bool? autoEscape = default,
 			CancellationToken cancellationToken = default
 			);
 		
 		public ValueTask<(ApiStatusType, int)> SendGroupMsg(long groupId,
 			IEnumerable<CQCode> message,
-			bool autoEscape = false,
+			bool? autoEscape = default,
 			CancellationToken cancellationToken = default
 		);
 
 		public ValueTask<(ApiStatusType, int)> SendMsg(long? userId, long? groupId,
 			IEnumerable<CQCode> message,
-			bool autoEscape = false,
+			bool? autoEscape = default,
 			CancellationToken cancellationToken = default);
 	}
 }

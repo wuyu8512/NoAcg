@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Enumeration;
@@ -14,10 +15,12 @@ namespace Wuyu.OneBot
     public class HttpApi : IOneBotApi
     {
         private readonly IOneBotHttpApi _api;
+        private readonly ILogger<HttpApi> _logger;
 
-        public HttpApi(IOneBotHttpApi api)
+        public HttpApi(IOneBotHttpApi api,ILogger<HttpApi> logger)
         {
             _api = api;
+            _logger = logger;
         }
 
         public OneBotApiType GetApiType()
@@ -26,23 +29,24 @@ namespace Wuyu.OneBot
         }
 
         public async ValueTask<(ApiStatusType, int)> SendPrivateMsg(long userId, long? groupId,
-            IEnumerable<CQCode> message, bool autoEscape = false,
+            IEnumerable<CQCode> message, bool? autoEscape = default,
             CancellationToken cancellationToken = default)
         {
             return await SendMsg(userId, groupId, message, autoEscape, cancellationToken);
         }
 
         public async ValueTask<(ApiStatusType, int)> SendGroupMsg(long groupId, IEnumerable<CQCode> message,
-            bool autoEscape = false,
+            bool? autoEscape = default,
             CancellationToken cancellationToken = default)
         {
             return await SendMsg(null, groupId, message, autoEscape, cancellationToken);
         }
 
         public async ValueTask<(ApiStatusType, int)> SendMsg(long? userId, long? groupId, IEnumerable<CQCode> message,
-            bool autoEscape = false,
+            bool? autoEscape = default,
             CancellationToken cancellationToken = default)
         {
+            _logger.LogDebug("[SendMsg] User：{UserId} Group：{GroupId}", userId, groupId);
             var replay = await _api.SendMsg(new SendMessageParams
             {
                 UserId = userId,
