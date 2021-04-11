@@ -55,9 +55,7 @@ namespace NoAcgNew.Handler
             {
                 var (data, rating) = await yandeService.GetHotImgAsync(_globalService.YandeSetting.HotImg.Rating);
                 var replay = CQCode.CQImage("base64://" + Convert.ToBase64String(data));
-                if (api.GetApiType() == OneBotApiType.Http) return (replay, 1);
-                await api.SendMsg(userId, groupId, new[] {replay});
-                return 1;
+                return (replay, 1);
             }
 
             foreach (var customTags in _globalService.YandeSetting.CustomTags)
@@ -80,7 +78,7 @@ namespace NoAcgNew.Handler
                 }
             }
 
-            return 0;
+            return null;
         }
     }
 }

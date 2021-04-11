@@ -16,6 +16,7 @@ using Wuyu.OneBot.Enumeration.ApiType;
 using Wuyu.OneBot.Expansion;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Models.ApiParams;
+using Wuyu.OneBot.Models.QuickOperation;
 
 namespace Wuyu.OneBot
 {
@@ -53,17 +54,18 @@ namespace Wuyu.OneBot
             }
         }
 
-        private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken)
+        private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken,bool waitReplay=true)
             where T : ApiRequest
         {
-            if (_socket.State != WebSocketState.Open) return (null, ApiStatusType.Error);;
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(request, Formatting.None));
+            if (_socket.State != WebSocketState.Open) return (null, ApiStatusType.Error);
+            var str = JsonConvert.SerializeObject(request);
+            var data = Encoding.UTF8.GetBytes(str);
             JObject replay = null;
             try
             {
                 await _socket.SendAsync(new ArraySegment<byte>(data), WebSocketMessageType.Text, true,
                     cancellationToken);
-                replay = await WaitReplay(request.Echo).WaitAsync(TimeSpan.FromSeconds(30));
+                if (waitReplay) replay = await WaitReplay(request.Echo).WaitAsync(TimeSpan.FromSeconds(30));
             }
             catch (TimeoutException e)
             {
@@ -107,7 +109,6 @@ namespace Wuyu.OneBot
             return await SendMsg(null, groupId, message, autoEscape, cancellationToken);
         }
 
-        
         public async ValueTask<(ApiStatusType, int)> SendMsg(long? userId, long? groupId, IEnumerable<CQCode> message,
             bool? autoEscape = default,
             CancellationToken cancellationToken = default)
@@ -128,6 +129,24 @@ namespace Wuyu.OneBot
             }
 
             return replay == null ? (statusType, 0) : (statusType, id);
+        }
+
+        internal async ValueTask<(ApiStatusType, JObject)> HandleQuickOperation<T>(JObject content, T operation,
+            CancellationToken cancellationToken = default)
+            where T : BaseQuickOperation
+        {
+            var request = new ApiRequest<JObject>
+            {
+                ApiParams = new JObject
+                {
+                    ["content"] = content,
+                    ["operation"] = JObject.FromObject(operation)
+                },
+                ApiRequestType = ApiRequestType.HandleQuickOperation
+            };
+
+            var (replay, statusType) = await SendRequest(request, cancellationToken);
+            return (statusType, replay);
         }
     }
 }

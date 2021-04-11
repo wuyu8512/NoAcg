@@ -57,7 +57,7 @@ namespace NoAcgNew.Handler
 
         private async ValueTask<GroupMsgQuickOperation> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
         {
-            return 0;
+            return null;
         }
 
         private async void CallBack(TweeterMonitor monitor, Tweet tweet)

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Wuyu.OneBot.Models.QuickOperation;
 
 namespace Wuyu.OneBot.Service
 {
@@ -88,7 +89,11 @@ namespace Wuyu.OneBot.Service
             {
                 if (string.IsNullOrWhiteSpace(str)) return;
                 var json = JObject.Parse(str);
-                if (json.ContainsKey("post_type")) await _eventManager.Adapter(json, _api, str);
+                if (json.ContainsKey("post_type"))
+                {
+                    var result = await _eventManager.Adapter(json, _api, str);
+                    if (result is BaseQuickOperation operation) await _api.HandleQuickOperation(json, operation);
+                }
                 else if (json.ContainsKey("echo")) _api.OnApiReplay(json);
             }
             catch (JsonReaderException e)

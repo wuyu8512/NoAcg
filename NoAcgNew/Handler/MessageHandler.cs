@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wuyu.OneBot;
+using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
@@ -23,12 +24,12 @@ namespace NoAcgNew.Handler
             _eventManager.OnPrivateMessage += async (args, api) =>
             {
                 _logger.LogDebug(args.MessageId, args.RawMessage);
-                return 0;
+                return CQCode.CQText(args.RawMessage);
             };
             _eventManager.OnGroupMessage += async (args, api) =>
             {
                 _logger.LogDebug(args.MessageId, args.RawMessage);
-                return 0;
+                return null;
             };
         }
     }

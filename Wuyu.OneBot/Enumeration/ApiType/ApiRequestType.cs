@@ -263,8 +263,12 @@ namespace Wuyu.OneBot.Enumeration.ApiType
         /// <summary>
         /// 发送群公告
         /// </summary>
-        [Description("_send_group_notice")] _SendGroupNotice
+        [Description("_send_group_notice")] _SendGroupNotice,
 
+        /// <summary>
+        /// 对事件执行快速操作
+        /// </summary>
+        [Description(".handle_quick_operation")] HandleQuickOperation
         #endregion
     }
 }
