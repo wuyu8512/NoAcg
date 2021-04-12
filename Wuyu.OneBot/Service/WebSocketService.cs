@@ -94,7 +94,7 @@ namespace Wuyu.OneBot.Service
                     var result = await _eventManager.Adapter(json, _api, str);
                     if (result is BaseQuickOperation operation) await _api.HandleQuickOperation(json, operation);
                 }
-                else if (json.ContainsKey("echo")) _api.OnApiReplay(json);
+                else if (json.ContainsKey("echo")) _api.OnApiReply(json);
             }
             catch (JsonReaderException e)
             {

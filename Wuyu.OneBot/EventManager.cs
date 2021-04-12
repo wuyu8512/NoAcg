@@ -492,7 +492,7 @@ namespace Wuyu.OneBot
             IOneBotApi api, string rawMsg)
             where T : EventArgs where TResult : BaseQuickOperation
         {
-            TResult replay = null;
+            TResult reply = null;
             foreach (var @delegate in handler.GetInvocationList())
             {
                 var func = (EventCallBackHandler<T, TResult>) @delegate;
@@ -501,7 +501,7 @@ namespace Wuyu.OneBot
                 {
                     var result = await func(args, api);
                     if (result == null) continue;
-                    replay = result;
+                    reply = result;
                     code = result.Code;
                 }
                 catch (Exception e)
@@ -512,7 +512,7 @@ namespace Wuyu.OneBot
                 if (code == 1) break;
             }
 
-            return replay;
+            return reply;
         }
 
         #endregion

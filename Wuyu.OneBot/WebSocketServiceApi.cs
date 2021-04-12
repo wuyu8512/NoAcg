@@ -23,64 +23,64 @@ namespace Wuyu.OneBot
     public class WebSocketServiceApi : IOneBotApi
     {
         private readonly WebSocket _socket;
-        private readonly Hashtable _replayTable;
+        private readonly Hashtable _replyTable;
         private readonly ILogger<WebSocketServiceApi> _logger;
 
         public WebSocketServiceApi(WebSocket socket, ILogger<WebSocketServiceApi> logger)
         {
             _socket = socket;
-            _replayTable = Hashtable.Synchronized(new Hashtable());
+            _replyTable = Hashtable.Synchronized(new Hashtable());
             _logger = logger;
         }
 
-        internal void OnApiReplay(JObject json)
+        internal void OnApiReply(JObject json)
         {
             var guid = json["echo"].ToObject<Guid>();
-            _replayTable[guid] = json;
+            _replyTable[guid] = json;
         }
 
-        private async Task<JObject> WaitReplay(Guid guid)
+        private async Task<JObject> WaitReply(Guid guid)
         {
             while (true)
             {
-                if (_replayTable.ContainsKey(guid))
+                if (_replyTable.ContainsKey(guid))
                 {
-                    var replay = _replayTable[guid] as JObject;
-                    _replayTable.Remove(guid);
-                    return replay;
+                    var reply = _replyTable[guid] as JObject;
+                    _replyTable.Remove(guid);
+                    return reply;
                 }
 
                 await Task.Delay(50);
             }
         }
 
-        private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken,bool waitReplay=true)
+        private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken,bool waitreply=true)
             where T : ApiRequest
         {
             if (_socket.State != WebSocketState.Open) return (null, ApiStatusType.Error);
             var str = JsonConvert.SerializeObject(request);
             var data = Encoding.UTF8.GetBytes(str);
-            JObject replay = null;
+            JObject reply = null;
             try
             {
                 await _socket.SendAsync(new ArraySegment<byte>(data), WebSocketMessageType.Text, true,
                     cancellationToken);
-                if (waitReplay) replay = await WaitReplay(request.Echo).WaitAsync(TimeSpan.FromSeconds(30));
+                if (waitreply) reply = await WaitReply(request.Echo).WaitAsync(TimeSpan.FromSeconds(30));
             }
             catch (TimeoutException e)
             {
                 _logger.LogError(e, "[SendRequest]Api请求等待超时，可能没有执行成功，执行的请求[{Request}]", request.ApiRequestType);
-                return (replay, ApiStatusType.TimeOut);
+                return (reply, ApiStatusType.TimeOut);
             }
             catch (SocketException e)
             {
                 _logger.LogError(e, "[SendRequest] {Request}", request.ApiRequestType);
-                return (replay, ApiStatusType.Error);
+                return (reply, ApiStatusType.Error);
             }
             catch (WebSocketException e)
             {
                 _logger.LogError(e, "[SendRequest] {Request}", request.ApiRequestType);
-                return (replay, ApiStatusType.Error);
+                return (reply, ApiStatusType.Error);
             }
             catch (TaskCanceledException)
             {
@@ -88,7 +88,7 @@ namespace Wuyu.OneBot
             }
 
             // TODO ApiStatusType解析
-            return (replay, ApiStatusType.Ok);
+            return (reply, ApiStatusType.Ok);
         }
 
         public OneBotApiType GetApiType()
@@ -121,14 +121,14 @@ namespace Wuyu.OneBot
                     {UserId = userId, GroupId = groupId, Message = message, AutoEscape = autoEscape}
             };
 
-            var (replay, statusType) = await SendRequest(request, cancellationToken);
+            var (reply, statusType) = await SendRequest(request, cancellationToken);
             var id = -1;
-            if (replay?["data"] is JObject data && data.ContainsKey("message_id"))
+            if (reply?["data"] is JObject data && data.ContainsKey("message_id"))
             {
                 id = data["message_id"]?.ToObject<int>() ?? -1;
             }
 
-            return replay == null ? (statusType, 0) : (statusType, id);
+            return reply == null ? (statusType, 0) : (statusType, id);
         }
 
         internal async ValueTask<(ApiStatusType, JObject)> HandleQuickOperation<T>(JObject content, T operation,
@@ -139,14 +139,14 @@ namespace Wuyu.OneBot
             {
                 ApiParams = new JObject
                 {
-                    ["content"] = content,
+                    ["context"] = content,
                     ["operation"] = JObject.FromObject(operation)
                 },
                 ApiRequestType = ApiRequestType.HandleQuickOperation
             };
 
-            var (replay, statusType) = await SendRequest(request, cancellationToken);
-            return (statusType, replay);
+            var (reply, statusType) = await SendRequest(request, cancellationToken);
+            return (statusType, reply);
         }
     }
 }

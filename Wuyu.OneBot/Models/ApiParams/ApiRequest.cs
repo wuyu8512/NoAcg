@@ -5,16 +5,6 @@ using Wuyu.OneBot.Enumeration.ApiType;
 
 namespace Wuyu.OneBot.Models.ApiParams
 {
-    public sealed class ApiRequest<T> : ApiRequest
-    {
-        /// <summary>
-        /// API参数对象
-        /// 不需要请使用非泛型版本
-        /// </summary>
-        [JsonProperty(PropertyName = "params",NullValueHandling = NullValueHandling.Ignore)]
-        internal T ApiParams { get; set; }
-    }
-    
     public class ApiRequest
     {
         /// <summary>
@@ -30,5 +20,15 @@ namespace Wuyu.OneBot.Models.ApiParams
         /// </summary>
         [JsonProperty(PropertyName = "echo")]
         internal Guid Echo { get; set; } = Guid.NewGuid();
+    }
+    
+    public sealed class ApiRequest<T> : ApiRequest
+    {
+        /// <summary>
+        /// API参数对象
+        /// 不需要请使用非泛型版本
+        /// </summary>
+        [JsonProperty(PropertyName = "params",NullValueHandling = NullValueHandling.Ignore)]
+        internal T ApiParams { get; set; }
     }
 }

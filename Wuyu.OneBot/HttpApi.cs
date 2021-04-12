@@ -47,7 +47,7 @@ namespace Wuyu.OneBot
             CancellationToken cancellationToken = default)
         {
             _logger.LogDebug("[SendMsg] User：{UserId} Group：{GroupId}", userId, groupId);
-            var replay = await _api.SendMsg(new SendMessageParams
+            var reply = await _api.SendMsg(new SendMessageParams
             {
                 UserId = userId,
                 GroupId = groupId,
@@ -56,13 +56,13 @@ namespace Wuyu.OneBot
             }, cancellationToken);
 
             var id = -1;
-            if (replay?["data"] is JObject data && data.ContainsKey("message_id"))
+            if (reply?["data"] is JObject data && data.ContainsKey("message_id"))
             {
                 id = data["message_id"]?.ToObject<int>() ?? -1;
             }
 
             // TODO ApiStatusType解析
-            return replay == null ? (ApiStatusType.Error, 0) : (ApiStatusType.Ok, id);
+            return reply == null ? (ApiStatusType.Error, 0) : (ApiStatusType.Ok, id);
         }
     }
 }

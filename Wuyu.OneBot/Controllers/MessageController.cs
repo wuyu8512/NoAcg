@@ -39,7 +39,7 @@ namespace Wuyu.OneBot.Controllers
             var result = await _eventManager.Adapter(json, _api, rawMsg);
             return result switch
             {
-                BaseQuickOperation replay => Ok(JsonConvert.SerializeObject(replay, Formatting.None)),
+                BaseQuickOperation reply => Ok(JsonConvert.SerializeObject(reply, Formatting.None)),
                 _ => Ok()
             };
         }
