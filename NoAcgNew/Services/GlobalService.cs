@@ -34,7 +34,6 @@ namespace NoAcgNew.Services
             token.RegisterChangeCallback(o =>
             {
                 Load(null);
-                ReLoad();
             }, null);
             ReLoad();
         }
