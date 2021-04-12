@@ -219,11 +219,12 @@ namespace Wuyu.OneBot.Entities.CQCodes
         /// <summary>
         /// 视频CQ码
         /// </summary>
-        /// <param name="data">视频名/绝对路径/URL/base64</param>
+        /// <param name="data">视频, 绝对路径/URL</param>
+        /// <param name="cover">视频封面, 支持http, file和base64发送, 格式必须为jpg</param>
         /// <param name="useCache">是否使用已缓存的文件</param>
         /// <param name="useProxy">是否通过代理下载文件</param>
         /// <param name="timeout">超时时间，默认为<see langword="null"/>(不超时)</param>
-        public static CQCode CQVideo(string data, bool useCache = true, bool useProxy = true, int? timeout = null)
+        public static CQCode CQVideo(string data,string cover = null, bool useCache = true, bool useProxy = true, int? timeout = null)
         {
             var (dataStr, isDataStr) = ParseDataStr(data);
             if (!isDataStr)
@@ -235,7 +236,8 @@ namespace Wuyu.OneBot.Entities.CQCodes
             return new CQCode(CQCodeType.Video,
                 new Video
                 {
-                    VideoFile = dataStr,
+                    VideoUrl = dataStr,
+                    Cover = cover,
                     Cache = useCache ? 1 : null,
                     Proxy = useProxy ? 1 : null,
                     Timeout = timeout
@@ -527,7 +529,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         /// <para><see langword="retStr"/>处理后数据字符串</para>
         /// <para><see langword="isMatch"/>是否为合法数据字符串</para>
         /// </returns>
-        internal static (string retStr, bool isMatch) ParseDataStr(string dataStr)
+        private static (string retStr, bool isMatch) ParseDataStr(string dataStr)
         {
             if (string.IsNullOrEmpty(dataStr)) return (null, false);
             var isMatch = false;

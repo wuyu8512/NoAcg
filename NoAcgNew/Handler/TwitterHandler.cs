@@ -125,7 +125,7 @@ namespace NoAcgNew.Handler
                             {
                                 img.Add(CQCode.CQText(mp4["url"].ToString()));
                                 var data = HttpNet.Get(mp4["url"].ToString(), proxy: _globalService.WebProxy);
-                                var tempPath = AppDomain.CurrentDomain.BaseDirectory + "/Cache/" +
+                                var tempPath = AppDomain.CurrentDomain.BaseDirectory + "Cache/" +
                                                HashHelp.MD5Encrypt(data) + ".mp4";
                                 File.WriteAllBytes(tempPath, data);
                                 img.Add(CQCode.CQVideo(tempPath, useCache: true));

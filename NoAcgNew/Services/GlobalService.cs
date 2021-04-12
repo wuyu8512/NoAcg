@@ -13,17 +13,33 @@ namespace NoAcgNew.Services
         public GlobalService(IConfiguration configuration)
         {
             _configuration = configuration;
-            WebProxy = configuration.GetSection("Proxy").Get<WebProxy>();
-            YandeSetting.HotImg = configuration.GetSection("Yande").GetSection("HotImg")
+            Load(null);
+        }
+
+        private void ReLoad()
+        {
+            WebProxy = _configuration.GetSection("Proxy").Get<WebProxy>();
+            YandeSetting.HotImg = _configuration.GetSection("Yande").GetSection("HotImg")
                 .Get<YandeSetting.HotImgSetting>();
-            YandeSetting.CustomTags = configuration.GetSection("Yande").GetSection("CustomTags")
+            YandeSetting.CustomTags = _configuration.GetSection("Yande").GetSection("CustomTags")
                 .Get<YandeSetting.CustomTagsSetting[]>();
 
-            TwitterSetting.Monitor = configuration.GetSection("Twitter").GetSection("Monitor")
+            TwitterSetting.Monitor = _configuration.GetSection("Twitter").GetSection("Monitor")
                 .Get<TwitterSetting.MonitorSetting[]>().ToDictionary(m => m.Name);
         }
 
-        public WebProxy WebProxy { get; }
+        private void Load(object obj)
+        {            
+            var token = _configuration.GetReloadToken();
+            token.RegisterChangeCallback(o =>
+            {
+                Load(null);
+                ReLoad();
+            }, null);
+            ReLoad();
+        }
+        
+        public WebProxy WebProxy { get; private set; }
         public YandeSetting YandeSetting { get; } = new();
         public TwitterSetting TwitterSetting { get; } = new();
     }
