@@ -12,11 +12,6 @@ namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
         [JsonProperty(PropertyName = "auto_escape", NullValueHandling = NullValueHandling.Ignore)]
         public bool? AutoEscape { get; set; }
 
-        public static implicit operator BaseMsgQuickOperation(int code) => new() {Code = code};
-
-        public static implicit operator BaseMsgQuickOperation(CQCode code) => new() {Reply = new[] {code}};
-
-        public static implicit operator BaseMsgQuickOperation((CQCode msg, int code) data) =>
-            new() {Reply = new[] {data.msg}, Code = data.code};
+        public static implicit operator BaseMsgQuickOperation(CQCode msg) => new() {Reply = new[] {msg}};
     }
 }

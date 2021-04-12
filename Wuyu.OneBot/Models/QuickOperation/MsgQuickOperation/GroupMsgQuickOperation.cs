@@ -20,14 +20,11 @@ namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
         [JsonProperty(PropertyName = "ban_duration", NullValueHandling = NullValueHandling.Ignore)]
         public long? BanDuration { get; set; }
 
-        public static implicit operator GroupMsgQuickOperation(int code) => new() {Code = code};
-
         public static implicit operator GroupMsgQuickOperation(CQCode code) => new() {Reply = new[] {code}};
 
         public GroupMsgQuickOperation(BaseMsgQuickOperation baseMsg)
         {
             Reply = baseMsg.Reply;
-            Code = baseMsg.Code;
             AutoEscape = baseMsg.AutoEscape;
         }
 

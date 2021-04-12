@@ -31,19 +31,20 @@ namespace NoAcgNew.Handler
             _provider = provider;
         }
 
-        private async ValueTask<GroupMsgQuickOperation> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
+        private async ValueTask<(int, GroupMsgQuickOperation)?> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
         {
             var result = await Handler(args, api);
-            return result is null ? null : new GroupMsgQuickOperation(result);
+            return result.HasValue ? (result.Value.Item1, new GroupMsgQuickOperation(result.Value.Item2)) : null;
         }
 
-        private async ValueTask<PrivateMsgQuickOperation> OnPrivateMessage(PrivateMsgEventArgs args, IOneBotApi api)
+        private async ValueTask<(int, PrivateMsgQuickOperation)?> OnPrivateMessage(PrivateMsgEventArgs args,
+            IOneBotApi api)
         {
             var result = await Handler(args, api);
-            return result is null ? null : new PrivateMsgQuickOperation(result);
+            return result.HasValue ? (result.Value.Item1, new PrivateMsgQuickOperation(result.Value.Item2)) : null;
         }
 
-        private async ValueTask<BaseMsgQuickOperation> Handler(BaseMessageEventArgs args, IOneBotApi api)
+        private async ValueTask<(int, BaseMsgQuickOperation)?> Handler(BaseMessageEventArgs args, IOneBotApi api)
         {
             long? groupId = null;
             long? userId = null;
@@ -55,7 +56,7 @@ namespace NoAcgNew.Handler
             {
                 var (data, rating) = await yandeService.GetHotImgAsync(_globalService.YandeSetting.HotImg.Rating);
                 var replay = CQCode.CQImage("base64://" + Convert.ToBase64String(data));
-                return (replay, 1);
+                return (1, replay);
             }
 
             foreach (var customTags in _globalService.YandeSetting.CustomTags)
@@ -74,7 +75,7 @@ namespace NoAcgNew.Handler
                         });
                     }
 
-                    return 1;
+                    return (1, null);
                 }
             }
 

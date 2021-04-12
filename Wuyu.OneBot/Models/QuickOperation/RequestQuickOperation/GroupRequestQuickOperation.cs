@@ -9,7 +9,5 @@ namespace Wuyu.OneBot.Models.QuickOperation.RequestQuickOperation
         /// </summary>
         [JsonProperty(PropertyName = "reason", NullValueHandling = NullValueHandling.Ignore)]
         public string Reason { get; set; }
-
-        public static implicit operator GroupRequestQuickOperation(int code) => new() {Code = code};
     }
 }
