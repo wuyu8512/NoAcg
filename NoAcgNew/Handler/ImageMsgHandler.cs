@@ -34,14 +34,20 @@ namespace NoAcgNew.Handler
         private async ValueTask<(int, GroupMsgQuickOperation)?> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
         {
             var result = await Handler(args, api);
-            return result.HasValue ? (result.Value.Item1, new GroupMsgQuickOperation(result.Value.Item2)) : null;
+            return result.HasValue
+                ? (result.Value.Item1,
+                    result.Value.Item2 != null ? new GroupMsgQuickOperation(result.Value.Item2) : null)
+                : null;
         }
 
         private async ValueTask<(int, PrivateMsgQuickOperation)?> OnPrivateMessage(PrivateMsgEventArgs args,
             IOneBotApi api)
         {
             var result = await Handler(args, api);
-            return result.HasValue ? (result.Value.Item1, new PrivateMsgQuickOperation(result.Value.Item2)) : null;
+            return result.HasValue
+                ? (result.Value.Item1,
+                    result.Value.Item2 != null ? new PrivateMsgQuickOperation(result.Value.Item2) : null)
+                : null;
         }
 
         private async ValueTask<(int, BaseMsgQuickOperation)?> Handler(BaseMessageEventArgs args, IOneBotApi api)
