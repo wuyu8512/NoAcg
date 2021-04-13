@@ -26,7 +26,7 @@ namespace NoAcgNew.Handler
         private readonly ILogger<TwitterHandler> _logger;
         private readonly GlobalService _globalService;
         private readonly IServiceProvider _provider;
-        private readonly TweeterMonitorManage _manage;
+        private TweeterMonitorManage _manage;
         private IOneBotApi _api;
         private bool _isStart;
 
@@ -43,6 +43,13 @@ namespace NoAcgNew.Handler
                 {
                     foreach (var monitor in globalService.TwitterSetting.Monitor.Where(monitor => monitor.Value.Enable))
                     {
+                        if (_manage == null)
+                        {
+                            var client = new WebClient {Proxy = _globalService.WebProxy};
+                            _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(provider,
+                                new TwitterApi(ref client));
+                        }
+
                         _manage.StartNewMonitor(monitor.Key, CallBack);
                     }
 
@@ -51,11 +58,9 @@ namespace NoAcgNew.Handler
             };
             _globalService = globalService;
             _provider = provider;
-            var client = new WebClient {Proxy = _globalService.WebProxy};
-            _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(provider, new TwitterApi(ref client));
         }
 
-        private async ValueTask<(int,GroupMsgQuickOperation)?> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
+        private async ValueTask<(int, GroupMsgQuickOperation)?> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
         {
             return null;
         }

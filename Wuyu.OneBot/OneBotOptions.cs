@@ -8,7 +8,7 @@ namespace Wuyu.OneBot
         public bool EnableWebSocketService { get; set; }
         public bool EnableWebSocketClient { get; set; }
         public string WebSocketServiceUrl { get; set; } = "/Universal";
-        public string WebSocketClientUrl { get; set; } = "ws://172.18.0.254:6700";
+        public string WebSocketClientUrl { get; set; }
         public bool EnableHttpPost { get; set; }
         public IConfigurationSection HttpApi { get; set; }
     }

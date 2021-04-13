@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -56,8 +57,11 @@ namespace NoAcgNew.Handler
             long? userId = null;
             if (args is GroupMsgEventArgs groupArgs) groupId = groupArgs.GroupId;
             else userId = args.UserId;
-
-            var yandeService = ActivatorUtilities.CreateInstance<YandeService>(_provider, _globalService.WebProxy);
+            YandeService yandeService;
+            if (_globalService.WebProxy == null)
+                yandeService = ActivatorUtilities.CreateInstance<YandeService>(_provider);
+            else
+                yandeService = ActivatorUtilities.CreateInstance<YandeService>(_provider, _globalService.WebProxy);
             if (args.RawMessage == _globalService.YandeSetting.HotImg.Command)
             {
                 var (data, rating) = await yandeService.GetHotImgAsync(_globalService.YandeSetting.HotImg.Rating);

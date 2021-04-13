@@ -10,6 +10,7 @@ using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
 using Wuyu.OneBot.Service;
+using Microsoft.Extensions.Hosting;
 
 namespace Wuyu.OneBot
 {
@@ -39,6 +40,11 @@ namespace Wuyu.OneBot
                 services.ConfigureHttpApi<IOneBotHttpApi>(Options.HttpApi);
             }
 
+            if (Options.EnableWebSocketClient && string.IsNullOrWhiteSpace(Options.WebSocketClientUrl))
+            {
+                throw new ArgumentException("开启了WebSocketClient但没有传递OneBot的WebSocket Url设置");
+            }
+            
             return services;
         }
 
@@ -60,29 +66,30 @@ namespace Wuyu.OneBot
 
             if (Options.EnableWebSocketClient)
             {
+                var lifetime = app.ApplicationServices.GetRequiredService<IHostApplicationLifetime>();           
                 Task.Run(async () =>
                 {
-                    var token = new CancellationTokenSource();
-                    while (true)
+                    while (lifetime.ApplicationStopping.CanBeCanceled)
                     {
                         try
                         {
                             var clientWebSocket = new ClientWebSocket();
-                            await clientWebSocket.ConnectAsync(new Uri(Options.WebSocketClientUrl), token.Token);
-                            var h = ActivatorUtilities.CreateInstance<WebSocketService>(app.ApplicationServices, clientWebSocket,
-                                token.Token);
+                            await clientWebSocket.ConnectAsync(new Uri(Options.WebSocketClientUrl), lifetime.ApplicationStopping);
+                            var h = ActivatorUtilities.CreateInstance<WebSocketService>(app.ApplicationServices,
+                                clientWebSocket, lifetime.ApplicationStopping);
                             await h.EchoLoop();
-                            clientWebSocket.Dispose();
+                            h.Dispose();
                         }
                         catch (Exception e)
                         {
                             logger.LogError(e, "连接OneBot WebSocket服务器失败，Url：{Url}", Options.WebSocketClientUrl);
                         }
-                        await Task.Delay(3000, token.Token);
+
+                        await Task.Delay(5000, lifetime.ApplicationStopping);
                     }
                 });
             }
-            
+
             ApplicationLogging.LoggerFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
         }
     }

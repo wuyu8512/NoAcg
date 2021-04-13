@@ -115,8 +115,6 @@ namespace Wuyu.OneBot.Service
 
             if (disposing)
             {
-                _cancellationToken?.Cancel();
-                _cancellationToken?.Dispose();
                 _socket?.Dispose();
             }
 
