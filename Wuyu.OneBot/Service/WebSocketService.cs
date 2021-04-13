@@ -26,23 +26,22 @@ namespace Wuyu.OneBot.Service
         private readonly EventManager _eventManager;
         private readonly ILogger<WebSocketService> _logger;
 
-        public WebSocketService(IHostApplicationLifetime applicationLifetime, HttpContext context,
+        public WebSocketService(IHostApplicationLifetime applicationLifetime, WebSocket socket,
             EventManager eventManager,
-            ILogger<WebSocketService> logger)
+            ILogger<WebSocketService> logger, IServiceProvider serviceProvider,
+            CancellationToken cancellationToken = default)
         {
             _eventManager = eventManager;
             _logger = logger;
             applicationLifetime.ApplicationStopping.Register(Dispose);
-            _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
-            var task = context.WebSockets.AcceptWebSocketAsync();
-            task.Wait();
-            _socket = task.Result;
-            _api = ActivatorUtilities.CreateInstance<WebSocketServiceApi>(context.RequestServices, _socket);
+            _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            _socket = socket;
+            _api = ActivatorUtilities.CreateInstance<WebSocketServiceApi>(serviceProvider, _socket);
 
             logger.LogInformation("有新客户端连接了");
         }
 
-        private async ValueTask EchoLoop()
+        internal async ValueTask EchoLoop()
         {
             _eventManager.Connection(_api);
             while (true)
@@ -127,12 +126,14 @@ namespace Wuyu.OneBot.Service
         private static async Task Acceptor(HttpContext context, Func<Task> next)
         {
             if (!context.WebSockets.IsWebSocketRequest) return;
-            var h = ActivatorUtilities.CreateInstance<WebSocketService>(context.RequestServices, context);
+            var socket = await context.WebSockets.AcceptWebSocketAsync();
+            var h = ActivatorUtilities.CreateInstance<WebSocketService>(context.RequestServices, socket,
+                context.RequestAborted);
             await h.EchoLoop();
             h.Dispose();
         }
 
-        public static void Map(IApplicationBuilder app)
+        internal static void Map(IApplicationBuilder app)
         {
             app.UseWebSockets();
             app.Use(Acceptor);
