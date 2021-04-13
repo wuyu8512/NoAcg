@@ -16,25 +16,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj" />
+      <ProjectReference Include="..\..\..\C#\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj" />
       <ProjectReference Include="..\Wuyu.OneBot\Wuyu.OneBot.csproj" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Api" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Content Update="Setting\yande.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
-      <Content Update="Setting\twitter.json">
-        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-      </Content>
     </ItemGroup>
 
 </Project>
