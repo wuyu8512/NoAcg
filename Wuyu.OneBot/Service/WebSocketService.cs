@@ -18,7 +18,7 @@ namespace Wuyu.OneBot.Service
 {
     public sealed class WebSocketService : IDisposable
     {
-        private const int BufferSize = 1024;
+        private const int BufferSize = 4096;
         private bool _disposed;
         private readonly WebSocket _socket;
         private readonly WebSocketServiceApi _api;
@@ -37,8 +37,7 @@ namespace Wuyu.OneBot.Service
             _cancellationToken = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
             _socket = socket;
             _api = ActivatorUtilities.CreateInstance<WebSocketServiceApi>(serviceProvider, _socket);
-
-            logger.LogInformation("有新客户端连接了");
+            logger.LogInformation(socket is ClientWebSocket ? "已经成功连接上了服务端" : "有新客户端连接了");
         }
 
         internal async ValueTask EchoLoop()

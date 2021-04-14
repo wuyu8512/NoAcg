@@ -8,6 +8,7 @@ using Wuyu.OneBot;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
+
 namespace NoAcgNew.Handler
 {
     public class MessageHandler
