@@ -26,7 +26,7 @@ namespace NoAcgNew
                         o =>
                         {
                             foreach (var jsonFilename in Directory.EnumerateFiles(
-                                AppDomain.CurrentDomain.BaseDirectory + "Setting", "*.json",
+                                Directory.GetCurrentDirectory() + "\\Setting", "*.json",
                                 SearchOption.AllDirectories))
                                 o.AddJsonFile(jsonFilename, optional: true, reloadOnChange: true);
                         });

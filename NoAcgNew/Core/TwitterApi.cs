@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,147 +13,112 @@ namespace NoAcgNew.Core
 {
     public class TwitterApi
     {
-        private WebClient _webClient;
+        private readonly HttpClient _client;
+        private static TweetConfig TweetCache { get; } = new();
 
-        private string _header =
-            "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36";
-
-        public string Authorization => _webClient.Headers["authorization"];
-        public string Path { get; private set; }
-        public string Token => _webClient.Headers["x-guest-token"];
-        public static TweetConfig TweetCache { get; set; } = new TweetConfig();
-
-        public TwitterApi(ref WebClient webClient, bool userCache = true)
+        public TwitterApi(HttpMessageHandler handler)
         {
-            _webClient = webClient;
-            lock (TweetCache)
-            {
-                if (userCache)
-                {
-                    if (string.IsNullOrWhiteSpace(TweetCache.Authorization) ||
-                        string.IsNullOrWhiteSpace(TweetCache.Path))
-                    {
-                        GetAuthorization();
-                    }
-                    else
-                    {
-                        webClient.Headers["authorization"] = TweetCache.Authorization;
-                        Path = TweetCache.Path;
-                    }
-
-                    if (string.IsNullOrWhiteSpace(TweetCache.Token)) GetToken();
-                    else webClient.Headers["x-guest-token"] = TweetCache.Token;
-                }
-                else
-                {
-                    GetAuthorization();
-                    GetToken();
-                }
-
-                TweetCache.Authorization = this.Authorization;
-                TweetCache.Path = this.Path;
-                TweetCache.Token = this.Token;
-            }
+            _client = new HttpClient(handler, false);
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36");
         }
 
-        protected void GetAuthorization()
+        public async Task InitAuthorizationAsync()
         {
-            string @string;
+            if (string.IsNullOrWhiteSpace(TweetCache.Authorization) ||
+                string.IsNullOrWhiteSpace(TweetCache.Path))
+            {
+                await GetAuthorizationAsync();
+            }
+
+            if (string.IsNullOrWhiteSpace(TweetCache.Token)) await GetTokenAsync();
+        }
+
+        private async ValueTask GetAuthorizationAsync()
+        {
+            string html;
             try
             {
-                lock (_webClient)
-                {
-                    _webClient.Headers.Add(_header);
-                    @string = Encoding.UTF8.GetString(_webClient.DownloadData("https://twitter.com/"));
-                }
+                html = Encoding.UTF8.GetString(await _client.GetByteArrayAsync("https://twitter.com/"));
             }
-            catch (WebException e)
+            catch (HttpRequestException e)
             {
                 LogHelp.WriteLine(e.ToString());
-                if (e.Status == WebExceptionStatus.ProtocolError)
+                if (e.StatusCode == HttpStatusCode.TooManyRequests)
                 {
                     LogHelp.WriteLine("进入等待");
-                    Task.Delay(5 * 60 * 1000).Wait();
+                    await Task.Delay(5 * 60 * 1000);
                 }
 
                 return;
             }
 
-            Regex regex = new Regex("https([^\"]*?)/main\\.([^\"]*?)\\.js");
-            string text = regex.Match(@string).Value;
+            var text = Regex.Match(html, "https([^\"]*?)/main\\.([^\"]*?)\\.js").Value;
             string string2;
-            lock (_webClient)
-            {
-                string2 = Encoding.UTF8.GetString(_webClient.DownloadData(text));
-            }
-
-            Regex regex2 = new Regex("\"(A{5,}.*?)\"");
-            string value = "Bearer " + regex2.Match(string2).Groups[1].Value;
-            _webClient.Headers["authorization"] = value;
-            Path = new Regex("queryId:\"([a-zA-Z0-9-_]*?)\",operationName:\"UserByScreenName\"").Match(string2)
-                .Groups[1].Value;
-        }
-
-        protected void GetToken()
-        {
-            string value2 = string.Empty;
-            //webClient.Headers["x-guest-token"] = value2;
             try
             {
-                lock (_webClient)
-                {
-                    value2 = JObject.Parse(Encoding.UTF8.GetString(
-                        _webClient.UploadData("https://api.twitter.com/1.1/guest/activate.json", new byte[0])))[
-                        "guest_token"].ToString();
-                }
-
-                _webClient.Headers["x-guest-token"] = value2;
+                string2 = await _client.GetStringAsync(text);
             }
-            catch (WebException)
+            catch (HttpRequestException e)
             {
-                _webClient = new WebClient() {Proxy = _webClient.Proxy};
-                GetAuthorization();
+                LogHelp.WriteLine(e.ToString());
+                return;
             }
+            
+            var value = "Bearer " + Regex.Match(string2, "\"(A{5,}.*?)\"").Groups[1].Value;
+            TweetCache.Authorization = value;
+
+            TweetCache.Path = new Regex("queryId:\"([a-zA-Z0-9-_]*?)\",operationName:\"UserByScreenName\"")
+                .Match(string2)
+                .Groups[1].Value;
+            
+            _client.DefaultRequestHeaders.Remove("authorization");
+            _client.DefaultRequestHeaders.Add("authorization", TweetCache.Authorization);
         }
 
-        public string GetUserID(string userName)
+        private async ValueTask GetTokenAsync()
         {
-            string text2 =
-                $"https://api.twitter.com/graphql/{Path}/UserByScreenName?variables=%7B%22screen_name%22%3A%22{userName}%22%2C%22withHighlightedLabel%22%3Afalse%7D";
-            lock (_webClient)
+            try
             {
-                return JObject.Parse(Encoding.UTF8.GetString(_webClient.DownloadData(text2)))["data"]["user"]["rest_id"]
-                    .ToString();
+                var response = await _client.PostAsync("https://api.twitter.com/1.1/guest/activate.json",
+                    new ByteArrayContent(Array.Empty<byte>()));
+                var token = JObject.Parse(await response.Content.ReadAsStringAsync())["guest_token"]?.ToString();
+                TweetCache.Token = token;
             }
+            catch (HttpRequestException)
+            {
+                await GetAuthorizationAsync();
+            }
+            _client.DefaultRequestHeaders.Remove("x-guest-token");
+            _client.DefaultRequestHeaders.Add("x-guest-token", TweetCache.Token);
         }
 
-        public Tweet[] GetTweets(string userId)
+        public async ValueTask<string> GetUserIDAsync(string userName)
         {
-            string address =
+            var url =
+                $"https://api.twitter.com/graphql/{TweetCache.Path}/UserByScreenName?variables=%7B%22screen_name%22%3A%22{userName}%22%2C%22withHighlightedLabel%22%3Afalse%7D";
+            var str = await _client.GetStringAsync(url);
+            var json = JObject.Parse(str);
+            return json["data"]["user"]["result"]["rest_id"].ToString();
+        }
+
+        public async ValueTask<Tweet[]> GetTweetsAsync(string userId)
+        {
+            var address =
                 $"https://api.twitter.com/2/timeline/profile/{userId}.json?tweet_mode=extended&simple_quoted_tweet=true";
             string string3;
             try
             {
-                lock (_webClient)
-                {
-                    string3 = Encoding.UTF8.GetString(_webClient.DownloadData(address));
-                }
+                string3 = await _client.GetStringAsync(address);
             }
-            catch (WebException e)
+            catch (HttpRequestException e)
             {
-                LogHelp.WriteLine(e.ToString());
-                if (int.TryParse(e.Response.Headers["status"], out int status))
-                {
-                    LogHelp.WriteLine(e.ToString());
-                    LogHelp.WriteLine("状态码", status.ToString());
-                }
-
-                GetToken();
+                await GetTokenAsync();
                 return null;
             }
 
             var json = JObject.Parse(string3);
-            List<Tweet> tweets = new List<Tweet>();
+            var tweets = new List<Tweet>();
             foreach (var item in json["timeline"]["instructions"][0]["addEntries"]["entries"])
             {
                 var entryId = item["entryId"].ToString();
@@ -169,13 +135,14 @@ namespace NoAcgNew.Core
 
         private static void ParseTweet(JObject json, string tweetId, out Tweet tweet)
         {
-            var temp = json["globalObjects"]["tweets"][tweetId] as JObject;
-            if (temp != null)
+            if (json["globalObjects"]["tweets"][tweetId] is JObject temp)
             {
-                tweet = new Tweet();
-                tweet.Id = tweetId;
-                tweet.CreatTime = DateTime.ParseExact(temp["created_at"].ToString(), "ddd MMM dd HH:mm:ss zzz yyyy",
-                    CultureInfo.InvariantCulture);
+                tweet = new Tweet
+                {
+                    Id = tweetId,
+                    CreatTime = DateTime.ParseExact(temp["created_at"].ToString(), "ddd MMM dd HH:mm:ss zzz yyyy",
+                        CultureInfo.InvariantCulture)
+                };
                 var isRetweet = temp.ContainsKey("retweeted_status_id_str");
                 var userId = temp["user_id_str"].ToString();
                 tweet.UserName = json["globalObjects"]["users"][userId]["name"].ToString();
@@ -191,15 +158,15 @@ namespace NoAcgNew.Core
                 if (isRetweet)
                 {
                     var retweetId = temp["retweeted_status_id_str"].ToString();
-                    var full_text = temp["full_text"].ToString();
-                    if (!full_text.StartsWith("RT @"))
+                    var fullText = temp["full_text"].ToString();
+                    if (!fullText.StartsWith("RT @"))
                     {
-                        tweet.Content = full_text;
+                        tweet.Content = fullText;
                         tweet.IsOnlyRetweet = false;
                     }
                     else tweet.IsOnlyRetweet = true;
 
-                    ParseTweet(json, retweetId, out Tweet retweet);
+                    ParseTweet(json, retweetId, out var retweet);
                     tweet.Retweet = retweet;
                 }
                 else
@@ -209,7 +176,7 @@ namespace NoAcgNew.Core
                     tweet.Content = Encoding.UTF32.GetString(data[0..end]);
                     if (temp.ContainsKey("quoted_status_id_str"))
                     {
-                        ParseTweet(json, temp["quoted_status_id_str"].ToString(), out Tweet retweet);
+                        ParseTweet(json, temp["quoted_status_id_str"].ToString(), out var retweet);
                         tweet.Retweet = retweet;
                     }
                 }

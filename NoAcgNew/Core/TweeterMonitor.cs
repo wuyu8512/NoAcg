@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wuyu.Tool.Expansion;
 
@@ -7,7 +9,7 @@ namespace NoAcgNew.Core
     public class TweeterMonitor : Wuyu.Tool.Common.Monitor
     {
         private readonly TwitterApi _twitter;
-        private readonly string _userId;
+        private readonly Lazy<string> _userId;
         private readonly ILogger<TweeterMonitor> _logger;
         public string Name { get; }
 
@@ -15,26 +17,30 @@ namespace NoAcgNew.Core
 
         public event Action<TweeterMonitor, Tweet> NewTweetEvent;
 
-        public TweeterMonitor(string name, TwitterApi twitter,ILogger<TweeterMonitor> logger) : base(name)
+        public TweeterMonitor(string name, TwitterApi twitter, ILogger<TweeterMonitor> logger) : base(name)
         {
             _logger = logger;
             Name = name;
             _twitter = twitter;
             NewTweetEvent += (sender, tweet) => logger.LogDebug("{Name}有新的推文了", name);
-            _userId = _twitter.GetUserID(name);
-            logger.LogInformation("本次监控用户ID为：{UserId}", _userId);
+            _userId = new Lazy<string>(() =>
+            {
+                var id = _twitter.GetUserIDAsync(name).Result;
+                logger.LogInformation("本次监控用户ID为：{UserId}", id);
+                return id;
+            });
         }
 
-        protected override void Handle()
+        protected override async Task Handle()
         {
-            if (_userId.IsNull()) return;
-            var list = _twitter.GetTweets(_userId);
-
-            _logger.LogDebug("本次{Name}推文数量：{Length}", Name, list.Length);
-            if (list.Length == 0)
+            if (_userId.Value.IsNull()) return;
+            var list = await _twitter.GetTweetsAsync(_userId.Value);
+            if (!list.Any())
             {
                 return;
             }
+
+            _logger.LogDebug("本次{Name}推文数量：{Length}", Name, list.Length);
 
             if (_lastDateTime == null)
             {

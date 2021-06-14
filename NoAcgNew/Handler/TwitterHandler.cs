@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,35 +30,55 @@ namespace NoAcgNew.Handler
         private TweeterMonitorManage _manage;
         private IOneBotApi _api;
         private bool _isStart;
+        private HttpClientHandler _handler = new();
 
         public TwitterHandler(EventManager eventManager,
             ILogger<TwitterHandler> logger, GlobalService globalService, IServiceProvider provider)
         {
             _eventManager = eventManager;
             _logger = logger;
-            eventManager.OnGroupMessage += OnGroupMessage;
-            eventManager.OnConnection += async (api) =>
-            {
-                _api = api;
-                if (!_isStart)
-                {
-                    foreach (var monitor in globalService.TwitterSetting.Monitor.Where(monitor => monitor.Value.Enable))
-                    {
-                        if (_manage == null)
-                        {
-                            var client = new WebClient {Proxy = _globalService.WebProxy};
-                            _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(provider,
-                                new TwitterApi(ref client));
-                        }
-
-                        _manage.StartNewMonitor(monitor.Key, CallBack);
-                    }
-
-                    _isStart = true;
-                }
-            };
             _globalService = globalService;
             _provider = provider;
+
+            eventManager.OnGroupMessage += OnGroupMessage;
+            eventManager.OnConnection += OnConnection;
+            globalService.OnLoad += SetHandler;
+        }
+
+        private void SetHandler(GlobalService globalService)
+        {
+            if (globalService.WebProxy?.Address != null)
+            {
+                _handler.UseProxy = true;
+                _handler.Proxy = globalService.WebProxy;
+            }
+            else
+            {
+                _handler.UseProxy = false;
+            }
+        }
+
+        private async ValueTask OnConnection(IOneBotApi api)
+        {
+            _api = api;
+            if (!_isStart)
+            {
+                SetHandler(_globalService);
+
+                foreach (var monitor in _globalService.TwitterSetting.Monitor.Where(monitor => monitor.Value.Enable))
+                {
+                    if (_manage == null)
+                    {
+                        var twitterApi = new TwitterApi(_handler);
+                        await twitterApi.InitAuthorizationAsync();
+                        _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(_provider, twitterApi);
+                    }
+
+                    _manage.StartNewMonitor(monitor.Key, CallBack);
+                }
+
+                _isStart = true;
+            }
         }
 
         private async ValueTask<(int, GroupMsgQuickOperation)?> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
