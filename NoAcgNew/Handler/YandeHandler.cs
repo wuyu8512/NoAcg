@@ -37,7 +37,7 @@ namespace NoAcgNew.Handler
             _yandeApi = new YandeApi(_globalService.HttpClientProxyHandler);
         }
 
-        private async ValueTask<(int, BaseMsgQuickOperation)?> Handler(BaseMessageEventArgs args, IOneBotApi api)
+        private async ValueTask<BaseMsgQuickOperation> Handler(BaseMessageEventArgs args, IOneBotApi api)
         {
             long? groupId = null;
             long? userId = null;
@@ -68,7 +68,7 @@ namespace NoAcgNew.Handler
                         });
                     }
 
-                    return (1, null);
+                    return 1;
                 }
             }
 

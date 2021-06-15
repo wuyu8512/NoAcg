@@ -26,6 +26,7 @@ namespace Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation
         {
             Reply = baseMsg.Reply;
             AutoEscape = baseMsg.AutoEscape;
+            Code = baseMsg.Code;
         }
 
         public GroupMsgQuickOperation()

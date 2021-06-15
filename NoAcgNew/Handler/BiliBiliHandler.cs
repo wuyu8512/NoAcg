@@ -31,7 +31,7 @@ namespace NoAcgNew.Handler
             _provider = provider;
         }
         
-        private async ValueTask<(int, BaseMsgQuickOperation)?> Handler(BaseMessageEventArgs args, IOneBotApi api)
+        private async ValueTask<BaseMsgQuickOperation> Handler(BaseMessageEventArgs args, IOneBotApi api)
         {
             if (args.RawMessage.Equals(_globalService.BiliSetting.HotCos.Command,
                 StringComparison.CurrentCultureIgnoreCase))
@@ -43,7 +43,7 @@ namespace NoAcgNew.Handler
                 }
             }
 
-            return (0, null);
+            return null;
         }
     }
 }

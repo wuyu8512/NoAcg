@@ -90,7 +90,11 @@ namespace Wuyu.OneBot.Service
                 if (json.ContainsKey("post_type"))
                 {
                     var result = await _eventManager.Adapter(json, _api, str);
-                    if (result is BaseQuickOperation operation) await _api.HandleQuickOperation(json, operation);
+                    if (result is BaseQuickOperation operation)
+                    {
+                        _logger.LogDebug("回复消息");
+                        await _api.HandleQuickOperation(json, operation);
+                    }
                 }
                 else if (json.ContainsKey("echo")) _api.OnApiReply(json);
             }

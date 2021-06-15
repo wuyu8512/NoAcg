@@ -64,7 +64,7 @@ namespace NoAcgNew.Handler
             }
         }
 
-        private async ValueTask<(int, GroupMsgQuickOperation)?> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
+        private async ValueTask<GroupMsgQuickOperation> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
         {
             return null;
         }

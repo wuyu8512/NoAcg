@@ -10,29 +10,23 @@ namespace Wuyu.OneBot.Expansion
     {
         public static EventManager.EventCallBackHandler<GroupMsgEventArgs, GroupMsgQuickOperation>
             ToGroupHandler(
-                this Func<BaseMessageEventArgs, IOneBotApi, ValueTask<(int, BaseMsgQuickOperation)?>> handler)
+                this Func<BaseMessageEventArgs, IOneBotApi, ValueTask<BaseMsgQuickOperation>> handler)
         {
             return async (args, api) =>
             {
                 var result = await handler(args, api);
-                return result.HasValue
-                    ? (result.Value.Item1,
-                        result.Value.Item2 != null ? new GroupMsgQuickOperation(result.Value.Item2) : null)
-                    : null;
+                return result == null ? null : new GroupMsgQuickOperation(result);
             };
         }
 
         public static EventManager.EventCallBackHandler<PrivateMsgEventArgs, PrivateMsgQuickOperation>
             ToPrivateHandler(
-                this Func<BaseMessageEventArgs, IOneBotApi, ValueTask<(int, BaseMsgQuickOperation)?>> handler)
+                this Func<BaseMessageEventArgs, IOneBotApi, ValueTask<BaseMsgQuickOperation>> handler)
         {
             return async (args, api) =>
             {
                 var result = await handler(args, api);
-                return result.HasValue
-                    ? (result.Value.Item1,
-                        result.Value.Item2 != null ? new PrivateMsgQuickOperation(result.Value.Item2) : null)
-                    : null;
+                return result == null ? null : new PrivateMsgQuickOperation(result);
             };
         }
     }
