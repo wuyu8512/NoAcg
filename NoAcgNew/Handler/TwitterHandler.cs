@@ -53,7 +53,7 @@ namespace NoAcgNew.Handler
                 {
                     if (_manage == null)
                     {
-                        var twitterApi = new TwitterApi(_globalService.HttpClientProxyHandler);
+                        var twitterApi = new Lazy<TwitterApi>(() => new TwitterApi(_globalService.HttpClientProxyHandler));
                         _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(_provider, twitterApi);
                     }
 

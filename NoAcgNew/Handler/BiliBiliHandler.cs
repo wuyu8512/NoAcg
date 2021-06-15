@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using NoAcgNew.Core;
@@ -30,16 +32,26 @@ namespace NoAcgNew.Handler
             _globalService = globalService;
             _provider = provider;
         }
-        
+
         private async ValueTask<BaseMsgQuickOperation> Handler(BaseMessageEventArgs args, IOneBotApi api)
         {
             if (args.RawMessage.Equals(_globalService.BiliSetting.HotCos.Command,
                 StringComparison.CurrentCultureIgnoreCase))
             {
-                if (BiliApi.GetCosHot(out var urls))
+                var result = await BiliApi.GetCosHotAsync();
+                if (result.Any())
                 {
-                    var cqCodes = urls.Select(url => CQCode.CQImage(url)).ToArray();
-                    return (1, cqCodes);
+                    _logger.LogDebug("数量：{Count}", result.Length);
+                    var cqCodes = new List<CQCode>();
+                    var tasks = result.Select(url => Task.Run(async () =>
+                    {
+                        var client = new HttpClient();
+                        var data = await client.GetByteArrayAsync(url);
+                        cqCodes.Add(CQCode.CQImage("base64://" + Convert.ToBase64String(data)));
+                    }));
+
+                    await Task.WhenAll(tasks);
+                    return (1, cqCodes.ToArray());
                 }
             }
 

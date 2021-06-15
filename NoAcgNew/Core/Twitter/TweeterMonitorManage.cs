@@ -10,11 +10,11 @@ namespace NoAcgNew.Services
     public class TweeterMonitorManage
     {
         private readonly GlobalService _globalService;
-        private readonly TwitterApi _twitterApi;
+        private readonly Lazy<TwitterApi> _twitterApi;
         private readonly IServiceProvider _serviceProvider;
         private readonly Dictionary<string, TweeterMonitor> _tweeterMonitors = new();
 
-        public TweeterMonitorManage(GlobalService globalService, TwitterApi twitterApi,
+        public TweeterMonitorManage(GlobalService globalService, Lazy<TwitterApi> twitterApi,
             IServiceProvider serviceProvider)
         {
             _globalService = globalService;
@@ -24,9 +24,7 @@ namespace NoAcgNew.Services
 
         public void StartNewMonitor(string name, Action<TweeterMonitor, Tweet> action)
         {
-            var client = new WebClient();
-
-            var tweeterMonitor = ActivatorUtilities.CreateInstance<TweeterMonitor>(_serviceProvider, name, _twitterApi);
+            var tweeterMonitor = ActivatorUtilities.CreateInstance<TweeterMonitor>(_serviceProvider, name, _twitterApi.Value);
             tweeterMonitor.ClearAllStartEvent();
             tweeterMonitor.OnNewTweetEvent += action;
             tweeterMonitor.Start();

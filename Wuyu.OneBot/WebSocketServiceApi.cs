@@ -54,7 +54,8 @@ namespace Wuyu.OneBot
             }
         }
 
-        private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken,bool waitreply=true)
+        private async ValueTask<(JObject, ApiStatusType)> SendRequest<T>(T request, CancellationToken cancellationToken,
+            bool waitReply = true)
             where T : ApiRequest
         {
             if (_socket.State != WebSocketState.Open) return (null, ApiStatusType.Error);
@@ -65,7 +66,7 @@ namespace Wuyu.OneBot
             {
                 await _socket.SendAsync(new ArraySegment<byte>(data), WebSocketMessageType.Text, true,
                     cancellationToken);
-                if (waitreply) reply = await WaitReply(request.Echo).WaitAsync(TimeSpan.FromSeconds(30));
+                if (waitReply) reply = await WaitReply(request.Echo).WaitAsync(TimeSpan.FromSeconds(30));
             }
             catch (TimeoutException e)
             {

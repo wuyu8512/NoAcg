@@ -25,7 +25,7 @@ namespace NoAcgNew.Handler
             _eventManager.OnPrivateMessage += async (args, api) =>
             {
                 _logger.LogDebug(args.MessageId, args.RawMessage);
-                return (0, CQCode.CQText(args.RawMessage));
+                return null;
             };
             _eventManager.OnGroupMessage += async (args, api) =>
             {

@@ -92,7 +92,7 @@ namespace Wuyu.OneBot.Service
                     var result = await _eventManager.Adapter(json, _api, str);
                     if (result is BaseQuickOperation operation)
                     {
-                        _logger.LogDebug("回复消息");
+                        _logger.LogDebug("发送快速操作");
                         await _api.HandleQuickOperation(json, operation);
                     }
                 }
