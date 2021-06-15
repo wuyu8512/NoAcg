@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wuyu.Tool.Expansion;
 
-namespace NoAcgNew.Core
+namespace NoAcgNew.Core.Twitter
 {
     public class TweeterMonitor : Wuyu.Tool.Common.Monitor
     {
@@ -15,14 +15,14 @@ namespace NoAcgNew.Core
 
         private DateTime? _lastDateTime;
 
-        public event Action<TweeterMonitor, Tweet> NewTweetEvent;
+        public event Action<TweeterMonitor, Tweet> OnNewTweetEvent;
 
         public TweeterMonitor(string name, TwitterApi twitter, ILogger<TweeterMonitor> logger) : base(name)
         {
             _logger = logger;
             Name = name;
             _twitter = twitter;
-            NewTweetEvent += (sender, tweet) => logger.LogDebug("{Name}有新的推文了", name);
+            OnNewTweetEvent += (sender, tweet) => logger.LogDebug("{Name}有新的推文了", name);
             _userId = new Lazy<string>(() =>
             {
                 var id = _twitter.GetUserIDAsync(name).Result;
@@ -51,7 +51,7 @@ namespace NoAcgNew.Core
             foreach (var tweet in list)
             {
                 if (tweet.CreatTime <= _lastDateTime) break;
-                NewTweetEvent?.Invoke(this, tweet);
+                OnNewTweetEvent?.Invoke(this, tweet);
             }
 
             _lastDateTime = list[0].CreatTime;
@@ -72,11 +72,11 @@ namespace NoAcgNew.Core
 
         public void ClearAllNewTweetEvent()
         {
-            if (NewTweetEvent == null) return;
-            var invocationList = this.NewTweetEvent.GetInvocationList();
+            if (OnNewTweetEvent == null) return;
+            var invocationList = this.OnNewTweetEvent.GetInvocationList();
             foreach (Delegate @delegate in invocationList)
             {
-                NewTweetEvent -= @delegate as Action<TweeterMonitor, Tweet>;
+                OnNewTweetEvent -= @delegate as Action<TweeterMonitor, Tweet>;
             }
         }
     }

@@ -34,6 +34,8 @@ namespace NoAcgNew.Services
             TwitterSetting.Monitor = _configuration.GetSection("Twitter").GetSection("Monitor")
                 .Get<TwitterSetting.MonitorSetting[]>().ToDictionary(m => m.Name);
 
+            BiliSetting = _configuration.GetSection("BiliBili").Get<BiliSetting>();
+            
             if (WebProxy?.Address != null)
             {
                 HttpClientProxyHandler.UseProxy = true;
@@ -61,5 +63,6 @@ namespace NoAcgNew.Services
         public HttpClientHandler HttpClientProxyHandler { get; private set; }
         public YandeSetting YandeSetting { get; } = new();
         public TwitterSetting TwitterSetting { get; } = new();
+        public BiliSetting BiliSetting { get; set; } = new();
     }
 }

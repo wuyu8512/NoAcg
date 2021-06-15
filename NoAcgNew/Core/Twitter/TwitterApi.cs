@@ -9,18 +9,23 @@ using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Wuyu.Tool;
 
-namespace NoAcgNew.Core
+namespace NoAcgNew.Core.Twitter
 {
     public class TwitterApi
     {
-        private readonly HttpClient _client;
+        private readonly Lazy<HttpClient> _client;
         private static TweetConfig TweetCache { get; } = new();
 
         public TwitterApi(HttpMessageHandler handler)
         {
-            _client = new HttpClient(handler, false);
-            _client.DefaultRequestHeaders.UserAgent.ParseAdd(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36");
+            _client = new Lazy<HttpClient>(() =>
+            {
+                var client = new HttpClient(handler, false);
+                client.DefaultRequestHeaders.UserAgent.ParseAdd(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36");
+                InitAuthorizationAsync().Wait();
+                return client;
+            });
         }
 
         public async Task InitAuthorizationAsync()
@@ -39,7 +44,7 @@ namespace NoAcgNew.Core
             string html;
             try
             {
-                html = Encoding.UTF8.GetString(await _client.GetByteArrayAsync("https://twitter.com/"));
+                html = Encoding.UTF8.GetString(await _client.Value.GetByteArrayAsync("https://twitter.com/"));
             }
             catch (HttpRequestException e)
             {
@@ -57,7 +62,7 @@ namespace NoAcgNew.Core
             string string2;
             try
             {
-                string2 = await _client.GetStringAsync(text);
+                string2 = await _client.Value.GetStringAsync(text);
             }
             catch (HttpRequestException e)
             {
@@ -72,15 +77,15 @@ namespace NoAcgNew.Core
                 .Match(string2)
                 .Groups[1].Value;
             
-            _client.DefaultRequestHeaders.Remove("authorization");
-            _client.DefaultRequestHeaders.Add("authorization", TweetCache.Authorization);
+            _client.Value.DefaultRequestHeaders.Remove("authorization");
+            _client.Value.DefaultRequestHeaders.Add("authorization", TweetCache.Authorization);
         }
 
         private async ValueTask GetTokenAsync()
         {
             try
             {
-                var response = await _client.PostAsync("https://api.twitter.com/1.1/guest/activate.json",
+                var response = await _client.Value.PostAsync("https://api.twitter.com/1.1/guest/activate.json",
                     new ByteArrayContent(Array.Empty<byte>()));
                 var token = JObject.Parse(await response.Content.ReadAsStringAsync())["guest_token"]?.ToString();
                 TweetCache.Token = token;
@@ -89,15 +94,15 @@ namespace NoAcgNew.Core
             {
                 await GetAuthorizationAsync();
             }
-            _client.DefaultRequestHeaders.Remove("x-guest-token");
-            _client.DefaultRequestHeaders.Add("x-guest-token", TweetCache.Token);
+            _client.Value.DefaultRequestHeaders.Remove("x-guest-token");
+            _client.Value.DefaultRequestHeaders.Add("x-guest-token", TweetCache.Token);
         }
 
         public async ValueTask<string> GetUserIDAsync(string userName)
         {
             var url =
                 $"https://api.twitter.com/graphql/{TweetCache.Path}/UserByScreenName?variables=%7B%22screen_name%22%3A%22{userName}%22%2C%22withHighlightedLabel%22%3Afalse%7D";
-            var str = await _client.GetStringAsync(url);
+            var str = await _client.Value.GetStringAsync(url);
             var json = JObject.Parse(str);
             return json["data"]["user"]["result"]["rest_id"].ToString();
         }
@@ -109,7 +114,7 @@ namespace NoAcgNew.Core
             string string3;
             try
             {
-                string3 = await _client.GetStringAsync(address);
+                string3 = await _client.Value.GetStringAsync(address);
             }
             catch (HttpRequestException e)
             {

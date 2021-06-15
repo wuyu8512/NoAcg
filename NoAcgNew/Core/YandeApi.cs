@@ -1,31 +1,26 @@
 ﻿using System;
 using System.Net;
-using System.Text;
+using System.Net.Http;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace NoAcgNew.Services
+namespace NoAcgNew.Core
 {
-    public class YandeService
+    public class YandeApi
     {
         private static readonly Random Random = new();
-        private readonly WebProxy _proxy;
+        private readonly HttpClientHandler _handler;
 
-        public YandeService(WebProxy proxy)
+        public YandeApi(HttpClientHandler handler = default)
         {
-            _proxy = proxy;
-        }
-
-        public YandeService()
-        {
+            _handler = handler;
         }
 
         public async ValueTask<int> GetTagsPageAsync(string tag)
         {
-            var client = new WebClient {Proxy = _proxy};
-            var html = await client.DownloadStringTaskAsync("https://yande.re/post?tags=" + tag);
-            ;
+            var client = new HttpClient(_handler, false);
+            var html = await client.GetStringAsync("https://yande.re/post?tags=" + tag);
+            
             var regex = new Regex("(\\d+)</a> <a [^<>]+?>Next");
             if (regex.IsMatch(html))
             {
@@ -65,14 +60,14 @@ namespace NoAcgNew.Services
                 text = text.Replace("Explicit|", string.Empty);
             }
 
-            var client = new WebClient {Proxy = _proxy};
+            var client = new HttpClient(_handler, false);
             var regex = new Regex(text);
-            var @string = await client.DownloadStringTaskAsync(url);
+            var @string = await client.GetStringAsync(url);
             var matchCollection = regex.Matches(@string);
             if (matchCollection.Count <= 0) throw new Exception("没有匹配到任何图片，请检查页数或网络设置");
             var i = Random.Next(0, matchCollection.Count - 1);
             var imgRating = matchCollection[i].Groups[1].Value;
-            return (await client.DownloadDataTaskAsync(matchCollection[i].Groups[2].Value), imgRating);
+            return (await client.GetByteArrayAsync(matchCollection[i].Groups[2].Value), imgRating);
         }
     }
 }

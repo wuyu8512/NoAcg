@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using NoAcgNew.Core;
+using NoAcgNew.Core.Twitter;
 
 namespace NoAcgNew.Services
 {
@@ -27,7 +28,7 @@ namespace NoAcgNew.Services
 
             var tweeterMonitor = ActivatorUtilities.CreateInstance<TweeterMonitor>(_serviceProvider, name, _twitterApi);
             tweeterMonitor.ClearAllStartEvent();
-            tweeterMonitor.NewTweetEvent += action;
+            tweeterMonitor.OnNewTweetEvent += action;
             tweeterMonitor.Start();
             _tweeterMonitors[name] = tweeterMonitor;
         }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NoAcgNew.Core;
+using NoAcgNew.Core.Twitter;
 using NoAcgNew.Models;
 using NoAcgNew.Services;
 using Wuyu.OneBot;
@@ -30,7 +31,6 @@ namespace NoAcgNew.Handler
         private TweeterMonitorManage _manage;
         private IOneBotApi _api;
         private bool _isStart;
-        private HttpClientHandler _handler = new();
 
         public TwitterHandler(EventManager eventManager,
             ILogger<TwitterHandler> logger, GlobalService globalService, IServiceProvider provider)
@@ -42,20 +42,6 @@ namespace NoAcgNew.Handler
 
             eventManager.OnGroupMessage += OnGroupMessage;
             eventManager.OnConnection += OnConnection;
-            globalService.OnLoad += SetHandler;
-        }
-
-        private void SetHandler(GlobalService globalService)
-        {
-            if (globalService.WebProxy?.Address != null)
-            {
-                _handler.UseProxy = true;
-                _handler.Proxy = globalService.WebProxy;
-            }
-            else
-            {
-                _handler.UseProxy = false;
-            }
         }
 
         private async ValueTask OnConnection(IOneBotApi api)
@@ -63,14 +49,11 @@ namespace NoAcgNew.Handler
             _api = api;
             if (!_isStart)
             {
-                SetHandler(_globalService);
-
                 foreach (var monitor in _globalService.TwitterSetting.Monitor.Where(monitor => monitor.Value.Enable))
                 {
                     if (_manage == null)
                     {
-                        var twitterApi = new TwitterApi(_handler);
-                        await twitterApi.InitAuthorizationAsync();
+                        var twitterApi = new TwitterApi(_globalService.HttpClientProxyHandler);
                         _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(_provider, twitterApi);
                     }
 
