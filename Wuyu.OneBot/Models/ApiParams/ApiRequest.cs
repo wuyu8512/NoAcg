@@ -14,7 +14,7 @@ namespace Wuyu.OneBot.Models.ApiParams
         [JsonProperty(PropertyName = "action")]
         [Newtonsoft.Json.JsonConverter(typeof(EnumDescriptionConverter))]
         [JsonPropertyName("action")]
-        // [System.Text.Json.Serialization.JsonConverter(typeof(Wuyu.OneBot.Converter.System.Text.Json.EnumDescriptionConverter))]
+        [System.Text.Json.Serialization.JsonConverter(typeof(Wuyu.OneBot.Converter.System.Text.Json.JsonDescriptionEnumConverter))]
         internal ApiRequestType ApiRequestType { get; set; }
 
         /// <summary>
