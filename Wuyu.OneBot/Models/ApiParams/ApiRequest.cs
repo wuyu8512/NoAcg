@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration.ApiType;
@@ -12,9 +11,7 @@ namespace Wuyu.OneBot.Models.ApiParams
         /// API请求类型
         /// </summary>
         [JsonProperty(PropertyName = "action")]
-        [Newtonsoft.Json.JsonConverter(typeof(EnumDescriptionConverter))]
-        [JsonPropertyName("action")]
-        [System.Text.Json.Serialization.JsonConverter(typeof(Wuyu.OneBot.Converter.System.Text.Json.JsonDescriptionEnumConverter))]
+        [JsonConverter(typeof(EnumDescriptionConverter))]
         internal ApiRequestType ApiRequestType { get; set; }
 
         /// <summary>
@@ -22,7 +19,6 @@ namespace Wuyu.OneBot.Models.ApiParams
         /// 会自动生成初始值不需要设置
         /// </summary>
         [JsonProperty(PropertyName = "echo")]
-        [JsonPropertyName("echo")]
         internal Guid Echo { get; set; } = Guid.NewGuid();
     }
     
@@ -33,8 +29,6 @@ namespace Wuyu.OneBot.Models.ApiParams
         /// 不需要请使用非泛型版本
         /// </summary>
         [JsonProperty(PropertyName = "params",NullValueHandling = NullValueHandling.Ignore)]
-        [JsonPropertyName("params")]
-        [System.Text.Json.Serialization.JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         internal T ApiParams { get; set; }
     }
 }
