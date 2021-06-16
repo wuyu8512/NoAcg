@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using NoAcgNew.Core;
+using NoAcgNew.Enumeration;
+using NoAcgNew.Helper;
+using NoAcgNew.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using NoAcgNew.Core;
-using NoAcgNew.Services;
 using Wuyu.OneBot;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Expansion;
@@ -45,9 +46,7 @@ namespace NoAcgNew.Handler
                     var cqCodes = new List<CQCode>();
                     var tasks = result.Select(url => Task.Run(async () =>
                     {
-                        var client = new HttpClient();
-                        var data = await client.GetByteArrayAsync(url);
-                        cqCodes.Add(CQCode.CQImage("base64://" + Convert.ToBase64String(data)));
+                        cqCodes.Add(await CQHelper.Image(url, CQFileType.Base64));
                     }));
 
                     await Task.WhenAll(tasks);

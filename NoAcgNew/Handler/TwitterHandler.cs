@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NoAcgNew.Core;
 using NoAcgNew.Core.Twitter;
-using NoAcgNew.Models;
+using NoAcgNew.Enumeration;
+using NoAcgNew.Helper;
 using NoAcgNew.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Wuyu.OneBot;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Models.EventArgs.MessageEvent;
 using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
-using Wuyu.Tool.Common;
-using Wuyu.Tool.Web.HttpHelper;
 
 namespace NoAcgNew.Handler
 {
@@ -53,7 +48,8 @@ namespace NoAcgNew.Handler
                 {
                     if (_manage == null)
                     {
-                        var twitterApi = new Lazy<TwitterApi>(() => new TwitterApi(_globalService.HttpClientProxyHandler));
+                        var twitterApi =
+                            new Lazy<TwitterApi>(() => new TwitterApi(_globalService.HttpClientProxyHandler));
                         _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(_provider, twitterApi);
                     }
 
@@ -69,11 +65,11 @@ namespace NoAcgNew.Handler
             return null;
         }
 
-        private async void CallBack(TweeterMonitor monitor, Tweet tweet)
+        private async ValueTask CallBack(TweeterMonitor monitor, Tweet tweet)
         {
             if (_api == null) return;
 
-            var content = GetTweetContent(tweet);
+            var content = await GetTweetContent(tweet);
             content.Insert(0, CQCode.CQText($"您订阅的{monitor.Name}有新推文了\n"));
             var video = content.Where(c => c.Type == CQCodeType.Video).ToArray();
             content = content.Where(c => c.Type != CQCodeType.Video).ToList();
@@ -101,7 +97,7 @@ namespace NoAcgNew.Handler
             }
         }
 
-        private List<CQCode> GetTweetContent(Tweet tweet)
+        private async ValueTask<List<CQCode>> GetTweetContent(Tweet tweet)
         {
             var temp = new List<CQCode> {CQCode.CQText(tweet.Content)};
             var img = new List<CQCode>();
@@ -111,8 +107,8 @@ namespace NoAcgNew.Handler
                 {
                     try
                     {
-                        var data = HttpNet.Get(item["media_url_https"].ToString(), proxy: _globalService.WebProxy);
-                        img.Add(CQCode.CQImage("base64://" + Convert.ToBase64String(data), useCache: true));
+                        img.Add(await CQHelper.Image(item["media_url_https"].ToString(), CQFileType.Base64,
+                            _globalService.HttpClientProxyHandler));
                     }
                     catch (Exception e)
                     {
@@ -122,27 +118,21 @@ namespace NoAcgNew.Handler
                     switch (item["type"].ToString())
                     {
                         case "photo":
-                        {
                             break;
-                        }
                         case "video":
                         case "animated_gif":
-                        {
                             var mp4 = item["video_info"]["variants"]
                                 .FirstOrDefault(video => video["content_type"].ToString() == "video/mp4");
                             if (mp4 != null)
                             {
-                                img.Add(CQCode.CQText(mp4["url"].ToString()));
-                                var data = HttpNet.Get(mp4["url"].ToString(), proxy: _globalService.WebProxy);
-                                var tempPath = AppDomain.CurrentDomain.BaseDirectory + "Cache/" +
-                                               HashHelp.MD5Encrypt(data) + ".mp4";
-                                File.WriteAllBytes(tempPath, data);
-                                img.Add(CQCode.CQVideo(tempPath, useCache: true));
+                                var videoUrl = mp4["url"].ToString();
+                                img.Add(CQCode.CQText(videoUrl));
+                                img.Add(await CQHelper.Video(videoUrl, CQFileType.File,
+                                    _globalService.HttpClientProxyHandler));
                             }
                             else img.Add(CQCode.CQText(item["video_info"]["variants"][0]["url"].ToString()));
 
                             break;
-                        }
                     }
                 }
             }
@@ -156,7 +146,7 @@ namespace NoAcgNew.Handler
                 else
                 {
                     var a = new List<CQCode> {CQCode.CQText(tweet.Retweet.UserName + "：\n")};
-                    a.AddRange(GetTweetContent(tweet.Retweet));
+                    a.AddRange(await GetTweetContent(tweet.Retweet));
                     return a;
                 }
             }
@@ -174,7 +164,7 @@ namespace NoAcgNew.Handler
                     temp.AddRange(img);
                     temp.Add(time);
                     temp.Add(CQCode.CQText("\n" + tweet.Retweet.UserName + "：\n"));
-                    temp.AddRange(GetTweetContent(tweet.Retweet));
+                    temp.AddRange(await GetTweetContent(tweet.Retweet));
                     return temp;
                 }
             }

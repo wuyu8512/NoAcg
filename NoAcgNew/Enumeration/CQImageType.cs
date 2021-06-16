@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace NoAcgNew.Enumeration
 {
     [DefaultValue(Url)]
-    public enum CQImageType
+    public enum CQFileType
     {
         Url,
         File,

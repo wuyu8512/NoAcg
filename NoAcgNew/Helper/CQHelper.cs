@@ -12,36 +12,57 @@ namespace NoAcgNew.Helper
 {
     public static class CQHelper
     {
-        private static string ImageCachePath;
+        private static readonly string ImageCachePath;
+        private static readonly string VideoCachePath;
 
         static CQHelper()
         {
             ImageCachePath = AppDomain.CurrentDomain.BaseDirectory + "Cache/Image/";
+            VideoCachePath = AppDomain.CurrentDomain.BaseDirectory + "Cache/Video/";
             Directory.CreateDirectory(ImageCachePath);
+            Directory.CreateDirectory(VideoCachePath);
         }
 
-        public static async ValueTask<CQCode> Image(string uri, CQImageType type = default, HttpClientHandler handler = default)
+        public static async ValueTask<CQCode> Image(string uri, CQFileType type = default, HttpClientHandler handler = default)
         {
             HttpClient client;
+            byte[] data;
             switch (type)
             {
-                case CQImageType.Url:
+                case CQFileType.Url:
                     return CQCode.CQImage(uri);
-                case CQImageType.Base64:
+                case CQFileType.Base64:
                     client = new HttpClient(handler, false);
-                    var data = await client.GetByteArrayAsync(uri);
+                    data = await client.GetByteArrayAsync(uri);
                     return CQCode.CQImage("base64://" + Convert.ToBase64String(data));
-                case CQImageType.File:
+                case CQFileType.File:
                     client = new HttpClient(handler, false);
-                    var filePath = ImageCachePath + TimeHelp.GetCurrentTimeUnix(true);
-                    using (var fileStream = new FileStream(filePath, FileMode.OpenOrCreate))
-                    {
-                        using var imageStream = await client.GetStreamAsync(uri);
-                        await imageStream.CopyToAsync(fileStream);
-                        return CQCode.CQImage("file://" + filePath);
-                    }
+                    data = await client.GetByteArrayAsync(uri);
+                    var filePath = ImageCachePath + HashHelp.MD5Encrypt(data);
+                    await File.WriteAllBytesAsync(filePath, data);
+                    return CQCode.CQImage(new Uri(filePath).AbsoluteUri);
+                default:
+                    return null;
             }
-            return null;
+        }
+        
+        public static async ValueTask<CQCode> Video(string uri, CQFileType type = default, HttpClientHandler handler = default)
+        {
+            switch (type)
+            {
+                case CQFileType.Url:
+                    return CQCode.CQVideo(uri);
+                case CQFileType.Base64:
+                    throw new NotSupportedException("Video不支持Base64发送");
+                case CQFileType.File:
+                    var client = new HttpClient(handler, false);
+                    var data = await client.GetByteArrayAsync(uri);
+                    var filePath = VideoCachePath + HashHelp.MD5Encrypt(data);
+                    await File.WriteAllBytesAsync(filePath, data);
+                    return CQCode.CQImage(new Uri(filePath).AbsoluteUri);
+                default:
+                    return null;
+            }
         }
     }
 }

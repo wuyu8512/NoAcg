@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Wuyu.OneBot;
-using Wuyu.OneBot.Entities.CQCodes;
-using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 
 namespace NoAcgNew.Handler

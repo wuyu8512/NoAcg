@@ -15,14 +15,14 @@ namespace NoAcgNew.Core.Twitter
 
         private DateTime? _lastDateTime;
 
-        public event Action<TweeterMonitor, Tweet> OnNewTweetEvent;
+        public event Func<TweeterMonitor, Tweet, ValueTask> OnNewTweetEvent;
 
         public TweeterMonitor(string name, TwitterApi twitter, ILogger<TweeterMonitor> logger) : base(name)
         {
             _logger = logger;
             Name = name;
             _twitter = twitter;
-            OnNewTweetEvent += (sender, tweet) => logger.LogDebug("{Name}有新的推文了", name);
+            OnNewTweetEvent += async (sender, tweet) => logger.LogDebug("{Name}有新的推文了", name);
             _userId = new Lazy<string>(() =>
             {
                 var id = _twitter.GetUserIDAsync(name).Result;
@@ -74,9 +74,9 @@ namespace NoAcgNew.Core.Twitter
         {
             if (OnNewTweetEvent == null) return;
             var invocationList = this.OnNewTweetEvent.GetInvocationList();
-            foreach (Delegate @delegate in invocationList)
+            foreach (var @delegate in invocationList)
             {
-                OnNewTweetEvent -= @delegate as Action<TweeterMonitor, Tweet>;
+                OnNewTweetEvent -= @delegate as Func<TweeterMonitor, Tweet, ValueTask>;
             }
         }
     }

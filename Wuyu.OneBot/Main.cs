@@ -44,7 +44,7 @@ namespace Wuyu.OneBot
             {
                 throw new ArgumentException("开启了WebSocketClient但没有传递OneBot的WebSocket Url设置");
             }
-            
+
             return services;
         }
 

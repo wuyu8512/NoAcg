@@ -1,14 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Net;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using NoAcgNew.Core;
 using NoAcgNew.Services;
+using System;
+using System.Threading.Tasks;
 using Wuyu.OneBot;
 using Wuyu.OneBot.Entities.CQCodes;
-using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Expansion;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Models.EventArgs.MessageEvent;

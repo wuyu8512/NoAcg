@@ -64,8 +64,7 @@ namespace Wuyu.OneBot
             JObject reply = null;
             try
             {
-                await _socket.SendAsync(new ArraySegment<byte>(data), WebSocketMessageType.Text, true,
-                    cancellationToken);
+                await _socket.SendAsync(data, WebSocketMessageType.Text, true, cancellationToken);
                 if (waitReply) reply = await WaitReply(request.Echo).WaitAsync(TimeSpan.FromSeconds(30));
             }
             catch (TimeoutException e)

@@ -12,10 +12,12 @@ namespace Wuyu.OneBot.Converter
     /// </summary>
     internal class EnumDescriptionConverter : JsonConverter
     {
-        //控制执行条件（当属性的值为枚举类型时才使用转换器）
-        public override bool CanConvert(Type objectType)
+        /// <summary>
+        /// 控制执行条件（当属性的值为枚举类型时才使用转换器）
+        /// </summary>
+        public override bool CanConvert(Type typeToConvert)
         {
-            return objectType == typeof(Enum);
+            return typeToConvert == typeof(Enum);
         }
 
         /// <summary>
