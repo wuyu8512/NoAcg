@@ -35,10 +35,7 @@ namespace NoAcgNew.Core.Twitter
         {
             if (_userId.Value.IsNull()) return;
             var list = await _twitter.GetTweetsAsync(_userId.Value);
-            if (!list.Any())
-            {
-                return;
-            }
+            if (!list.Any()) return;
 
             _logger.LogDebug("本次{Name}推文数量：{Length}", Name, list.Length);
 
@@ -51,7 +48,7 @@ namespace NoAcgNew.Core.Twitter
             foreach (var tweet in list)
             {
                 if (tweet.CreatTime <= _lastDateTime) break;
-                OnNewTweetEvent?.Invoke(this, tweet);
+                if (OnNewTweetEvent != null) await OnNewTweetEvent(this, tweet);
             }
 
             _lastDateTime = list[0].CreatTime;

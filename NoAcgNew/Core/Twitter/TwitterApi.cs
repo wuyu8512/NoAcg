@@ -126,7 +126,7 @@ namespace NoAcgNew.Core.Twitter
                 if (entryId.Contains("tweet"))
                 {
                     var id = item["sortIndex"].ToString();
-                    ParseTweet(json, id, out Tweet tweet);
+                    ParseTweet(json, id, out var tweet);
                     tweets.Add(tweet);
                 }
             }

@@ -32,11 +32,11 @@ namespace NoAcgNew.Helper
                 case CQFileType.Url:
                     return CQCode.CQImage(uri);
                 case CQFileType.Base64:
-                    client = new HttpClient(handler, false);
+                    client = handler == default ? new HttpClient() : new HttpClient(handler, false);
                     data = await client.GetByteArrayAsync(uri);
                     return CQCode.CQImage("base64://" + Convert.ToBase64String(data));
                 case CQFileType.File:
-                    client = new HttpClient(handler, false);
+                    client = handler == default ? new HttpClient() : new HttpClient(handler, false);
                     data = await client.GetByteArrayAsync(uri);
                     var filePath = ImageCachePath + HashHelp.MD5Encrypt(data);
                     await File.WriteAllBytesAsync(filePath, data);
@@ -55,7 +55,7 @@ namespace NoAcgNew.Helper
                 case CQFileType.Base64:
                     throw new NotSupportedException("Video不支持Base64发送");
                 case CQFileType.File:
-                    var client = new HttpClient(handler, false);
+                    var client = handler == default ? new HttpClient() : new HttpClient(handler, false);
                     var data = await client.GetByteArrayAsync(uri);
                     var filePath = VideoCachePath + HashHelp.MD5Encrypt(data);
                     await File.WriteAllBytesAsync(filePath, data);
