@@ -46,7 +46,7 @@ namespace Wuyu.OneBot
             bool? autoEscape = default,
             CancellationToken cancellationToken = default)
         {
-            _logger.LogDebug("[SendMsg] User：{UserId} Group：{GroupId}", userId, groupId);
+            _logger.LogInformation("[SendMsg] User：{UserId} Group：{GroupId}", userId, groupId);
             var reply = await _api.SendMsg(new SendMessageParams
             {
                 UserId = userId,

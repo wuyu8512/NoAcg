@@ -20,7 +20,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
     [JsonConverter(typeof(CQCodeConverter))]
     public sealed class CQCode
     {
-        private static ILogger _log = ApplicationLogging.CreateLogger<CQCode>();
+        private static readonly ILogger Log = ApplicationLogging.CreateLogger<CQCode>();
 
         #region 属性
 
@@ -73,7 +73,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         {
             if (uid < 10000)
             {
-                _log.LogError("[CQAt]非法参数，已忽略CQ码[uid超出范围限制({Uid})]", uid);
+                Log.LogError("[CQAt]非法参数，已忽略CQ码[uid超出范围限制({Uid})]", uid);
                 return CQIlleage();
             }
 
@@ -99,7 +99,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             //检查ID合法性
             if (id is < 0 or > 244)
             {
-                _log.LogError("[CQFace]非法参数，已忽略CQ码[id超出范围限制({ID})]", id);
+                Log.LogError("[CQFace]非法参数，已忽略CQ码[id超出范围限制({ID})]", id);
                 return CQIlleage();
             }
 
@@ -121,7 +121,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             var (dataStr, isDataStr) = ParseDataStr(data);
             if (!isDataStr)
             {
-                _log.LogError("[CQRecord]非法参数({Data})，已忽略此CQ码", data);
+                Log.LogError("[CQRecord]非法参数({Data})，已忽略此CQ码", data);
                 return CQIlleage();
             }
 
@@ -148,7 +148,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             var (dataStr, isDataStr) = ParseDataStr(data);
             if (!isDataStr)
             {
-                _log.LogError("[CQImage]非法参数({Data})，已忽略CQ码", data);
+                Log.LogError("[CQImage]非法参数({Data})，已忽略CQ码", data);
                 return CQIlleage();
             }
 
@@ -174,7 +174,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             (string dataStr, bool isDataStr) = ParseDataStr(data);
             if (!isDataStr)
             {
-                _log.LogError("[CQImage]非法参数({Data})，已忽略CQ码", data);
+                Log.LogError("[CQImage]非法参数({Data})，已忽略CQ码", data);
                 return CQIlleage();
             }
 
@@ -201,7 +201,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             (string dataStr, bool isDataStr) = ParseDataStr(data);
             if (!isDataStr)
             {
-                _log.LogError("[CQShowImage]非法参数({Data})，已忽略CQ码", data);
+                Log.LogError("[CQShowImage]非法参数({Data})，已忽略CQ码", data);
                 return CQIlleage();
             }
 
@@ -229,7 +229,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             var (dataStr, isDataStr) = ParseDataStr(data);
             if (!isDataStr)
             {
-                _log.LogError("[CQVideo]非法参数({Data})，已忽略CQ码", data);
+                Log.LogError("[CQVideo]非法参数({Data})，已忽略CQ码", data);
                 return CQIlleage();
             }
 
@@ -328,7 +328,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         {
             if (uid < 10000)
             {
-                _log.LogError("[CQPoke]非法参数，已忽略CQ码[uid超出范围限制({Uid})]", uid);
+                Log.LogError("[CQPoke]非法参数，已忽略CQ码[uid超出范围限制({Uid})]", uid);
                 return CQIlleage();
             }
 
@@ -436,7 +436,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             (string dataStr, bool isDataStr) = ParseDataStr(imageFile);
             if (!isDataStr)
             {
-                _log.LogError("[CQCardImage]非法参数({ImageFile})，已忽略CQ码", imageFile);
+                Log.LogError("[CQCardImage]非法参数({ImageFile})，已忽略CQ码", imageFile);
                 return CQIlleage();
             }
 

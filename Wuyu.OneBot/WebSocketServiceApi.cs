@@ -113,7 +113,7 @@ namespace Wuyu.OneBot
             bool? autoEscape = default,
             CancellationToken cancellationToken = default)
         {
-            _logger.LogDebug("[SendMsg] User：{UserId} Group：{GroupId}", userId, groupId);
+            _logger.LogInformation("[SendMsg] User：{UserId} Group：{GroupId}", userId, groupId);
             var request = new ApiRequest<SendMessageParams>
             {
                 ApiRequestType = ApiRequestType.SendMsg,
@@ -135,6 +135,7 @@ namespace Wuyu.OneBot
             CancellationToken cancellationToken = default)
             where T : BaseQuickOperation
         {
+            _logger.LogInformation("[HandleQuickOperation]发送快速操作");
             var request = new ApiRequest<JObject>
             {
                 ApiParams = new JObject

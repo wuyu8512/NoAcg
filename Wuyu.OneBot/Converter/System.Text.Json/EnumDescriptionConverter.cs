@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
@@ -11,64 +12,48 @@ using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Converter.System.Text.Json
 {
-    public class JsonDescriptionEnumConverter : JsonConverterFactory
+    public class EnumDescriptionConverter<T> : JsonConverter<T> where T : Enum
     {
-        private readonly JsonNamingPolicy _namingPolicy;
-        private readonly bool _allowIntegerValues;
-        private readonly JsonStringEnumConverter _baseConverter;
-
-        public JsonDescriptionEnumConverter() : this(null, true)
+        public override bool CanConvert(Type typeToConvert)
         {
+            return typeToConvert == typeof(Enum);
         }
-
-        public JsonDescriptionEnumConverter(JsonNamingPolicy namingPolicy = null, bool allowIntegerValues = true)
+        
+        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            this._namingPolicy = namingPolicy;
-            this._allowIntegerValues = allowIntegerValues;
-            this._baseConverter = new JsonStringEnumConverter(namingPolicy, allowIntegerValues);
-        }
-
-        public override bool CanConvert(Type typeToConvert) => _baseConverter.CanConvert(typeToConvert);
-
-        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
-        {
-            var query = from field in typeToConvert.GetFields(BindingFlags.Public | BindingFlags.Static)
-                let attr = field.GetCustomAttribute<DescriptionAttribute>()
-                where attr != null
-                select (field.Name, attr.Description);
-            var dictionary = query.ToDictionary(p => p.Item1, p => p.Item2);
-            if (dictionary.Count > 0)
+            var fields = typeToConvert.GetFields();
+            var readValue = reader.GetString() ?? string.Empty;
+            foreach (var field in fields)
             {
-                return new JsonStringEnumConverter(new DictionaryLookupNamingPolicy(dictionary, _namingPolicy),
-                    _allowIntegerValues).CreateConverter(typeToConvert, options);
+                var objects = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
+                if (objects.Any(item => (item as DescriptionAttribute)?.Description ==
+                                        readValue))
+                {
+                    return (T?)Convert.ChangeType(field.GetValue(-1), typeToConvert);
+                }
             }
-            else
-            {
-                return _baseConverter.CreateConverter(typeToConvert, options);
-            }
+
+            return default;
         }
-    }
 
-    public class JsonNamingPolicyDecorator : JsonNamingPolicy
-    {
-        private readonly JsonNamingPolicy _underlyingNamingPolicy;
+        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        {
+            if (string.IsNullOrEmpty(value.ToString()))
+            {
+                writer.WriteStringValue("");
+                return;
+            }
 
-        protected JsonNamingPolicyDecorator(JsonNamingPolicy underlyingNamingPolicy) =>
-            this._underlyingNamingPolicy = underlyingNamingPolicy;
+            var fieldInfo = value.GetType().GetField(value.ToString()!);
+            if (fieldInfo == null)
+            {
+                writer.WriteStringValue("");
+                return;
+            }
 
-        public override string ConvertName(string name) =>
-            _underlyingNamingPolicy == null ? name : _underlyingNamingPolicy.ConvertName(name);
-    }
-
-    internal class DictionaryLookupNamingPolicy : JsonNamingPolicyDecorator
-    {
-        private readonly Dictionary<string, string> _dictionary;
-
-        public DictionaryLookupNamingPolicy(Dictionary<string, string> dictionary,
-            JsonNamingPolicy underlyingNamingPolicy) : base(underlyingNamingPolicy) =>
-            this._dictionary = dictionary ?? throw new ArgumentNullException();
-
-        public override string ConvertName(string name) =>
-            _dictionary.TryGetValue(name, out var value) ? value : base.ConvertName(name);
+            var attributes =
+                (DescriptionAttribute[]) fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
+            writer.WriteStringValue(attributes.Length > 0 ? attributes[0].Description : "");
+        }
     }
 }

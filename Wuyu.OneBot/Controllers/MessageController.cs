@@ -37,11 +37,13 @@ namespace Wuyu.OneBot.Controllers
             var json = JObject.Parse(rawMsg);
             if (!json.ContainsKey("post_type")) return Ok();
             var result = await _eventManager.Adapter(json, _api, rawMsg);
-            return result switch
+            if (result is BaseQuickOperation reply)
             {
-                BaseQuickOperation reply => Ok(JsonConvert.SerializeObject(reply, Formatting.None)),
-                _ => Ok()
-            };
+                _logger.LogInformation("[HandleQuickOperation]返回快速操作");
+                return Ok(JsonConvert.SerializeObject(reply, Formatting.None));
+            }
+
+            return Ok();
         }
     }
 }
