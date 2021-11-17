@@ -14,7 +14,12 @@ namespace NoAcgNew
     {
         public static void Main(string[] args)
         {
+            var encoding = Console.OutputEncoding;
+            Console.OutputEncoding = new System.Text.UTF8Encoding(false);
+
             CreateHostBuilder(args).Build().Run();
+
+            Console.OutputEncoding = encoding;
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

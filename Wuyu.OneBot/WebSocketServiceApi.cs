@@ -118,7 +118,7 @@ namespace Wuyu.OneBot
             {
                 ApiRequestType = ApiRequestType.SendMsg,
                 ApiParams = new SendMessageParams
-                    {UserId = userId, GroupId = groupId, Message = message, AutoEscape = autoEscape}
+                { UserId = userId, GroupId = groupId, Message = message, AutoEscape = autoEscape }
             };
 
             var (reply, statusType) = await SendRequest(request, cancellationToken);
@@ -131,7 +131,7 @@ namespace Wuyu.OneBot
             return reply == null ? (statusType, 0) : (statusType, id);
         }
 
-        internal async ValueTask<(ApiStatusType, JObject)> HandleQuickOperation<T>(JObject content, T operation,
+        internal async ValueTask<ApiStatusType> HandleQuickOperation<T>(JObject content, T operation,
             CancellationToken cancellationToken = default)
             where T : BaseQuickOperation
         {
@@ -146,8 +146,9 @@ namespace Wuyu.OneBot
                 ApiRequestType = ApiRequestType.HandleQuickOperation
             };
 
-            var (reply, statusType) = await SendRequest(request, cancellationToken);
-            return (statusType, reply);
+            // 快速操作没有返回值
+            var (_, statusType) = await SendRequest(request, cancellationToken);
+            return statusType;
         }
     }
 }

@@ -18,14 +18,14 @@ namespace NoAcgNew.Core
         {
             var client = new HttpClient();
 
-            var result = await client.GetStringAsync(
-                $"https://api.vc.bilibili.com/link_draw/v2/Photo/list?category=cos&type=hot&page_num=1&page_size=20");
-            var totalCount = JObject.Parse(result)["data"]["total_count"].ToObject<int>();
-            totalCount = (int) Math.Ceiling(totalCount / 20.0) - 1;
+            const string uri = "https://api.vc.bilibili.com/link_draw/v2/Photo/index?type=recommend";
+            //const uri = "https://api.vc.bilibili.com/link_draw/v2/Photo/list?category=cos&type=hot";
 
-            var @string =
-                await client.GetStringAsync(
-                    $"https://api.vc.bilibili.com/link_draw/v2/Photo/list?category=cos&type=hot&page_num={Random.Next(0, totalCount)}&page_size=20");
+            var result = await client.GetStringAsync($"{uri}&page_num=1&page_size=20");
+            var totalCount = JObject.Parse(result)["data"]["total_count"].ToObject<int>();
+            totalCount = (int)Math.Ceiling(totalCount / 20.0) - 1;
+
+            var @string = await client.GetStringAsync($"{uri}&page_num={Random.Next(0, totalCount)}&page_size=20");
             if (string.IsNullOrWhiteSpace(@string)) return Array.Empty<string>();
 
             var jObject = JObject.Parse(@string);

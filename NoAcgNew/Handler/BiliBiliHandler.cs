@@ -46,7 +46,14 @@ namespace NoAcgNew.Handler
                     var cqCodes = new List<CQCode>();
                     var tasks = result.Select(url => Task.Run(async () =>
                     {
-                        cqCodes.Add(await CQHelper.Image(url, CQFileType.Base64));
+                        try
+                        {
+                            cqCodes.Add(await CQHelper.Image(url, CQFileType.Base64));
+                        }
+                        catch (Exception e)
+                        {
+                            _logger.LogWarning("[SendImage]下载图片失败：{Url}\r\nError: {Error}", e.ToString(), url);
+                        }
                     }));
 
                     await Task.WhenAll(tasks);

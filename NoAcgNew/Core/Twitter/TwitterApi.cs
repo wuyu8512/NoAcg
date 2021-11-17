@@ -20,7 +20,7 @@ namespace NoAcgNew.Core.Twitter
         {
             _client = new HttpClient(handler, false);
             _client.DefaultRequestHeaders.UserAgent.ParseAdd(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.150 Safari/537.36");
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36");
             InitAuthorizationAsync().Wait();
         }
 
@@ -33,6 +33,8 @@ namespace NoAcgNew.Core.Twitter
             }
 
             if (string.IsNullOrWhiteSpace(TweetCache.Token)) await GetTokenAsync();
+            Console.WriteLine(TweetCache.Authorization);
+            Console.WriteLine(TweetCache.Token);
         }
 
         private async ValueTask GetAuthorizationAsync()
@@ -65,14 +67,14 @@ namespace NoAcgNew.Core.Twitter
                 LogHelp.WriteLine(e.ToString());
                 return;
             }
-            
+
             var value = "Bearer " + Regex.Match(string2, "\"(A{5,}.*?)\"").Groups[1].Value;
             TweetCache.Authorization = value;
 
             TweetCache.Path = new Regex("queryId:\"([a-zA-Z0-9-_]*?)\",operationName:\"UserByScreenName\"")
                 .Match(string2)
                 .Groups[1].Value;
-            
+
             _client.DefaultRequestHeaders.Remove("authorization");
             _client.DefaultRequestHeaders.Add("authorization", TweetCache.Authorization);
         }
@@ -96,8 +98,7 @@ namespace NoAcgNew.Core.Twitter
 
         public async ValueTask<string> GetUserIDAsync(string userName)
         {
-            var url =
-                $"https://api.twitter.com/graphql/{TweetCache.Path}/UserByScreenName?variables=%7B%22screen_name%22%3A%22{userName}%22%2C%22withHighlightedLabel%22%3Afalse%7D";
+            var url = $"https://api.twitter.com/graphql/{TweetCache.Path}/UserByScreenName?variables=%7B%22screen_name%22%3A%22{userName}%22%2C%22withSafetyModeUserFields%22%3Atrue%2C%22withSuperFollowsUserFields%22%3Atrue%2C%22withNftAvatar%22%3Afalse%7D";
             var str = await _client.GetStringAsync(url);
             var json = JObject.Parse(str);
             return json["data"]["user"]["result"]["rest_id"].ToString();
@@ -105,8 +106,7 @@ namespace NoAcgNew.Core.Twitter
 
         public async ValueTask<Tweet[]> GetTweetsAsync(string userId)
         {
-            var address =
-                $"https://api.twitter.com/2/timeline/profile/{userId}.json?tweet_mode=extended&simple_quoted_tweet=true";
+            var address = $"https://api.twitter.com/2/timeline/profile/{userId}.json?tweet_mode=extended&simple_quoted_tweet=true";
             string string3;
             try
             {

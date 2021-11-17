@@ -57,10 +57,8 @@ namespace NoAcgNew.Handler
                     {
                         var _ = Task.Run(async () =>
                         {
-                            var (data, rating) =
-                                await _yandeApi.GetImageByTagsAsync(customTags.Tag, page, customTags.Rating);
-                            await api.SendMsg(userId, groupId,
-                                new[] {CQCode.CQImage("base64://" + Convert.ToBase64String(data))});
+                            var (data, rating) = await _yandeApi.GetImageByTagsAsync(customTags.Tag, page, customTags.Rating);
+                            await api.SendMsg(userId, groupId, new[] { CQCode.CQImage("base64://" + Convert.ToBase64String(data)) });
                         });
                     }
 
