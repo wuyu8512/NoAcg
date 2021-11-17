@@ -24,7 +24,7 @@ namespace Wuyu.OneBot.Models.EventArgs.MessageEvent
         /// 消息 ID
         /// </summary>
         [JsonProperty(PropertyName = "message_id")]
-        public int MessageId { get; internal init; }
+        public string MessageId { get; internal init; }
 
         /// <summary>
         /// 发送者 QQ 号

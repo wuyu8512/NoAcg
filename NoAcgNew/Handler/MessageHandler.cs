@@ -14,15 +14,15 @@ namespace NoAcgNew.Handler
         {
             _eventManager = eventManager;
             _logger = logger;
-            
+
             _eventManager.OnPrivateMessage += async (args, api) =>
             {
-                _logger.LogDebug(args.MessageId, args.RawMessage);
+                _logger.LogDebug("{Nick}: {Msg}", args.SenderInfo.Nick, args.RawMessage);
                 return null;
             };
             _eventManager.OnGroupMessage += async (args, api) =>
             {
-                _logger.LogDebug(args.MessageId, args.RawMessage);
+                _logger.LogDebug("{Nick}: {Msg}", args.SenderInfo.Nick, args.RawMessage);
                 return null;
             };
         }
