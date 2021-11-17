@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 
@@ -7,6 +8,7 @@ namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
     /// <summary>
     /// 群禁言事件
     /// </summary>
+    [EventType("notice", "group_ban")]
     public sealed class GroupBanEventArgs : BaseNoticeEventArgs
     {
         /// <summary>

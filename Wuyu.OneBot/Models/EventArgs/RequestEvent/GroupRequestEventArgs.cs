@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 
@@ -7,6 +8,7 @@ namespace Wuyu.OneBot.Models.EventArgs.RequestEvent
     /// <summary>
     /// 群聊邀请/入群请求事件
     /// </summary>
+    [EventType("request", "group")]
     public sealed class GroupRequestEventArgs : BaseRequestEvent
     {
         /// <summary>

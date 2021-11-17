@@ -1,6 +1,10 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Entities.CQCodes.CQCodeModel;
 using Wuyu.OneBot.Enumeration;
@@ -8,8 +12,24 @@ using Wuyu.OneBot.Models;
 
 namespace Wuyu.OneBot.Converter
 {
-    internal class CQCodeConverter: JsonConverter<CQCode>
+    internal class CQCodeConverter : JsonConverter<CQCode>
     {
+        private readonly static List<(Type type, MsgTypeAttribute customAttributes)> msgTypes;
+
+        static CQCodeConverter()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            msgTypes = new List<(Type type, MsgTypeAttribute customAttributes)>();
+            assembly.GetTypes().ToList().ForEach(type =>
+            {
+                var customAttributes = type.GetCustomAttributes(typeof(MsgTypeAttribute), false).FirstOrDefault();
+                if (customAttributes != null)
+                {
+                    msgTypes.Add((type, customAttributes as MsgTypeAttribute));
+                }
+            });
+        }
+
         public override void WriteJson(JsonWriter writer, CQCode value, JsonSerializer serializer)
         {
             // writer.WriteRawValue(JsonConvert.SerializeObject(value.Data));
@@ -20,26 +40,26 @@ namespace Wuyu.OneBot.Converter
         {
             var json = JObject.Load(reader);
             var messageElement = json.ToObject<MessageElement>();
-            return messageElement?.MsgType switch
+
+            if (messageElement?.MsgType != null)
             {
-                CQCodeType.Text => new CQCode(CQCodeType.Text, messageElement.RawData.ToObject<Text>()),
-                CQCodeType.Face => new CQCode(CQCodeType.Face, messageElement.RawData.ToObject<Face>()),
-                CQCodeType.Image => new CQCode(CQCodeType.Image, messageElement.RawData.ToObject<Image>()),
-                CQCodeType.Record => new CQCode(CQCodeType.Record, messageElement.RawData.ToObject<Record>()),
-                CQCodeType.At => new CQCode(CQCodeType.At, messageElement.RawData.ToObject<At>()),
-                CQCodeType.Share => new CQCode(CQCodeType.Share, messageElement.RawData.ToObject<Share>()),
-                CQCodeType.Reply => new CQCode(CQCodeType.Reply, messageElement.RawData.ToObject<Reply>()),
-                CQCodeType.Forward => new CQCode(CQCodeType.Forward, messageElement.RawData.ToObject<Forward>()),
-                CQCodeType.Xml => new CQCode(CQCodeType.Xml, messageElement.RawData.ToObject<Code>()),
-                CQCodeType.Json => new CQCode(CQCodeType.Json, messageElement.RawData.ToObject<Code>()),
-                CQCodeType.Video => new CQCode(CQCodeType.Video,messageElement.RawData.ToObject<Video>()),
-                CQCodeType.Gift => new CQCode(CQCodeType.Gift,messageElement.RawData.ToObject<Gift>()),
-                CQCodeType.Music => new CQCode(CQCodeType.Music,messageElement.RawData.ToObject<Music>()),
-                CQCodeType.Poke => new CQCode(CQCodeType.Poke,messageElement.RawData.ToObject<Poke>()),
-                CQCodeType.CardImage => new CQCode(CQCodeType.CardImage,messageElement.RawData.ToObject<CardImage>()),
-                CQCodeType.RedBag => new CQCode(CQCodeType.RedBag,messageElement.RawData.ToObject<RedBag>()),
-                _ => new CQCode(CQCodeType.Unknown, messageElement?.RawData)
-            };
+                // 特殊处理某些Type
+                if (messageElement.MsgType == CQCodeType.Image)
+                {
+                    if (messageElement.RawData["type"].ToString() == "custom") return new CQCode(CQCodeType.Image, messageElement.RawData.ToObject<CustomMusic>());
+                    else return new CQCode(CQCodeType.Image, messageElement.RawData.ToObject<Music>());
+                }
+                else
+                {
+                    var msgType = msgTypes.FirstOrDefault(x => x.customAttributes.MsgType.Contains(messageElement.MsgType));
+                    if (msgType != default)
+                    {
+                        return new CQCode(messageElement.MsgType, messageElement.RawData.ToObject(msgType.type));
+                    }
+                }
+            }
+
+            return new CQCode(CQCodeType.Unknown, messageElement?.RawData);
         }
 
         public override bool CanWrite { get; } = false;

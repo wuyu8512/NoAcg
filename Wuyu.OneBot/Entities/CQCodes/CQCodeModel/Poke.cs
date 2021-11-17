@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
@@ -8,6 +10,7 @@ namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
     /// <para>仅发送</para>
     /// <para>仅支持Go</para>
     /// </summary>
+    [MsgType(CQCodeType.Poke)]
     public struct Poke
     {
         #region 属性

@@ -1,10 +1,13 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 链接分享
     /// </summary>
+    [MsgType(CQCodeType.Share)]
     public struct Share
     {
         #region 属性

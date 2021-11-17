@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <UserSecretsId>4aee34b7-e4a1-474c-9cad-82bd3da55e47</UserSecretsId>
     </PropertyGroup>
 
@@ -16,7 +16,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\..\C#\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj" />
+      <ProjectReference Include="..\..\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj" />
       <ProjectReference Include="..\Wuyu.OneBot\Wuyu.OneBot.csproj" />
     </ItemGroup>
 

@@ -1,11 +1,14 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 自定义合并转发节点
     /// </summary>
+    [MsgType(CQCodeType.Node)]
     public struct Node
     {
         #region 属性

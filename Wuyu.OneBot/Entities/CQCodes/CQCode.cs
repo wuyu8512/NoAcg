@@ -62,7 +62,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         /// <param name="msg">文本消息</param>
         public static CQCode CQText(string msg)
         {
-            return new(CQCodeType.Text, new Text {Content = msg});
+            return new(CQCodeType.Text, new Text { Content = msg });
         }
 
         /// <summary>
@@ -77,8 +77,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
                 return CQIlleage();
             }
 
-            return new CQCode(CQCodeType.At,
-                new At {Traget = uid.ToString()});
+            return new CQCode(CQCodeType.At, new At { Traget = uid.ToString() });
         }
 
         /// <summary>
@@ -86,8 +85,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         /// </summary>
         public static CQCode CQAtAll()
         {
-            return new(CQCodeType.At,
-                new At {Traget = "all"});
+            return new(CQCodeType.At, new At { Traget = "all" });
         }
 
         /// <summary>
@@ -104,7 +102,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
             }
 
             return new CQCode(CQCodeType.Face,
-                new Face {Id = id});
+                new Face { Id = id });
         }
 
         /// <summary>
@@ -224,7 +222,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         /// <param name="useCache">是否使用已缓存的文件</param>
         /// <param name="useProxy">是否通过代理下载文件</param>
         /// <param name="timeout">超时时间，默认为<see langword="null"/>(不超时)</param>
-        public static CQCode CQVideo(string data,string cover = null, bool useCache = true, bool useProxy = true, int? timeout = null)
+        public static CQCode CQVideo(string data, string cover = null, bool useCache = true, bool useProxy = true, int? timeout = null)
         {
             var (dataStr, isDataStr) = ParseDataStr(data);
             if (!isDataStr)
@@ -396,7 +394,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
                 new Code
                 {
                     Content = content,
-                    Resid = richText ? (int?) 1 : null
+                    Resid = richText ? (int?)1 : null
                 });
         }
 
@@ -474,8 +472,7 @@ namespace Wuyu.OneBot.Entities.CQCodes
         /// 空CQ码
         /// <para>当存在非法参数时CQ码将被本函数重置</para>
         /// </summary>
-        private static CQCode CQIlleage() =>
-            new(CQCodeType.Text, new Text {Content = null});
+        private static CQCode CQIlleage() => new(CQCodeType.Text, new Text { Content = null });
 
         #endregion
 

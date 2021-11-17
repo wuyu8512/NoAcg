@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
+using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
@@ -8,6 +10,7 @@ namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
     /// 音乐分享
     /// 仅发送
     /// </summary>
+    [MsgType(CQCodeType.Music)]
     public struct Music
     {
         /// <summary>

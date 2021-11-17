@@ -1,8 +1,13 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Interfaces;
+using Wuyu.OneBot.Models.EventArgs;
 using Wuyu.OneBot.Models.EventArgs.MessageEvent;
 using Wuyu.OneBot.Models.EventArgs.MetaEvent;
 using Wuyu.OneBot.Models.EventArgs.NoticeEvent;
@@ -16,16 +21,38 @@ namespace Wuyu.OneBot
     public class EventManager
     {
         private readonly ILogger<EventManager> _logger;
+        private readonly List<(Type type, EventTypeAttribute customAttributes)> _eventTypes = new();
+        private readonly EventInfo[] _eventInfos;
+        private readonly MethodInfo _invokeEventResultInfo;
+        private readonly MethodInfo _invokeEventInfo;
 
         public EventManager(ILogger<EventManager> logger)
         {
             _logger = logger;
+
+            var assembly = Assembly.GetExecutingAssembly();
+            assembly.GetTypes().ToList().ForEach(type =>
+            {
+                if (type.IsSubclassOf(typeof(BaseEventArgs)))
+                {
+                    var customAttributes = type.GetCustomAttributes(typeof(EventTypeAttribute), false).FirstOrDefault();
+                    if (customAttributes != null)
+                    {
+                        _eventTypes.Add((type, customAttributes as EventTypeAttribute));
+                    }
+                }
+            });
+
+            var eventManager = typeof(EventManager);
+            _eventInfos = eventManager.GetEvents();
+            _invokeEventResultInfo = eventManager.GetMethod("InvokeEventResult", BindingFlags.Instance | BindingFlags.NonPublic);
+            _invokeEventInfo = eventManager.GetMethod("InvokeEvent", BindingFlags.Instance | BindingFlags.NonPublic);
         }
 
         #region 事件委托
 
         /// <summary>
-        /// Onebot事件回调
+        /// Onebot事件回调，带参数和返回值版本
         /// </summary>
         /// <typeparam name="TEventArgs">事件参数</typeparam>
         /// <typeparam name="TResult">返回</typeparam>
@@ -36,14 +63,14 @@ namespace Wuyu.OneBot
             where TEventArgs : EventArgs where TResult : BaseQuickOperation;
 
         /// <summary>
-        /// Onebot事件回调
+        /// Onebot事件回调，带参数版本
         /// </summary>
         /// <typeparam name="TEventArgs">事件参数</typeparam>
         /// <param name="eventArgs">事件参数</param>
         /// <param name="oneBotApi">对应的OneBot Api接口</param>
         /// <returns></returns>
         public delegate ValueTask<int> EventCallBackHandler<in TEventArgs>(TEventArgs eventArgs, IOneBotApi oneBotApi);
-        
+
         /// <summary>
         /// Onebot事件回调
         /// </summary>
@@ -59,7 +86,7 @@ namespace Wuyu.OneBot
         /// 连接事件，对于反向WebSocket，将在每次客户端连接时触发，对于Http Post，将在程序启动时触发
         /// </summary>
         public event EventCallBackHandler OnConnection;
-        
+
         /// <summary>
         /// 心跳事件
         /// </summary>
@@ -180,14 +207,14 @@ namespace Wuyu.OneBot
                 _logger.LogWarning(e, "出现了未知错误");
             }
         }
-        
+
         /// <summary>
         /// 事件分发
         /// </summary>
         /// <param name="messageJson">消息json对象</param>
         /// <param name="oneBotApi">客户端链接接口</param>
         /// <param name="rawMsg"></param>
-        public async ValueTask<object> Adapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
+        public async ValueTask<object> Adapter_Old(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
         {
             var type = GetBaseEventType(messageJson);
             try
@@ -220,6 +247,86 @@ namespace Wuyu.OneBot
         }
 
         /// <summary>
+        /// 事件分发
+        /// </summary>
+        /// <param name="messageJson">消息json对象</param>
+        /// <param name="oneBotApi">客户端链接接口</param>
+        /// <param name="rawMsg">原始文本</param>
+        public async ValueTask<object> Adapter(JObject messageJson, IOneBotApi oneBotApi, string rawMsg)
+        {
+            var postType = messageJson.TryGetValue("post_type", out var postTypeJson) ? postTypeJson.ToString() : null;
+            if (postType == null)
+            {
+                _logger.LogWarning("[Event]接收到未知事件: {Msg}", rawMsg);
+                return null;
+            }
+            var eventType = messageJson.TryGetValue($"{postType}_type", out var typeJson) ? typeJson.ToString() : null;
+            var subType = messageJson.TryGetValue($"sub_type", out var subTypeJson) ? subTypeJson.ToString() : null;
+
+            var eventClass = _eventTypes.Where((type) =>
+            {
+                return type.customAttributes is EventTypeAttribute eventAttributes && eventAttributes.PostType == postType &&
+                                eventAttributes.Type.Contains(eventType) && (eventAttributes.SubType == subType || eventAttributes.SubType == "allType");
+            }).Select(item => item.type).FirstOrDefault();
+            var args = messageJson.ToObject(eventClass);
+            var eventManager = typeof(EventManager);
+            var eventInfo = _eventInfos.FirstOrDefault(item =>
+            {
+                return item.EventHandlerType.GenericTypeArguments.Contains(eventClass);
+            });
+            if (eventClass == null || args == null || eventInfo == null)
+            {
+                _logger.LogWarning("[Event]接收到未知事件: {Msg}", rawMsg);
+                return null;
+            }
+
+            try
+            {
+                if (eventInfo.EventHandlerType.GenericTypeArguments.Length == 1)
+                {
+                    // 带参数，不带返回值
+                    var delegateInstance = eventManager.GetField(eventInfo.Name, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(this);
+                    if (delegateInstance != null)
+                    {
+                        // 特殊处理某些Event
+                        if (args is PokeEventArgs pokeEvent)
+                        {
+                            if (pokeEvent.GroupId == default)
+                            {
+                                if (OnGroupPokeEvent != null) await InvokeEvent(OnGroupPokeEvent, pokeEvent, oneBotApi, rawMsg);
+                            }
+                            else if (OnFriendPokeEvent != null) await InvokeEvent(OnFriendPokeEvent, pokeEvent, oneBotApi, rawMsg);
+                        }
+                        else
+                        {
+                            MethodInfo bound = _invokeEventInfo.MakeGenericMethod(eventClass);
+                            dynamic result = bound.Invoke(this, new object[] { delegateInstance, args, oneBotApi, rawMsg });
+                            await result;
+                        }
+                    }
+                }
+                else if (eventInfo.EventHandlerType.GenericTypeArguments.Length == 2)
+                {
+                    // 带参数和返回值
+                    var delegateInstance = eventManager.GetField(eventInfo.Name, BindingFlags.Instance | BindingFlags.NonPublic)?.GetValue(this);
+
+                    if (delegateInstance != null)
+                    {
+                        MethodInfo bound = _invokeEventResultInfo.MakeGenericMethod(eventClass, eventInfo.EventHandlerType.GenericTypeArguments[1]);
+                        dynamic result = bound.Invoke(this, new object[] { delegateInstance, args, oneBotApi, rawMsg });
+                        return await result;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "[Adapter]事件处理出现未知错误：{Msg}", rawMsg);
+            }
+
+            return null;
+        }
+
+        /// <summary>
         /// 元事件处理和分发
         /// </summary>
         /// <param name="messageJson">消息</param>
@@ -232,20 +339,20 @@ namespace Wuyu.OneBot
             {
                 //心跳包
                 case "heartbeat":
-                {
-                    var heartBeat = messageJson.ToObject<HeartBeatEventArgs>();
-                    if (heartBeat != null && OnHeartBeatEvent != null)
-                        await InvokeEvent(OnHeartBeatEvent, heartBeat, oneBotApi, rawMsg);
-                    break;
-                }
+                    {
+                        var heartBeat = messageJson.ToObject<HeartBeatEventArgs>();
+                        if (heartBeat != null && OnHeartBeatEvent != null)
+                            await InvokeEvent(OnHeartBeatEvent, heartBeat, oneBotApi, rawMsg);
+                        break;
+                    }
                 //生命周期
                 case "lifecycle":
-                {
-                    var lifeCycle = messageJson.ToObject<LifeCycleEventArgs>();
-                    if (lifeCycle != null && OnLifeCycleEvent != null)
-                        await InvokeEvent(OnLifeCycleEvent, lifeCycle, oneBotApi, rawMsg);
-                    break;
-                }
+                    {
+                        var lifeCycle = messageJson.ToObject<LifeCycleEventArgs>();
+                        if (lifeCycle != null && OnLifeCycleEvent != null)
+                            await InvokeEvent(OnLifeCycleEvent, lifeCycle, oneBotApi, rawMsg);
+                        break;
+                    }
                 default:
                     _logger.LogWarning("[Meta Event]接收到未知事件[{MetaEventType}]", type);
                     break;
@@ -265,20 +372,20 @@ namespace Wuyu.OneBot
             {
                 //私聊事件
                 case "private":
-                {
-                    var privateMsg = messageJson.ToObject<PrivateMsgEventArgs>();
-                    if (privateMsg != null && OnPrivateMessage != null)
-                        return await InvokeEvent(OnPrivateMessage, privateMsg, oneBotApi, rawMsg);
-                    break;
-                }
+                    {
+                        var privateMsg = messageJson.ToObject<PrivateMsgEventArgs>();
+                        if (privateMsg != null && OnPrivateMessage != null)
+                            return await InvokeEventResult(OnPrivateMessage, privateMsg, oneBotApi, rawMsg);
+                        break;
+                    }
                 //群聊事件
                 case "group":
-                {
-                    var groupMsg = messageJson.ToObject<GroupMsgEventArgs>();
-                    if (groupMsg != null && OnGroupMessage != null)
-                        return await InvokeEvent(OnGroupMessage, groupMsg, oneBotApi, rawMsg);
-                    break;
-                }
+                    {
+                        var groupMsg = messageJson.ToObject<GroupMsgEventArgs>();
+                        if (groupMsg != null && OnGroupMessage != null)
+                            return await InvokeEventResult(OnGroupMessage, groupMsg, oneBotApi, rawMsg);
+                        break;
+                    }
                 default:
                     _logger.LogWarning("[Message Event]接收到未知事件[{MessageEventType}]", type);
                     break;
@@ -300,120 +407,120 @@ namespace Wuyu.OneBot
             {
                 //群文件上传
                 case "group_upload":
-                {
-                    var fileUpload = messageJson.ToObject<FileUploadEventArgs>();
-                    if (OnFileUpload != null && fileUpload != null) await OnFileUpload(fileUpload, oneBotApi);
-                    break;
-                }
+                    {
+                        var fileUpload = messageJson.ToObject<FileUploadEventArgs>();
+                        if (OnFileUpload != null && fileUpload != null) await OnFileUpload(fileUpload, oneBotApi);
+                        break;
+                    }
                 //群管理员变动
                 case "group_admin":
-                {
-                    var adminChange = messageJson.ToObject<AdminChangeEventArgs>();
-                    if (adminChange != null && OnGroupAdminChange != null)
-                        await OnGroupAdminChange(adminChange, oneBotApi);
-                    break;
-                }
+                    {
+                        var adminChange = messageJson.ToObject<AdminChangeEventArgs>();
+                        if (adminChange != null && OnGroupAdminChange != null)
+                            await OnGroupAdminChange(adminChange, oneBotApi);
+                        break;
+                    }
                 //群成员变动
                 case "group_decrease":
                 case "group_increase":
-                {
-                    var groupMemberChange =
-                        messageJson.ToObject<GroupMemberChangeEventArgs>();
-                    if (groupMemberChange != null && OnGroupMemberChange != null)
-                        await OnGroupMemberChange(groupMemberChange, oneBotApi);
-                    break;
-                }
+                    {
+                        var groupMemberChange =
+                            messageJson.ToObject<GroupMemberChangeEventArgs>();
+                        if (groupMemberChange != null && OnGroupMemberChange != null)
+                            await OnGroupMemberChange(groupMemberChange, oneBotApi);
+                        break;
+                    }
                 //群禁言
                 case "group_ban":
-                {
-                    var groupMute = messageJson.ToObject<GroupBanEventArgs>();
-                    if (groupMute != null && OnGroupBan != null) await OnGroupBan(groupMute, oneBotApi);
-                    break;
-                }
+                    {
+                        var groupMute = messageJson.ToObject<GroupBanEventArgs>();
+                        if (groupMute != null && OnGroupBan != null) await OnGroupBan(groupMute, oneBotApi);
+                        break;
+                    }
                 //好友添加
                 case "friend_add":
-                {
-                    var friendAdd = messageJson.ToObject<FriendAddEventArgs>();
-                    if (friendAdd != null && OnFriendAdd != null) await OnFriendAdd(friendAdd, oneBotApi);
-                    break;
-                }
+                    {
+                        var friendAdd = messageJson.ToObject<FriendAddEventArgs>();
+                        if (friendAdd != null && OnFriendAdd != null) await OnFriendAdd(friendAdd, oneBotApi);
+                        break;
+                    }
                 //群消息撤回
                 case "group_recall":
-                {
-                    var groupRecall = messageJson.ToObject<GroupRecallEventArgs>();
-                    if (groupRecall != null && OnGroupRecall != null) await OnGroupRecall(groupRecall, oneBotApi);
-                    break;
-                }
+                    {
+                        var groupRecall = messageJson.ToObject<GroupRecallEventArgs>();
+                        if (groupRecall != null && OnGroupRecall != null) await OnGroupRecall(groupRecall, oneBotApi);
+                        break;
+                    }
                 //好友消息撤回
                 case "friend_recall":
-                {
-                    var friendRecall = messageJson.ToObject<FriendRecallEventArgs>();
-                    if (friendRecall != null && OnFriendRecall != null)
-                        await OnFriendRecall(friendRecall, oneBotApi);
-                    break;
-                }
+                    {
+                        var friendRecall = messageJson.ToObject<FriendRecallEventArgs>();
+                        if (friendRecall != null && OnFriendRecall != null)
+                            await OnFriendRecall(friendRecall, oneBotApi);
+                        break;
+                    }
                 //群名片变更
                 //此事件仅在Go上存在
                 case "group_card":
-                {
-                    var groupCardUpdate = messageJson.ToObject<GroupCardUpdateEventArgs>();
-                    if (groupCardUpdate != null && OnGroupCardUpdate != null)
-                        await OnGroupCardUpdate(groupCardUpdate, oneBotApi);
-                    break;
-                }
+                    {
+                        var groupCardUpdate = messageJson.ToObject<GroupCardUpdateEventArgs>();
+                        if (groupCardUpdate != null && OnGroupCardUpdate != null)
+                            await OnGroupCardUpdate(groupCardUpdate, oneBotApi);
+                        break;
+                    }
                 case "offline_file":
-                {
-                    var offlineFile = messageJson.ToObject<OfflineFileEventArgs>();
-                    if (offlineFile != null && OnOfflineFileEvent != null)
-                        await OnOfflineFileEvent(offlineFile, oneBotApi);
-                    break;
-                }
+                    {
+                        var offlineFile = messageJson.ToObject<OfflineFileEventArgs>();
+                        if (offlineFile != null && OnOfflineFileEvent != null)
+                            await OnOfflineFileEvent(offlineFile, oneBotApi);
+                        break;
+                    }
                 case "client_status":
-                {
-                    var clientStatus = messageJson.ToObject<ClientStatusChangeEventArgs>();
-                    if (clientStatus != null && OnClientStatusChange != null)
-                        await OnClientStatusChange(clientStatus,
-                            oneBotApi);
-                    break;
-                }
+                    {
+                        var clientStatus = messageJson.ToObject<ClientStatusChangeEventArgs>();
+                        if (clientStatus != null && OnClientStatusChange != null)
+                            await OnClientStatusChange(clientStatus,
+                                oneBotApi);
+                        break;
+                    }
                 case "essence":
-                {
-                    var essenceChange = messageJson.ToObject<EssenceChangeEventArgs>();
-                    if (essenceChange != null && OnEssenceChange != null)
-                        await OnEssenceChange(essenceChange, oneBotApi);
-                    break;
-                }
+                    {
+                        var essenceChange = messageJson.ToObject<EssenceChangeEventArgs>();
+                        if (essenceChange != null && OnEssenceChange != null)
+                            await OnEssenceChange(essenceChange, oneBotApi);
+                        break;
+                    }
                 //通知类事件
                 case "notify":
                     var notifyType = GetNotifyType(messageJson);
                     switch (notifyType)
                     {
                         case "poke": //戳一戳
-                        {
-                            var pokeEvent = messageJson.ToObject<PokeEventArgs>();
-                            if (pokeEvent == null) break;
-                            if (pokeEvent.GroupId == default)
                             {
-                                if (OnGroupPokeEvent != null) await OnGroupPokeEvent(pokeEvent, oneBotApi);
-                            }
-                            else if (OnFriendPokeEvent != null) await OnFriendPokeEvent(pokeEvent, oneBotApi);
+                                var pokeEvent = messageJson.ToObject<PokeEventArgs>();
+                                if (pokeEvent == null) break;
+                                if (pokeEvent.GroupId == default)
+                                {
+                                    if (OnGroupPokeEvent != null) await OnGroupPokeEvent(pokeEvent, oneBotApi);
+                                }
+                                else if (OnFriendPokeEvent != null) await OnFriendPokeEvent(pokeEvent, oneBotApi);
 
-                            break;
-                        }
+                                break;
+                            }
                         case "lucky_king": //运气王
-                        {
-                            var luckyEvent = messageJson.ToObject<LuckyKingEventArgs>();
-                            if (luckyEvent != null && OnLuckyKingEvent != null)
-                                await OnLuckyKingEvent(luckyEvent, oneBotApi);
-                            break;
-                        }
+                            {
+                                var luckyEvent = messageJson.ToObject<LuckyKingEventArgs>();
+                                if (luckyEvent != null && OnLuckyKingEvent != null)
+                                    await OnLuckyKingEvent(luckyEvent, oneBotApi);
+                                break;
+                            }
                         case "honor":
-                        {
-                            var honorEvent = messageJson.ToObject<HonorEventArgs>();
-                            if (honorEvent != null && OnHonorEvent != null)
-                                await OnHonorEvent(honorEvent, oneBotApi);
-                            break;
-                        }
+                            {
+                                var honorEvent = messageJson.ToObject<HonorEventArgs>();
+                                if (honorEvent != null && OnHonorEvent != null)
+                                    await OnHonorEvent(honorEvent, oneBotApi);
+                                break;
+                            }
                         default:
                             _logger.LogWarning("[Notify]接收到未知事件[{NotifyType}]", notifyType);
                             break;
@@ -439,25 +546,25 @@ namespace Wuyu.OneBot
             {
                 //好友请求事件
                 case "friend":
-                {
-                    var friendRequest = messageJson.ToObject<FriendRequestEventArgs>();
-                    if (friendRequest != null && OnFriendRequest != null)
-                        await OnFriendRequest(friendRequest, oneBotApi);
-                    break;
-                }
-                //群组请求事件
-                case "group":
-                {
-                    if (messageJson.TryGetValue("sub_type", out var sub) && sub.ToString().Equals("notice"))
                     {
-                        _logger.LogWarning("[Request]收到notice消息类型，不解析此类型消息");
+                        var friendRequest = messageJson.ToObject<FriendRequestEventArgs>();
+                        if (friendRequest != null && OnFriendRequest != null)
+                            await OnFriendRequest(friendRequest, oneBotApi);
                         break;
                     }
+                //群组请求事件
+                case "group":
+                    {
+                        if (messageJson.TryGetValue("sub_type", out var sub) && sub.ToString().Equals("notice"))
+                        {
+                            _logger.LogWarning("[Request]收到notice消息类型，不解析此类型消息");
+                            break;
+                        }
 
-                    var groupRequest = messageJson.ToObject<GroupRequestEventArgs>();
-                    if (groupRequest != null && OnGroupRequest != null) await OnGroupRequest(groupRequest, oneBotApi);
-                    break;
-                }
+                        var groupRequest = messageJson.ToObject<GroupRequestEventArgs>();
+                        if (groupRequest != null && OnGroupRequest != null) await OnGroupRequest(groupRequest, oneBotApi);
+                        break;
+                    }
                 default:
                     _logger.LogWarning("[Request]接收到未知事件[{Type}]", type);
                     break;
@@ -473,7 +580,7 @@ namespace Wuyu.OneBot
         {
             foreach (var @delegate in handler.GetInvocationList())
             {
-                var func = (EventCallBackHandler<T>) @delegate;
+                var func = (EventCallBackHandler<T>)@delegate;
                 var code = 0;
                 try
                 {
@@ -488,14 +595,14 @@ namespace Wuyu.OneBot
             }
         }
 
-        private async ValueTask<TResult> InvokeEvent<T, TResult>(EventCallBackHandler<T, TResult> handler, T args,
+        private async ValueTask<TResult> InvokeEventResult<T, TResult>(EventCallBackHandler<T, TResult> handler, T args,
             IOneBotApi api, string rawMsg)
             where T : EventArgs where TResult : BaseQuickOperation
         {
             TResult reply = null;
             foreach (var @delegate in handler.GetInvocationList())
             {
-                var func = (EventCallBackHandler<T, TResult>) @delegate;
+                var func = (EventCallBackHandler<T, TResult>)@delegate;
                 try
                 {
                     var data = await func(args, api);
@@ -512,7 +619,6 @@ namespace Wuyu.OneBot
             }
             return reply;
         }
-
         #endregion
 
         #region 事件类型获取

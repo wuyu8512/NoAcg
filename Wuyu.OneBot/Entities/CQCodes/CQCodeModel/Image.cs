@@ -1,10 +1,13 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 图片
     /// </summary>
+    [MsgType(CQCodeType.Image)]
     public struct Image
     {
         #region 属性

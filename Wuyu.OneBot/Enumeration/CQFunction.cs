@@ -104,7 +104,12 @@ namespace Wuyu.OneBot.Enumeration
         /// <summary>
         /// 文本转语音
         /// </summary>
-        [Description("tts")] TTS
+        [Description("tts")] TTS,
+        
+        /// <summary>
+        /// 合并转发消息节点
+        /// </summary>
+        [Description("node")] Node,
 
         #endregion
     }

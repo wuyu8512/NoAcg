@@ -5,9 +5,9 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NoAcgNew", "NoAcgNew\NoAcgNew.csproj", "{691C5D9A-8244-4E97-BF95-9D753C7B5ED5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wuyu.OneBot", "Wuyu.OneBot\Wuyu.OneBot.csproj", "{AFF80BD2-25DC-46E4-A181-521DF594F63F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wuyu.OneBot", "Wuyu.OneBot\Wuyu.OneBot.csproj", "{AFF80BD2-25DC-46E4-A181-521DF594F63F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wuyu.Tool", "..\..\C#\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj", "{3A7AB100-F35F-4AE9-A83F-3DC2FB152E34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wuyu.Tool", "..\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj", "{A2BC974C-C6BE-44FC-B1FD-5B2ECA95C4D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{AFF80BD2-25DC-46E4-A181-521DF594F63F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AFF80BD2-25DC-46E4-A181-521DF594F63F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AFF80BD2-25DC-46E4-A181-521DF594F63F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3A7AB100-F35F-4AE9-A83F-3DC2FB152E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3A7AB100-F35F-4AE9-A83F-3DC2FB152E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3A7AB100-F35F-4AE9-A83F-3DC2FB152E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3A7AB100-F35F-4AE9-A83F-3DC2FB152E34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2BC974C-C6BE-44FC-B1FD-5B2ECA95C4D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2BC974C-C6BE-44FC-B1FD-5B2ECA95C4D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2BC974C-C6BE-44FC-B1FD-5B2ECA95C4D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2BC974C-C6BE-44FC-B1FD-5B2ECA95C4D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

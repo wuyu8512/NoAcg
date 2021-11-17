@@ -1,4 +1,6 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
@@ -6,6 +8,7 @@ namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
     /// 接收红包
     /// 仅支持Go
     /// </summary>
+    [MsgType(CQCodeType.RedBag)]
     public struct RedBag
     {
         /// <summary>

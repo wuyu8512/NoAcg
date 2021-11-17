@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 
 namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
 {
@@ -6,6 +7,7 @@ namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
     /// Go扩展事件
     /// 群成员名片变更事件
     /// </summary>
+    [EventType("notice", "group_card")]
     public sealed class GroupCardUpdateEventArgs : BaseNoticeEventArgs
     {
         /// <summary>

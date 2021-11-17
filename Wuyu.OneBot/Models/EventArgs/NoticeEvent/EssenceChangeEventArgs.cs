@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration.EventParamsType;
 
@@ -7,6 +8,7 @@ namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
     /// <summary>
     /// 精华消息变动事件
     /// </summary>
+    [EventType("notice", "essence")]
     public class EssenceChangeEventArgs : BaseNoticeEventArgs
     {
         /// <summary>

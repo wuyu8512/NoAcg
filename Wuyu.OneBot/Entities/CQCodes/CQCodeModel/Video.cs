@@ -1,11 +1,14 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 短视频
     /// </summary>
+    [MsgType(CQCodeType.Video)]
     public struct Video
     {
         #region 属性

@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
 using Wuyu.OneBot.Enumeration;
 
@@ -8,6 +9,7 @@ namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
     /// <para>Xml与Json集合</para>
     /// <para>可能为<see cref="CQCodeType"/>.<see langword="Json"/>或<see cref="CQCodeType"/>.<see langword="Xml"/></para>
     /// </summary>
+    [MsgType(new[] { CQCodeType.Xml, CQCodeType.Json })]
     public struct Code
     {
         #region 属性

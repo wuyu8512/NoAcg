@@ -1,12 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
-using Newtonsoft.Json.Linq;
 using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Enumeration.ApiType;
-using Wuyu.OneBot.Enumeration.EventParamsType;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Models.ApiParams;
 
@@ -17,7 +16,7 @@ namespace Wuyu.OneBot
         private readonly IOneBotHttpApi _api;
         private readonly ILogger<HttpApi> _logger;
 
-        public HttpApi(IOneBotHttpApi api,ILogger<HttpApi> logger)
+        public HttpApi(IOneBotHttpApi api, ILogger<HttpApi> logger)
         {
             _api = api;
             _logger = logger;

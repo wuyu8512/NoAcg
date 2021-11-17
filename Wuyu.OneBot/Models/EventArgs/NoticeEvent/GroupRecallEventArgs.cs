@@ -1,10 +1,12 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 
 namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
 {
     /// <summary>
     /// 群消息撤回事件
     /// </summary>
+    [EventType("notice", "group_recall")]
     public sealed class GroupRecallEventArgs : BaseNoticeEventArgs
     {
         /// <summary>

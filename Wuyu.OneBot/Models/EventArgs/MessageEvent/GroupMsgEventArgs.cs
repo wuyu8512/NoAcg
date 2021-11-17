@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Models.EventArgs.Info;
 
 namespace Wuyu.OneBot.Models.EventArgs.MessageEvent
@@ -6,7 +7,8 @@ namespace Wuyu.OneBot.Models.EventArgs.MessageEvent
     /// <summary>
     /// 群组消息事件
     /// </summary>
-    public sealed class GroupMsgEventArgs: BaseMessageEventArgs
+    [EventType("message", "group")]
+    public sealed class GroupMsgEventArgs : BaseMessageEventArgs
     {
         /// <summary>
         /// 群号

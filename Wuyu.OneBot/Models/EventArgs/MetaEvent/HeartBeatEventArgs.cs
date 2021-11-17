@@ -1,11 +1,13 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Wuyu.OneBot.Attributes;
 
 namespace Wuyu.OneBot.Models.EventArgs.MetaEvent
 {
     /// <summary>
     /// 心跳包
     /// </summary>
+    [EventType("meta_event", "heartbeat")]
     public sealed class HeartBeatEventArgs : BaseMetaEventArgs
     {
         /// <summary>

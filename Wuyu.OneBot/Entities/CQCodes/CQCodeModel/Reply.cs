@@ -1,11 +1,14 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Converter;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 回复
     /// </summary>
+    [MsgType(CQCodeType.Reply)]
     public struct Reply
     {
         #region 属性

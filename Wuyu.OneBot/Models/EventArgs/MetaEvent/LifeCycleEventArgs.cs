@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 
 namespace Wuyu.OneBot.Models.EventArgs.MetaEvent
 {
     /// <summary>
     /// 生命周期事件
     /// </summary>
+    [EventType("meta_event", "lifecycle")]
     public sealed class LifeCycleEventArgs : BaseMetaEventArgs
     {
         /// <summary>

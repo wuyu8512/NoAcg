@@ -1,10 +1,13 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
+using Wuyu.OneBot.Enumeration;
 
 namespace Wuyu.OneBot.Entities.CQCodes.CQCodeModel
 {
     /// <summary>
     /// 自定义音乐分享
     /// </summary>
+    [MsgType(CQCodeType.Music)]
     public struct CustomMusic
     {
         [JsonProperty(PropertyName = "type")] internal string ShareType;

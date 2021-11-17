@@ -1,4 +1,5 @@
 using Newtonsoft.Json;
+using Wuyu.OneBot.Attributes;
 using Wuyu.OneBot.Models.EventArgs.Info;
 
 namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
@@ -6,6 +7,7 @@ namespace Wuyu.OneBot.Models.EventArgs.NoticeEvent
     /// <summary>
     /// 其他客户端在线状态变更
     /// </summary>
+    [EventType("notice", "client_status")]
     public sealed class ClientStatusChangeEventArgs : BaseNoticeEventArgs
     {
         /// <summary>
