@@ -44,10 +44,10 @@ namespace Wuyu.OneBot.Converter
             if (messageElement?.MsgType != null)
             {
                 // 特殊处理某些Type
-                if (messageElement.MsgType == CQCodeType.Image)
+                if (messageElement.MsgType == CQCodeType.Music)
                 {
-                    if (messageElement.RawData["type"].ToString() == "custom") return new CQCode(CQCodeType.Image, messageElement.RawData.ToObject<CustomMusic>());
-                    else return new CQCode(CQCodeType.Image, messageElement.RawData.ToObject<Music>());
+                    if (messageElement.RawData["type"].ToString() == "custom") return new CQCode(CQCodeType.Music, messageElement.RawData.ToObject<CustomMusic>());
+                    else return new CQCode(CQCodeType.Music, messageElement.RawData.ToObject<Music>());
                 }
                 else
                 {
