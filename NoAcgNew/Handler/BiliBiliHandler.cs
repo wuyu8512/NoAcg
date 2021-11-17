@@ -12,6 +12,7 @@ using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Expansion;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Models.EventArgs.MessageEvent;
+using Wuyu.OneBot.Models.QuickOperation;
 using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
@@ -34,7 +35,7 @@ namespace NoAcgNew.Handler
             _provider = provider;
         }
 
-        private async ValueTask<BaseMsgQuickOperation> Handler(BaseMessageEventArgs args, IOneBotApi api)
+        private async ValueTask<EventResult<BaseMsgQuickOperation>> Handler(BaseMessageEventArgs args, IOneBotApi api)
         {
             if (args.RawMessage.Equals(_globalService.BiliSetting.HotCos.Command,
                 StringComparison.CurrentCultureIgnoreCase))

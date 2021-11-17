@@ -58,7 +58,7 @@ namespace Wuyu.OneBot
         /// <typeparam name="TResult">返回</typeparam>
         /// <param name="eventArgs">事件参数</param>
         /// <param name="oneBotApi">对应的OneBot Api接口</param>
-        public delegate ValueTask<TResult> EventCallBackHandler<in TEventArgs, TResult>(TEventArgs eventArgs,
+        public delegate ValueTask<EventResult<TResult>> EventCallBackHandler<in TEventArgs, TResult>(TEventArgs eventArgs,
             IOneBotApi oneBotApi)
             where TEventArgs : EventArgs where TResult : BaseQuickOperation;
 
@@ -327,7 +327,7 @@ namespace Wuyu.OneBot
                     var data = await func(args, api);
                     if (data != default)
                     {
-                        reply = data;
+                        reply = data.Operation;
                         if (data.Code == 1) break;
                     }
                 }

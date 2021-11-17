@@ -13,6 +13,7 @@ using Wuyu.OneBot.Entities.CQCodes;
 using Wuyu.OneBot.Enumeration;
 using Wuyu.OneBot.Interfaces;
 using Wuyu.OneBot.Models.EventArgs.MessageEvent;
+using Wuyu.OneBot.Models.QuickOperation;
 using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
@@ -60,7 +61,7 @@ namespace NoAcgNew.Handler
             }
         }
 
-        private async ValueTask<GroupMsgQuickOperation> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
+        private async ValueTask<EventResult<GroupMsgQuickOperation>> OnGroupMessage(GroupMsgEventArgs args, IOneBotApi api)
         {
             return null;
         }
@@ -99,7 +100,7 @@ namespace NoAcgNew.Handler
 
         private async ValueTask<List<CQCode>> GetTweetContent(Tweet tweet)
         {
-            var temp = new List<CQCode> {CQCode.CQText(tweet.Content)};
+            var temp = new List<CQCode> { CQCode.CQText(tweet.Content) };
             var img = new List<CQCode>();
             if (tweet.Media != null)
             {
@@ -141,11 +142,11 @@ namespace NoAcgNew.Handler
             {
                 if (tweet.Retweet == null)
                 {
-                    return new List<CQCode> {CQCode.CQText("error")};
+                    return new List<CQCode> { CQCode.CQText("error") };
                 }
                 else
                 {
-                    var a = new List<CQCode> {CQCode.CQText(tweet.Retweet.UserName + "：\n")};
+                    var a = new List<CQCode> { CQCode.CQText(tweet.Retweet.UserName + "：\n") };
                     a.AddRange(await GetTweetContent(tweet.Retweet));
                     return a;
                 }
