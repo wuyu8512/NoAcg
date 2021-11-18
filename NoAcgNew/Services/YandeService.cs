@@ -4,21 +4,21 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace NoAcgNew.Core
+namespace NoAcgNew.Services
 {
-    public class YandeApi
+    public class YandeService
     {
         private static readonly Random Random = new();
-        private readonly HttpClientHandler _handler;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public YandeApi(HttpClientHandler handler = default)
+        public YandeService(IHttpClientFactory httpClientFactory)
         {
-            _handler = handler;
+            _httpClientFactory = httpClientFactory;
         }
 
         public async ValueTask<int> GetTagsPageAsync(string tag)
         {
-            var client = new HttpClient(_handler, false);
+            var client = _httpClientFactory.CreateClient("default");
             var html = await client.GetStringAsync("https://yande.re/post?tags=" + tag);
             
             var regex = new Regex("(\\d+)</a> <a [^<>]+?>Next");
@@ -60,7 +60,7 @@ namespace NoAcgNew.Core
                 text = text.Replace("Explicit|", string.Empty);
             }
 
-            var client = new HttpClient(_handler, false);
+            var client = _httpClientFactory.CreateClient("default");
             var regex = new Regex(text);
             var @string = await client.GetStringAsync(url);
             var matchCollection = regex.Matches(@string);

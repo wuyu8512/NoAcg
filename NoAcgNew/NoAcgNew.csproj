@@ -10,6 +10,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http.Polly" Version="6.0.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.1" />
         <PackageReference Include="WebApiClientCore" Version="2.0.1" />
         <PackageReference Include="WebApiClientCore.Extensions.NewtonsoftJson" Version="2.0.1" />
@@ -18,10 +20,6 @@
     <ItemGroup>
       <ProjectReference Include="..\..\Wuyu.Tool\Wuyu.Tool\Wuyu.Tool.csproj" />
       <ProjectReference Include="..\Wuyu.OneBot\Wuyu.OneBot.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Api" />
     </ItemGroup>
 
 </Project>

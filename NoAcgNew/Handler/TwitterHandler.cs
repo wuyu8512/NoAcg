@@ -7,6 +7,7 @@ using NoAcgNew.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Wuyu.OneBot;
 using Wuyu.OneBot.Entities.CQCodes;
@@ -24,17 +25,20 @@ namespace NoAcgNew.Handler
         private readonly ILogger<TwitterHandler> _logger;
         private readonly GlobalService _globalService;
         private readonly IServiceProvider _provider;
+        private readonly IHttpClientFactory _httpClientFactory;
         private TweeterMonitorManage _manage;
+        private Lazy<TwitterApi> _twitterApi;
         private IOneBotApi _api;
         private bool _isStart;
 
         public TwitterHandler(EventManager eventManager,
-            ILogger<TwitterHandler> logger, GlobalService globalService, IServiceProvider provider)
+            ILogger<TwitterHandler> logger, GlobalService globalService, IServiceProvider provider, IHttpClientFactory httpClientFactory)
         {
             _eventManager = eventManager;
             _logger = logger;
             _globalService = globalService;
             _provider = provider;
+            _httpClientFactory = httpClientFactory;
 
             eventManager.OnGroupMessage += OnGroupMessage;
             eventManager.OnConnection += OnConnection;
@@ -49,9 +53,9 @@ namespace NoAcgNew.Handler
                 {
                     if (_manage == null)
                     {
-                        var twitterApi =
-                            new Lazy<TwitterApi>(() => new TwitterApi(_globalService.HttpClientProxyHandler));
-                        _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(_provider, twitterApi);
+                        //_twitterApi = new Lazy<TwitterApi>(() => new TwitterApi(_globalService.HttpClientProxyHandler));
+                        _twitterApi = ActivatorUtilities.CreateInstance<Lazier<TwitterApi>>(_provider);
+                        _manage = ActivatorUtilities.CreateInstance<TweeterMonitorManage>(_provider, _twitterApi);
                     }
 
                     _manage.StartNewMonitor(monitor.Key, CallBack);
@@ -108,8 +112,7 @@ namespace NoAcgNew.Handler
                 {
                     try
                     {
-                        img.Add(await CQHelper.Image(item["media_url_https"].ToString(), CQFileType.Base64,
-                            _globalService.HttpClientProxyHandler));
+                        img.Add(await CQHelper.Image(item["media_url_https"].ToString(), CQFileType.Base64, _httpClientFactory));
                     }
                     catch (Exception e)
                     {
@@ -128,8 +131,7 @@ namespace NoAcgNew.Handler
                             {
                                 var videoUrl = mp4["url"].ToString();
                                 img.Add(CQCode.CQText(videoUrl));
-                                img.Add(await CQHelper.Video(videoUrl, CQFileType.File,
-                                    _globalService.HttpClientProxyHandler));
+                                img.Add(await CQHelper.Video(videoUrl, CQFileType.File, _httpClientFactory));
                             }
                             else img.Add(CQCode.CQText(item["video_info"]["variants"][0]["url"].ToString()));
 

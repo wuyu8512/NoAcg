@@ -23,7 +23,7 @@ namespace NoAcgNew.Helper
             Directory.CreateDirectory(VideoCachePath);
         }
 
-        public static async ValueTask<CQCode> Image(string uri, CQFileType type = default, HttpClientHandler handler = default)
+        public static async ValueTask<CQCode> Image(string uri, CQFileType type = default, IHttpClientFactory httpClientFactory = default)
         {
             HttpClient client;
             byte[] data;
@@ -32,11 +32,11 @@ namespace NoAcgNew.Helper
                 case CQFileType.Url:
                     return CQCode.CQImage(uri);
                 case CQFileType.Base64:
-                    client = handler == default ? new HttpClient() : new HttpClient(handler, false);
+                    client = httpClientFactory == default ? new HttpClient() : httpClientFactory.CreateClient("default");
                     data = await client.GetByteArrayAsync(uri);
                     return CQCode.CQImage("base64://" + Convert.ToBase64String(data));
                 case CQFileType.File:
-                    client = handler == default ? new HttpClient() : new HttpClient(handler, false);
+                    client = httpClientFactory == default ? new HttpClient() : httpClientFactory.CreateClient("default");
                     data = await client.GetByteArrayAsync(uri);
                     var filePath = ImageCachePath + HashHelp.MD5Encrypt(data);
                     await File.WriteAllBytesAsync(filePath, data);
@@ -46,7 +46,7 @@ namespace NoAcgNew.Helper
             }
         }
         
-        public static async ValueTask<CQCode> Video(string uri, CQFileType type = default, HttpClientHandler handler = default)
+        public static async ValueTask<CQCode> Video(string uri, CQFileType type = default, IHttpClientFactory httpClientFactory = default)
         {
             switch (type)
             {
@@ -55,7 +55,7 @@ namespace NoAcgNew.Helper
                 case CQFileType.Base64:
                     throw new NotSupportedException("Video不支持Base64发送");
                 case CQFileType.File:
-                    var client = handler == default ? new HttpClient() : new HttpClient(handler, false);
+                    var client = httpClientFactory == default ? new HttpClient() : httpClientFactory.CreateClient("default");
                     var data = await client.GetByteArrayAsync(uri);
                     var filePath = VideoCachePath + HashHelp.MD5Encrypt(data);
                     await File.WriteAllBytesAsync(filePath, data);

@@ -18,20 +18,19 @@ namespace NoAcgNew.Handler
         private readonly EventManager _eventManager;
         private readonly ILogger<YandeHandler> _logger;
         private readonly GlobalService _globalService;
-        private readonly IServiceProvider _provider;
-        private readonly YandeApi _yandeApi;
+        //private readonly IServiceProvider _provider;
+        private readonly Lazy<YandeService> _yandeService;
 
         public YandeHandler(EventManager eventManager,
-            ILogger<YandeHandler> logger, GlobalService globalService, IServiceProvider provider)
+            ILogger<YandeHandler> logger, GlobalService globalService, IServiceProvider provider, Lazy<YandeService> yandeService)
         {
+            //_provider = provider;
             _eventManager = eventManager;
             _logger = logger;
             eventManager.OnGroupMessage += HandlerExpansion.ToGroupHandler(Handler);
             eventManager.OnPrivateMessage += HandlerExpansion.ToPrivateHandler(Handler);
             _globalService = globalService;
-            _provider = provider;
-
-            _yandeApi = new YandeApi(_globalService.HttpClientProxyHandler);
+            _yandeService = yandeService;
         }
 
         private async ValueTask<EventResult<BaseMsgQuickOperation>> Handler(BaseMessageEventArgs args, IOneBotApi api)
@@ -44,7 +43,7 @@ namespace NoAcgNew.Handler
             if (args.RawMessage.Equals(_globalService.YandeSetting.HotImg.Command,
                 StringComparison.CurrentCultureIgnoreCase))
             {
-                var (data, rating) = await _yandeApi.GetHotImgAsync(_globalService.YandeSetting.HotImg.Rating);
+                var (data, rating) = await _yandeService.Value.GetHotImgAsync(_globalService.YandeSetting.HotImg.Rating);
                 var replay = CQCode.CQImage("base64://" + Convert.ToBase64String(data));
                 return (1, replay);
             }
@@ -53,12 +52,12 @@ namespace NoAcgNew.Handler
             {
                 if (args.RawMessage.Equals(customTags.Command, StringComparison.CurrentCultureIgnoreCase))
                 {
-                    var page = await _yandeApi.GetTagsPageAsync(customTags.Tag);
+                    var page = await _yandeService.Value.GetTagsPageAsync(customTags.Tag);
                     for (var i = 0; i < customTags.Count; i++)
                     {
                         var _ = Task.Run(async () =>
                         {
-                            var (data, rating) = await _yandeApi.GetImageByTagsAsync(customTags.Tag, page, customTags.Rating);
+                            var (data, rating) = await _yandeService.Value.GetImageByTagsAsync(customTags.Tag, page, customTags.Rating);
                             await api.SendMsg(userId, groupId, new[] { CQCode.CQImage("base64://" + Convert.ToBase64String(data)) });
                         });
                     }

@@ -43,7 +43,7 @@ namespace NoAcgNew.Handler
                 var result = await BiliApi.GetCosHotAsync();
                 if (result.Any())
                 {
-                    _logger.LogDebug("数量：{Count}", result.Length);
+                    _logger.LogDebug("{Command}数量：{Count}", _globalService.BiliSetting.HotCos.Command, result.Length);
                     var cqCodes = new List<CQCode>();
                     var tasks = result.Select(url => Task.Run(async () =>
                     {

@@ -24,10 +24,11 @@ namespace Wuyu.OneBot
             setupAction?.Invoke(Options);
 
             services.AddSingleton<EventManager>();
-            services.AddHttpApi<IOneBotHttpApi>().ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                UseProxy = false
-            });
+            //services.AddHttpApi<IOneBotHttpApi>().ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            //{
+            //    UseProxy = false
+            //});
+            services.AddHttpApi<IOneBotHttpApi>();
             services.AddSingleton<HttpApi>();
 
             if (Options.EnableHttpPost)

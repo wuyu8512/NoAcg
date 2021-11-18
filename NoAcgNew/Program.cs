@@ -13,7 +13,7 @@ namespace NoAcgNew
     public class Program
     {
         public static void Main(string[] args)
-        {
+       {
             var encoding = Console.OutputEncoding;
             Console.OutputEncoding = new System.Text.UTF8Encoding(false);
 

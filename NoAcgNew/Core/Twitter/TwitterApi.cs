@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
@@ -6,8 +7,8 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Newtonsoft.Json.Linq;
 using Wuyu.Tool;
+
 
 namespace NoAcgNew.Core.Twitter
 {
@@ -16,9 +17,9 @@ namespace NoAcgNew.Core.Twitter
         private readonly HttpClient _client;
         private static TweetConfig TweetCache { get; } = new();
 
-        public TwitterApi(HttpMessageHandler handler)
+        public TwitterApi(IHttpClientFactory httpClientFactory)
         {
-            _client = new HttpClient(handler, false);
+            _client = httpClientFactory.CreateClient("default");
             _client.DefaultRequestHeaders.UserAgent.ParseAdd(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36");
             InitAuthorizationAsync().Wait();
@@ -33,8 +34,6 @@ namespace NoAcgNew.Core.Twitter
             }
 
             if (string.IsNullOrWhiteSpace(TweetCache.Token)) await GetTokenAsync();
-            Console.WriteLine(TweetCache.Authorization);
-            Console.WriteLine(TweetCache.Token);
         }
 
         private async ValueTask GetAuthorizationAsync()
@@ -144,6 +143,9 @@ namespace NoAcgNew.Core.Twitter
                     CreatTime = DateTime.ParseExact(temp["created_at"].ToString(), "ddd MMM dd HH:mm:ss zzz yyyy",
                         CultureInfo.InvariantCulture)
                 };
+
+                if (temp.ContainsKey("entities")) tweet.Entities = temp["entities"] as JObject;
+
                 var isRetweet = temp.ContainsKey("retweeted_status_id_str");
                 var userId = temp["user_id_str"].ToString();
                 tweet.UserName = json["globalObjects"]["users"][userId]["name"].ToString();
@@ -191,6 +193,7 @@ namespace NoAcgNew.Core.Twitter
         public string Id { get; set; }
         public string Content { get; set; }
         public JArray Media { get; set; }
+        public JObject Entities { get; set; }
         public DateTime CreatTime { get; set; }
         public string UserName { get; set; }
         public Tweet Retweet { get; set; }
