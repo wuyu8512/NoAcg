@@ -44,11 +44,11 @@ namespace NoAcgNew
                 o.EnableHttpPost = Configuration.GetValue<bool>("EnableHttpPost");
                 o.HttpApi = Configuration.GetSection("OneBotHttpApi");
             });
-
+             
             services.AddSingleton<GlobalService>();
             services.AddTransient(typeof(Lazy<>), typeof(Lazier<>));
 
-            Func<IServiceProvider, HttpMessageHandler> configHandler = (s) =>
+            HttpMessageHandler configHandler(IServiceProvider s)
             {
                 var handler = new HttpClientHandler
                 {
@@ -56,7 +56,7 @@ namespace NoAcgNew
                 };
                 Configuration.GetSection("HttpClient").Bind(handler);
                 return handler;
-            };
+            }
 
             services.AddHttpClient("default")
                 .AddTransientHttpErrorPolicy(p => p.RetryAsync(3))

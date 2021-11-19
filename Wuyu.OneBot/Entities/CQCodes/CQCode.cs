@@ -529,33 +529,18 @@ namespace Wuyu.OneBot.Entities.CQCodes
         private static (string retStr, bool isMatch) ParseDataStr(string dataStr)
         {
             if (string.IsNullOrEmpty(dataStr)) return (null, false);
-            var isMatch = false;
-            dataStr = dataStr.Replace('\\', '/');
-            //当字符串太长时跳过正则检查
-            if (dataStr.Length > 1000) return (dataStr, true);
-            for (var i = 0; i < 5; i++)
+
+            if (dataStr.Length > 65519) return (dataStr, true);
+
+            try
             {
-                isMatch |= Regex.IsMatch(dataStr, FileRegex[i]);
-                if (isMatch)
-                {
-                    switch (i)
-                    {
-                        case 0: //linux/osx
-                            if (Environment.OSVersion.Platform != PlatformID.Unix &&
-                                Environment.OSVersion.Platform != PlatformID.MacOSX &&
-                                !File.Exists(dataStr))
-                                return (dataStr, false);
-                            else
-                                return ($"file:///{dataStr}", true);
-                        case 1: //win
-                            if (Environment.OSVersion.Platform == PlatformID.Win32NT && File.Exists(dataStr))
-                                return ($"file:///{dataStr}", true);
-                            else
-                                return (dataStr, false);
-                        default:
-                            return (dataStr, true);
-                    }
-                }
+                var uri = new Uri(dataStr);
+                if (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == "base64") return (uri.AbsoluteUri, true);
+                else if (File.Exists(uri.AbsolutePath)) return (uri.AbsoluteUri, true);
+            }
+            catch (UriFormatException e)
+            {
+                Log.LogWarning("[ParseDataStr] 解析失败：{Error}", e.Message);
             }
 
             return (dataStr, false);
