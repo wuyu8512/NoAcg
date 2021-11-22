@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace NoAcgNew.Models
+namespace NoAcgNew.Setting
 {
     public class TwitterSetting
     {

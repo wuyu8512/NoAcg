@@ -1,4 +1,4 @@
-﻿namespace NoAcgNew.Models
+﻿namespace NoAcgNew.Setting
 {
     public class YandeSetting
     {

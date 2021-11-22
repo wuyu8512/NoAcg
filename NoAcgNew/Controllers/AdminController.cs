@@ -15,9 +15,9 @@ namespace NoAcgNew.Controllers
     public class AdminController : ControllerBase
     {
         private readonly ILogger<AdminController> _logger;
-        private readonly GlobalService _globalService;
+        private readonly ConfigService _globalService;
 
-        public AdminController(ILogger<AdminController> logger, GlobalService globalService)
+        public AdminController(ILogger<AdminController> logger, ConfigService globalService)
         {
             _logger = logger;
             _globalService = globalService;

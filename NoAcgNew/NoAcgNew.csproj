@@ -22,4 +22,8 @@
       <ProjectReference Include="..\Wuyu.OneBot\Wuyu.OneBot.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\" />
+    </ItemGroup>
+
 </Project>

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NoAcgNew.Attributes;
 using NoAcgNew.Core.Twitter;
 using NoAcgNew.Enumeration;
 using NoAcgNew.Helper;
@@ -19,11 +20,12 @@ using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
 {
+    [Handler]
     public class TwitterHandler
     {
         private readonly EventManager _eventManager;
         private readonly ILogger<TwitterHandler> _logger;
-        private readonly GlobalService _globalService;
+        private readonly ConfigService _globalService;
         private readonly IServiceProvider _provider;
         private readonly IHttpClientFactory _httpClientFactory;
         private TweeterMonitorManage _manage;
@@ -32,7 +34,7 @@ namespace NoAcgNew.Handler
         private bool _isStart;
 
         public TwitterHandler(EventManager eventManager,
-            ILogger<TwitterHandler> logger, GlobalService globalService, IServiceProvider provider, IHttpClientFactory httpClientFactory)
+            ILogger<TwitterHandler> logger, ConfigService globalService, IServiceProvider provider, IHttpClientFactory httpClientFactory)
         {
             _eventManager = eventManager;
             _logger = logger;
@@ -69,7 +71,7 @@ namespace NoAcgNew.Handler
         {
             return null;
         }
-
+         
         private async ValueTask CallBack(TweeterMonitor monitor, Tweet tweet)
         {
             if (_api == null) return;
@@ -131,7 +133,7 @@ namespace NoAcgNew.Handler
                             {
                                 var videoUrl = mp4["url"].ToString();
                                 img.Add(CQCode.CQText(videoUrl));
-                                img.Add(await CQHelper.Video(videoUrl, CQFileType.File, _httpClientFactory));
+                                img.Add(await CQHelper.Video(videoUrl, CQFileType.File, null, _httpClientFactory));
                             }
                             else img.Add(CQCode.CQText(item["video_info"]["variants"][0]["url"].ToString()));
 

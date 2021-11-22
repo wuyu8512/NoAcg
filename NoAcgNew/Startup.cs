@@ -5,13 +5,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
+using NoAcgNew.Attributes;
 using NoAcgNew.Converter;
 using NoAcgNew.Handler;
 using NoAcgNew.Services;
 using Polly;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using Wuyu.OneBot;
 
@@ -45,7 +48,7 @@ namespace NoAcgNew
                 o.HttpApi = Configuration.GetSection("OneBotHttpApi");
             });
              
-            services.AddSingleton<GlobalService>();
+            services.AddSingleton<ConfigService>();
             services.AddTransient(typeof(Lazy<>), typeof(Lazier<>));
 
             HttpMessageHandler configHandler(IServiceProvider s)
@@ -78,14 +81,19 @@ namespace NoAcgNew
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
-
+             
             app.UseOneBot();
             Task.Run(() =>
             {
-                ActivatorUtilities.CreateInstance<MessageHandler>(app.ApplicationServices);
-                ActivatorUtilities.CreateInstance<YandeHandler>(app.ApplicationServices);
-                ActivatorUtilities.CreateInstance<TwitterHandler>(app.ApplicationServices);
-                ActivatorUtilities.CreateInstance<BiliBiliHandler>(app.ApplicationServices);
+                var assembly = Assembly.GetExecutingAssembly();
+                foreach (var type in assembly.GetTypes())
+                {
+                    var customAttributes = type.GetCustomAttributes(typeof(HandlerAttribute), false).FirstOrDefault();
+                    if (customAttributes != null)
+                    {
+                        ActivatorUtilities.CreateInstance(app.ApplicationServices, type);
+                    }
+                }
             });
         }
     }

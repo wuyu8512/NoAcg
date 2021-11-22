@@ -47,13 +47,13 @@ namespace NoAcgNew.Helper
                     return null;
             }
         }
-        
-        public static async ValueTask<CQCode> Video(string url, CQFileType type = default, IHttpClientFactory httpClientFactory = default)
+
+        public static async ValueTask<CQCode> Video(string url, CQFileType type = default, string cover = default, IHttpClientFactory httpClientFactory = default)
         {
             switch (type)
             {
                 case CQFileType.Url:
-                    return CQCode.CQVideo(url);
+                    return CQCode.CQVideo(url, cover);
                 case CQFileType.Base64:
                     throw new NotSupportedException("Video不支持Base64发送");
                 case CQFileType.File:
@@ -62,7 +62,7 @@ namespace NoAcgNew.Helper
                     var data = await client.GetByteArrayAsync(uri);
                     var filePath = VideoCachePath + HashHelp.MD5Encrypt(data) + Path.GetExtension(uri.Segments.Last());
                     await File.WriteAllBytesAsync(filePath, data);
-                    return CQCode.CQVideo(new Uri(filePath).AbsoluteUri);
+                    return CQCode.CQVideo(new Uri(filePath).AbsoluteUri, cover);
                 default:
                     return null;
             }

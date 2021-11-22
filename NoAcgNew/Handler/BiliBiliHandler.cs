@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NoAcgNew.Attributes;
 using NoAcgNew.Core;
 using NoAcgNew.Enumeration;
 using NoAcgNew.Helper;
@@ -17,15 +18,16 @@ using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
 {
+    [Handler]
     public class BiliBiliHandler
     {
         private readonly EventManager _eventManager;
         private readonly ILogger<BiliBiliHandler> _logger;
-        private readonly GlobalService _globalService;
+        private readonly ConfigService _globalService;
         private readonly IServiceProvider _provider;
 
         public BiliBiliHandler(EventManager eventManager,
-            ILogger<BiliBiliHandler> logger, GlobalService globalService, IServiceProvider provider)
+            ILogger<BiliBiliHandler> logger, ConfigService globalService, IServiceProvider provider)
         {
             _eventManager = eventManager;
             _logger = logger;

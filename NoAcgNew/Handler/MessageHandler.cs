@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
+using NoAcgNew.Attributes;
 using Wuyu.OneBot;
-
 
 namespace NoAcgNew.Handler
 {
+    [Handler]
     public class MessageHandler
     {
         private readonly EventManager _eventManager;

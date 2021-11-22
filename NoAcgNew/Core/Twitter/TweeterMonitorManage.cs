@@ -10,12 +10,12 @@ namespace NoAcgNew.Services
 {
     public class TweeterMonitorManage
     {
-        private readonly GlobalService _globalService;
+        private readonly ConfigService _globalService;
         private readonly Lazy<TwitterApi> _twitterApi;
         private readonly IServiceProvider _serviceProvider;
         private readonly Dictionary<string, TweeterMonitor> _tweeterMonitors = new();
 
-        public TweeterMonitorManage(GlobalService globalService, Lazy<TwitterApi> twitterApi,
+        public TweeterMonitorManage(ConfigService globalService, Lazy<TwitterApi> twitterApi,
             IServiceProvider serviceProvider)
         {
             _globalService = globalService;

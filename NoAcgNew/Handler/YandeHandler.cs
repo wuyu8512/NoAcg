@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NoAcgNew.Attributes;
 using NoAcgNew.Core;
 using NoAcgNew.Services;
 using System;
@@ -13,16 +14,17 @@ using Wuyu.OneBot.Models.QuickOperation.MsgQuickOperation;
 
 namespace NoAcgNew.Handler
 {
+    [Handler]
     public class YandeHandler
     {
         private readonly EventManager _eventManager;
         private readonly ILogger<YandeHandler> _logger;
-        private readonly GlobalService _globalService;
+        private readonly ConfigService _globalService;
         //private readonly IServiceProvider _provider;
         private readonly Lazy<YandeService> _yandeService;
 
         public YandeHandler(EventManager eventManager,
-            ILogger<YandeHandler> logger, GlobalService globalService, IServiceProvider provider, Lazy<YandeService> yandeService)
+            ILogger<YandeHandler> logger, ConfigService globalService, IServiceProvider provider, Lazy<YandeService> yandeService)
         {
             //_provider = provider;
             _eventManager = eventManager;
