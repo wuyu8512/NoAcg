@@ -149,6 +149,7 @@ namespace NoAcgNew.Core.Twitter
                 var isRetweet = temp.ContainsKey("retweeted_status_id_str");
                 var userId = temp["user_id_str"].ToString();
                 tweet.UserName = json["globalObjects"]["users"][userId]["name"].ToString();
+                tweet.UserId = userId;
                 if (temp.ContainsKey("extended_entities"))
                 {
                     var extended = temp["extended_entities"] as JObject;
@@ -191,6 +192,7 @@ namespace NoAcgNew.Core.Twitter
     public class Tweet
     {
         public string Id { get; set; }
+        public string UserId { get; set; }
         public string Content { get; set; }
         public JArray Media { get; set; }
         public JObject Entities { get; set; }
